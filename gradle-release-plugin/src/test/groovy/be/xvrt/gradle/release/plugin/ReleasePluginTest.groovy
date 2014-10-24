@@ -21,7 +21,7 @@ class ReleasePluginTest {
     void testAllTasksAddedToProject() {
         assertTrue( project.tasks.prepareRelease instanceof PrepareReleaseTask )
         assertTrue( project.tasks.release instanceof ReleaseTask )
-        assertTrue( project.tasks.saveRelease instanceof SaveReleaseTask )
+        assertTrue( project.tasks.tagRelease instanceof TagReleaseTask )
     }
 
 }

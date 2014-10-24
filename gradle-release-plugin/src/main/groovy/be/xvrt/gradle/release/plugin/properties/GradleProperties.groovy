@@ -13,7 +13,7 @@ class GradleProperties {
     private final Project project
     private final Properties fileProperties
 
-    protected GradleProperties( Project project ) {
+    GradleProperties( Project project ) {
         this.project = project
         this.fileProperties = new Properties()
 
@@ -21,6 +21,7 @@ class GradleProperties {
     }
 
     def String getVersion() {
+        // TODO: Always query this live in case other plugins do stuff
         def projectVersion = project.version
         if ( projectVersion.equals( "unspecified" ) ) {
             fileProperties.get 'version'

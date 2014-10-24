@@ -1,36 +1,46 @@
 package be.xvrt.gradle.release.plugin
 
-import be.xvrt.gradle.release.plugin.properties.GradleProperties
-import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
-class PrepareReleaseTask extends DefaultTask {
+class PrepareReleaseTask extends RollbackTask {
 
-    boolean isSnapshotVersion
-    GradleProperties gradleProperties
+    private static final GString TASK_TAG = ":${ReleasePlugin.PREPARE_RELEASE_TASK} "
+
+    private String originalVersion
+    private String releaseVersion
+
+    @Override
+    def configure() {
+        originalVersion = project.version
+        releaseVersion = buildReleaseVersion()
+
+        // TODO: Optionally write to file
+        project.version = releaseVersion
+        logger.info( TASK_TAG + "set release version to ${project.version}." )
+    }
 
     @TaskAction
-    def prepareReleaseVersion() {
-        def releaseVersion = buildReleaseVersion()
-        gradleProperties.setVersion( releaseVersion )
-        logger.debug( "Project version set to ${releaseVersion}." )
+    def executeTask() {
+
+    }
+
+    @Override
+    def rollback() {
+
+    }
+
+    boolean wasSnapshotVersion() {
+        return originalVersion.endsWith( '-SNAPSHOT' )
     }
 
     private String buildReleaseVersion() {
-        logger.debug( 'Preparing for release.' )
-        def projectVersion = getProjectVersion()
+        def releaseVersion = originalVersion
 
-        if ( projectVersion.endsWith( '-SNAPSHOT' ) ) {
-            projectVersion -= '-SNAPSHOT'
-            isSnapshotVersion = true
+        if ( releaseVersion.endsWith( '-SNAPSHOT' ) ) {
+            releaseVersion -= '-SNAPSHOT'
         }
 
-        projectVersion
+        releaseVersion
     }
-
-    private String getProjectVersion() {
-        project.version
-    }
-
 
 }

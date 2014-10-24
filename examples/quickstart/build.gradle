@@ -1,0 +1,29 @@
+/*
+plugins {
+    id 'be.xvrt.gradle.release' version '0.0.1'
+}
+*/
+
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+
+    dependencies {
+        classpath 'be.xvrt:gradle-release-plugin:0.0.1'
+    }
+}
+
+apply plugin: 'release'
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+
+version = '1.0.0-SNAPSHOT'

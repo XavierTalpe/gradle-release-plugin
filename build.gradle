@@ -1,43 +1,29 @@
-task wrapper( type: Wrapper ) {
-    gradleVersion = '2.1'
-}
+/*
+publishing {
+    publications {
+        maven( MavenPublication ) {
+            from components.java
 
-subprojects {
+            artifact buildSourcesJar {
+                classifier 'sources'
+            }
 
-    version = '0.0.1-SNAPSHOT'
-    group = 'be.xvrt.gradle.release'
-
+            artifact buildJavadocJar {
+                classifier 'javadoc'
+            }
+        }
+    }
     repositories {
-        mavenCentral()
-    }
-
-    /*
-    publishing {
-        publications {
-            maven( MavenPublication ) {
-                from components.java
-
-                artifact buildSourcesJar {
-                    classifier 'sources'
-                }
-
-                artifact buildJavadocJar {
-                    classifier 'javadoc'
-                }
+        maven {
+            name 'someserver'
+            credentials {
+                // TODO Use 'nexus' authentication details from your ~/.m2/settings.xml file.
+                username 'user'
+                password 'pass'
             }
-        }
-        repositories {
-            maven {
-                name 'someserver'
-                credentials {
-                    // TODO Use 'nexus' authentication details from your ~/.m2/settings.xml file.
-                    username 'user'
-                    password 'pass'
-                }
 
-                url 'http://url'
-            }
+            url 'http://url'
         }
     }
-    */
 }
+*/

@@ -14,7 +14,18 @@ class PrepareReleaseTaskTest {
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
-    void testPrepareReleaseForSnapshotVersion() {
+    public void testConfigureWithoutPropertiesFile() throws Exception {
+        Project project = ProjectBuilder.builder().build()
+        project.version = '1.0.0-SNAPSHOT'
+        project.apply plugin: ReleasePlugin
+
+        assertEquals( '1.0.0-SNAPSHOT', project.version )
+        project.tasks.prepareRelease.configure()
+        assertEquals( '1.0.0', project.version )
+    }
+
+    @Test
+    public void testConfigureWithPropertiesFile() throws Exception {
         def properties = temporaryFolder.newFile( 'gradle.properties' )
         properties.withWriter { w -> w.writeLine 'version=1.0.0-SNAPSHOT' }
 
@@ -22,20 +33,7 @@ class PrepareReleaseTaskTest {
         project.apply plugin: ReleasePlugin
 
         assertEquals( '1.0.0-SNAPSHOT', project.version )
-        project.tasks.prepareRelease.execute()
-        assertEquals( '1.0.0', project.version )
-    }
-
-    @Test
-    void testPrepareReleaseForNonSnapshotVersion() {
-        def properties = temporaryFolder.newFile( 'gradle.properties' )
-        properties.withWriter { w -> w.writeLine 'version=1.0.0' }
-
-        Project project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
-        project.apply plugin: ReleasePlugin
-
-        assertEquals( '1.0.0', project.version )
-        project.tasks.prepareRelease.execute()
+        project.tasks.prepareRelease.configure()
         assertEquals( '1.0.0', project.version )
     }
 

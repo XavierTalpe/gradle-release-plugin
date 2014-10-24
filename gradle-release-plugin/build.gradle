@@ -25,3 +25,5 @@ test {
         events 'failed', 'standardOut', 'standardError'
     }
 }
+
+defaultTasks 'test', 'publishToMavenLocal'
