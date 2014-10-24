@@ -1,4 +1,4 @@
-package be.xvrt.gradle.release
+package be.xvrt.gradle.release.plugin
 
 import org.gradle.api.DefaultTask
 

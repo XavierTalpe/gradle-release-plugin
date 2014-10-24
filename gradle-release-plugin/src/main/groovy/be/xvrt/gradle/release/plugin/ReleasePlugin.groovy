@@ -1,5 +1,6 @@
-package be.xvrt.gradle.release
+package be.xvrt.gradle.release.plugin
 
+import be.xvrt.gradle.release.plugin.properties.GradleProperties
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -16,8 +17,11 @@ class ReleasePlugin implements Plugin<Project> {
         def releaseTask = project.tasks.create( RELEASE_TASK, ReleaseTask )
         def saveReleaseTask = project.tasks.create( SAVE_RELEASE_TASK, SaveReleaseTask )
 
+        def gradleProperties = new GradleProperties( project )
+
         prepareReleaseTask.group = TASK_GROUP
         prepareReleaseTask.description = 'TODO'
+        prepareReleaseTask.gradleProperties = gradleProperties
 
         releaseTask.group = TASK_GROUP
         releaseTask.description = 'TODO'
@@ -25,6 +29,8 @@ class ReleasePlugin implements Plugin<Project> {
 
         saveReleaseTask.group = TASK_GROUP
         saveReleaseTask.description = 'TODO'
+        saveReleaseTask.gradleProperties = gradleProperties
     }
+
 
 }

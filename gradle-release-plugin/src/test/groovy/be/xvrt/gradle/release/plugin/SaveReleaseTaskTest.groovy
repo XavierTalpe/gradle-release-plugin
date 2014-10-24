@@ -1,4 +1,4 @@
-package be.xvrt.gradle.release
+package be.xvrt.gradle.release.plugin
 
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
@@ -7,7 +7,7 @@ import org.junit.Test
 
 import static org.junit.Assert.assertEquals
 
-class PrepareReleaseTaskTest {
+class SaveReleaseTaskTest {
 
     private Project project
 
@@ -18,19 +18,21 @@ class PrepareReleaseTaskTest {
     }
 
     @Test
-    void testPrepareReleaseForSnapshotVersion() {
+    void testSetNextSnapshotVersion() {
         project.version = '1.0.0-SNAPSHOT'
         project.tasks.prepareRelease.execute()
+        project.tasks.saveRelease.execute()
 
-        assertEquals( '1.0.0', this.project.version )
+        assertEquals( '1.0.1-SNAPSHOT', this.project.version )
     }
 
     @Test
-    void testPrepareReleaseForNonSnapshotVersion() {
-        project.version = '1.0.0-SNAPSHOT'
+    void testSetNextNonSnapshotVersion() {
+        project.version = '1.0.0'
         project.tasks.prepareRelease.execute()
+        project.tasks.saveRelease.execute()
 
-        assertEquals( '1.0.0', this.project.version )
+        assertEquals( '1.0.1', this.project.version )
     }
 
 }

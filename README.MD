@@ -32,3 +32,9 @@ See maven release plugin
 ## How to upgrade to next major version?
 For example, currently 2.1-SNAPSHOT. Next release should be for 3.0(-SNAPSHOT).
 - Allow parameter to set next version
+
+
+
+## Setting the version
+- Either from a gradle.properties file (in which case we update it)
+- By passing parameter -Pversion from command line (in which case we won't update the file (unless there is one))

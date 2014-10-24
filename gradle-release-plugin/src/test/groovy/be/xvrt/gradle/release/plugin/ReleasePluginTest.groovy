@@ -1,4 +1,4 @@
-package be.xvrt.gradle.release
+package be.xvrt.gradle.release.plugin
 
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
@@ -19,7 +19,7 @@ class ReleasePluginTest {
 
     @Test
     void testAllTasksAddedToProject() {
-        assertTrue( project.tasks.prepareRelease instanceof PrepareReleaseTask)
+        assertTrue( project.tasks.prepareRelease instanceof PrepareReleaseTask )
         assertTrue( project.tasks.release instanceof ReleaseTask )
         assertTrue( project.tasks.saveRelease instanceof SaveReleaseTask )
     }

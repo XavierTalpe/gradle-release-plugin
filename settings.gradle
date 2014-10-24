@@ -1,1 +1,4 @@
-rootProject.name = 'gradle-release'
+include 'examples'
+include 'gradle-release-plugin'
+
+
