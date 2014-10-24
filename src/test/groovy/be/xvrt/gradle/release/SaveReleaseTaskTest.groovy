@@ -12,17 +12,27 @@ class SaveReleaseTaskTest {
     private Project project
 
     @Before
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         project = ProjectBuilder.builder().build()
         project.apply plugin: ReleasePlugin
-
-        project.version = '1.0.0'
     }
 
     @Test
-    public void setSnapshotVersion() {
-        assertEquals( '1.0.0', this.project.version )
-        project.saveRelease.execute()
+    void testSetNextSnapshotVersion() {
+        project.version = '1.0.0-SNAPSHOT'
+        project.tasks.prepareRelease.execute()
+        project.tasks.saveRelease.execute()
+
         assertEquals( '1.0.1-SNAPSHOT', this.project.version )
     }
+
+    @Test
+    void testSetNextNonSnapshotVersion() {
+        project.version = '1.0.0'
+        project.tasks.prepareRelease.execute()
+        project.tasks.saveRelease.execute()
+
+        assertEquals( '1.0.1', this.project.version )
+    }
+
 }

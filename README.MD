@@ -22,7 +22,13 @@ Inspired by the release plugin of [Eric Berry](https://github.com/townsfolk/grad
 - Increment version for next (snapshot) release
 - Commit new version
 
+# TODOS
+
 ## What if release fails?
 - Roll back version modifications in file?
 See maven release plugin
 
+
+## How to upgrade to next major version?
+For example, currently 2.1-SNAPSHOT. Next release should be for 3.0(-SNAPSHOT).
+- Allow parameter to set next version

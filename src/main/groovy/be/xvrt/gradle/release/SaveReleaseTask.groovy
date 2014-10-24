@@ -6,14 +6,21 @@ import org.gradle.api.tasks.TaskAction
 class SaveReleaseTask extends DefaultTask {
 
     @TaskAction
-    def setNextSnapshotVersion() {
-        String snapshotVersion = project.version
+    def setNextReleaseVersion() {
+        String projectVersion = project.version
 
-        def lastDot = snapshotVersion.findLastIndexOf { '.' }
-        def lastVersion = snapshotVersion.substring( lastDot, snapshotVersion.length() )
+        def lastDotIndex = projectVersion.findLastIndexOf { '.' }
+        def lastVersion = projectVersion.substring( lastDotIndex, projectVersion.length() )
         def newVersion = Integer.parseInt( lastVersion ) + 1
 
-        project.version = snapshotVersion.substring( 0, lastDot ) + newVersion + '-SNAPSHOT'
+        def nextProjectVersion = projectVersion.substring( 0, lastDotIndex ) + newVersion
+
+        if ( project.prepareRelease.isSnapshotVersion ) {
+            nextProjectVersion += '-SNAPSHOT'
+        }
+
+        project.version = nextProjectVersion
     }
+
 
 }

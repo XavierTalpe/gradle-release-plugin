@@ -5,23 +5,20 @@ import org.gradle.api.tasks.TaskAction
 
 class PrepareReleaseTask extends DefaultTask {
 
-    @TaskAction
-    def setReleaseVersion() {
-        String releaseVersion = project.version
+    boolean isSnapshotVersion
 
-        if ( releaseVersion.endsWith( '-SNAPSHOT' ) ) {
-            releaseVersion -= '-SNAPSHOT';
+    @TaskAction
+    def prepareReleaseVersion() {
+        logger.debug( 'Preparing for release.' )
+        String projectVersion = project.version
+
+        if ( projectVersion.endsWith( '-SNAPSHOT' ) ) {
+            projectVersion -= '-SNAPSHOT'
+            isSnapshotVersion = true
         }
 
-        project.version = releaseVersion
-
-        logger.quiet( 'An info log message which is always logged.' )
-        logger.error( 'An error log message.' )
-        logger.warn( 'A warning log message.' )
-        logger.lifecycle( 'A lifecycle info log message.' )
-        logger.info( 'An info log message.' )
-        logger.debug( 'A debug log message.' )
-        logger.trace( 'A trace log message.' )
+        project.version = projectVersion
+        logger.debug( "Project version set to ${projectVersion}." )
     }
 
 }

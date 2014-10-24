@@ -12,13 +12,13 @@ class ReleasePluginTest {
     private Project project
 
     @Before
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         project = ProjectBuilder.builder().build()
         project.apply plugin: ReleasePlugin
     }
 
     @Test
-    public void testAllTasksAddedToProject() {
+    void testAllTasksAddedToProject() {
         assertTrue( project.tasks.prepareRelease instanceof PrepareReleaseTask)
         assertTrue( project.tasks.release instanceof ReleaseTask )
         assertTrue( project.tasks.saveRelease instanceof SaveReleaseTask )
