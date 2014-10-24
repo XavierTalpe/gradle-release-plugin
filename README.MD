@@ -1,4 +1,4 @@
-# Gradle Release Plugin
+# Gradle Release Plugin ![](https://travis-ci.org/XavierTalpe/gradle-release-plugin.svg?branch=master)
 
 This is a work in progress plugin for Gradle. It takes care of automatically
 removing the SNAPSHOT tag from a version before making a release. After the
