@@ -20,10 +20,4 @@ publishing {
     }
 }
 
-test {
-    testLogging {
-        events 'failed', 'standardOut', 'standardError'
-    }
-}
-
 defaultTasks 'test', 'publishToMavenLocal'
