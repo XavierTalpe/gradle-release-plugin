@@ -1,46 +1,37 @@
 package be.xvrt.gradle.release.plugin
 
-import org.gradle.api.tasks.TaskAction
-
 class PrepareReleaseTask extends RollbackTask {
 
-    private static final GString TASK_TAG = ":${ReleasePlugin.PREPARE_RELEASE_TASK} "
+    private static final GString LOG_TAG = ":${ReleasePlugin.PREPARE_RELEASE_TASK} "
 
-    private String originalVersion
-    private String releaseVersion
-
-    @Override
-    def configure() {
-        originalVersion = project.version
-        releaseVersion = buildReleaseVersion()
-
-        // TODO: Optionally write to file
-        project.version = releaseVersion
-        logger.info( TASK_TAG + "set release version to ${project.version}." )
-    }
-
-    @TaskAction
-    def executeTask() {
-
-    }
-
-    @Override
-    def rollback() {
-
-    }
+    String originalVersion
+    String releaseVersion
 
     boolean wasSnapshotVersion() {
         return originalVersion.endsWith( '-SNAPSHOT' )
     }
 
-    private String buildReleaseVersion() {
-        def releaseVersion = originalVersion
+    @Override
+    def configure() {
+        originalVersion = project.version
+        releaseVersion = buildReleaseVersion originalVersion
 
-        if ( releaseVersion.endsWith( '-SNAPSHOT' ) ) {
-            releaseVersion -= '-SNAPSHOT'
+        // TODO: Optionally write to gradle.properties file
+        project.version = releaseVersion
+        logger.info( LOG_TAG + "set release version to ${project.version}." )
+    }
+
+    @Override
+    def rollback() {
+        // TODO
+    }
+
+    private String buildReleaseVersion( String version ) {
+        if ( version.endsWith( '-SNAPSHOT' ) ) {
+            version -= '-SNAPSHOT'
         }
 
-        releaseVersion
+        version
     }
 
 }
