@@ -24,4 +24,28 @@ class ReleasePluginTest {
         assertTrue( project.tasks.tagRelease instanceof TagReleaseTask )
     }
 
+    @Test
+    void testEnsurePrepareReleaseIsRunBeforeBuild() {
+        def buildTask = project.tasks.create( 'build' )
+
+        when:
+        project.evaluate()
+
+        then:
+        buildTask.mustRunAfter.each {
+            task -> task == project.tasks.prepareRelease
+        }
+    }
+
+    @Test
+    void testEnsureReleaseDependsOnBuild() {
+        def buildTask = project.tasks.create( 'build' )
+
+        when:
+        project.evaluate()
+
+        then:
+        project.tasks.release.dependsOn.contains buildTask
+    }
+
 }

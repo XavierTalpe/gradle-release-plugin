@@ -2,6 +2,7 @@ package be.xvrt.gradle.release.plugin
 
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -24,6 +25,7 @@ class PrepareReleaseTaskTest {
         assertEquals( '1.0.0', project.version )
     }
 
+    @Ignore
     @Test
     public void testConfigureWithPropertiesFile() throws Exception {
         def properties = temporaryFolder.newFile( 'gradle.properties' )

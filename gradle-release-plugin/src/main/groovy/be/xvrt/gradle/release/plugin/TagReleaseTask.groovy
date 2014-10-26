@@ -1,12 +1,9 @@
 package be.xvrt.gradle.release.plugin
 
-import be.xvrt.gradle.release.plugin.properties.GradleProperties
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
 class TagReleaseTask extends DefaultTask {
-
-    GradleProperties gradleProperties
 
     @TaskAction
     def setNextReleaseVersion() {

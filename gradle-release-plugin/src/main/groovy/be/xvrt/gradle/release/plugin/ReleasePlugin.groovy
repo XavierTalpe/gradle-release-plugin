@@ -1,8 +1,9 @@
 package be.xvrt.gradle.release.plugin
 
-import be.xvrt.gradle.release.plugin.properties.GradleProperties
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.execution.TaskExecutionGraph
 
 class ReleasePlugin implements Plugin<Project> {
 
@@ -10,14 +11,28 @@ class ReleasePlugin implements Plugin<Project> {
     static final String RELEASE_TASK = 'release'
     static final String TAG_RELEASE_TASK = 'tagRelease'
 
-    static final String TASK_GROUP = 'release';
+    static final String TASK_GROUP = 'release'
+
+    private Task prepareReleaseTask
+    private Task releaseTask
+    private Task tagReleaseTask
 
     void apply( Project project ) {
-        def prepareReleaseTask = project.tasks.create( PREPARE_RELEASE_TASK, PrepareReleaseTask )
-        def releaseTask = project.tasks.create( RELEASE_TASK, ReleaseTask )
-        def tagReleaseTask = project.tasks.create( TAG_RELEASE_TASK, TagReleaseTask )
+        createTasks( project )
 
-        def gradleProperties = new GradleProperties( project )
+        project.afterEvaluate {
+            setTaskDependencies( project )
+        }
+
+        project.gradle.taskGraph.whenReady {
+            ensureTaskConfigurationIsRun( project.gradle.taskGraph )
+        }
+    }
+
+    private void createTasks( Project project ) {
+        prepareReleaseTask = project.tasks.create( PREPARE_RELEASE_TASK, PrepareReleaseTask )
+        releaseTask = project.tasks.create( RELEASE_TASK, ReleaseTask )
+        tagReleaseTask = project.tasks.create( TAG_RELEASE_TASK, TagReleaseTask )
 
         prepareReleaseTask.group = TASK_GROUP
         prepareReleaseTask.description = 'TODO'
@@ -28,15 +43,23 @@ class ReleasePlugin implements Plugin<Project> {
 
         tagReleaseTask.group = TASK_GROUP
         tagReleaseTask.description = 'TODO'
-        tagReleaseTask.gradleProperties = gradleProperties
         tagReleaseTask.dependsOn releaseTask
+    }
 
-        project.afterEvaluate {
-            def buildTask = project.tasks.findByName( 'build' )
-            if ( buildTask ) {
-                releaseTask.dependsOn( prepareReleaseTask, buildTask )
-            }
+    private void setTaskDependencies( Project project ) {
+        def buildTask = project.tasks.findByName( 'build' )
+        if ( buildTask ) {
+            releaseTask.dependsOn( buildTask )
 
+            // Using must run after ensures that prepareRelease is executed first.
+            // It also prevents build from automatically executing prepareRelease even
+            // when release is not marked for execution. This is unlike dependsOn.
+            buildTask.mustRunAfter prepareReleaseTask
+        }
+    }
+
+    private void ensureTaskConfigurationIsRun( TaskExecutionGraph taskGraph ) {
+        if ( taskGraph.hasTask( prepareReleaseTask ) ) {
             prepareReleaseTask.configure()
         }
     }
