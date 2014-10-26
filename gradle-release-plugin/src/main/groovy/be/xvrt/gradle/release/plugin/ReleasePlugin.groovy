@@ -18,14 +18,14 @@ class ReleasePlugin implements Plugin<Project> {
     private Task tagReleaseTask
 
     void apply( Project project ) {
-        createTasks( project )
+        createTasks project
 
         project.afterEvaluate {
-            setTaskDependencies( project )
+            setTaskDependencies project
         }
 
         project.gradle.taskGraph.whenReady {
-            ensureTaskConfigurationIsRun( project.gradle.taskGraph )
+            ensureTaskConfigurationIsRun project.gradle.taskGraph
         }
     }
 
@@ -47,11 +47,11 @@ class ReleasePlugin implements Plugin<Project> {
     }
 
     private void setTaskDependencies( Project project ) {
-        def buildTask = project.tasks.findByName( 'build' )
+        def buildTask = project.tasks.findByName 'build'
         if ( buildTask ) {
-            releaseTask.dependsOn( buildTask )
+            releaseTask.dependsOn buildTask
 
-            // Using must run after ensures that prepareRelease is executed first.
+            // Using mustRunAfter ensures that prepareRelease is executed first.
             // It also prevents build from automatically executing prepareRelease even
             // when release is not marked for execution. This is unlike dependsOn.
             buildTask.mustRunAfter prepareReleaseTask

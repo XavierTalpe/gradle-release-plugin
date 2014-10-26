@@ -19,33 +19,41 @@ class ReleasePluginTest {
 
     @Test
     void testAllTasksAddedToProject() {
-        assertTrue( project.tasks.prepareRelease instanceof PrepareReleaseTask )
-        assertTrue( project.tasks.release instanceof ReleaseTask )
-        assertTrue( project.tasks.tagRelease instanceof TagReleaseTask )
+        def prepareReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_RELEASE_TASK )
+        def releaseTask = project.tasks.findByName( ReleasePlugin.RELEASE_TASK )
+
+        assertTrue( prepareReleaseTask instanceof PrepareReleaseTask )
+        assertTrue( releaseTask instanceof ReleaseTask )
+
+        assertTrue( releaseTask.dependsOn.contains( prepareReleaseTask ) )
     }
 
     @Test
     void testEnsurePrepareReleaseIsRunBeforeBuild() {
-        def buildTask = project.tasks.create( 'build' )
+        setup:
+        def buildTask = project.tasks.create 'build'
+        def prepareReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_RELEASE_TASK )
 
         when:
         project.evaluate()
 
         then:
         buildTask.mustRunAfter.each {
-            task -> task == project.tasks.prepareRelease
+            task -> task == prepareReleaseTask
         }
     }
 
     @Test
     void testEnsureReleaseDependsOnBuild() {
-        def buildTask = project.tasks.create( 'build' )
+        setup:
+        def buildTask = project.tasks.create 'build'
+        def releaseTask = project.tasks.findByName ReleasePlugin.RELEASE_TASK
 
         when:
         project.evaluate()
 
         then:
-        project.tasks.release.dependsOn.contains buildTask
+        releaseTask.dependsOn.contains buildTask
     }
 
 }
