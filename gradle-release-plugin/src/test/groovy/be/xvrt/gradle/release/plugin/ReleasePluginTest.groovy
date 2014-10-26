@@ -12,7 +12,7 @@ class ReleasePluginTest {
     private Project project
 
     @Before
-    void setUp() throws Exception {
+    public void setUp() {
         project = ProjectBuilder.builder().build()
         project.apply plugin: ReleasePlugin
     }

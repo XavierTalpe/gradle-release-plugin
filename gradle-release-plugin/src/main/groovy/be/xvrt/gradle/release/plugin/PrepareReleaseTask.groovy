@@ -1,5 +1,7 @@
 package be.xvrt.gradle.release.plugin
 
+import be.xvrt.gradle.release.plugin.util.GradleProperties
+
 class PrepareReleaseTask extends RollbackTask {
 
     private static final GString LOG_TAG = ":${ReleasePlugin.PREPARE_RELEASE_TASK} "
@@ -16,8 +18,9 @@ class PrepareReleaseTask extends RollbackTask {
         originalVersion = project.version
         releaseVersion = buildReleaseVersion originalVersion
 
-        // TODO: Optionally write to gradle.properties file
-        project.version = releaseVersion
+        def gradleProperties = new GradleProperties( project )
+        gradleProperties.saveVersion( releaseVersion )
+
         logger.info( LOG_TAG + "set release version to ${project.version}." )
     }
 

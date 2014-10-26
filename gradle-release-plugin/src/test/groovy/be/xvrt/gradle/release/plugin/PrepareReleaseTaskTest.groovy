@@ -3,7 +3,6 @@ package be.xvrt.gradle.release.plugin
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -19,7 +18,7 @@ class PrepareReleaseTaskTest {
     private prepareReleaseTask
 
     @Before
-    void setUp() throws Exception {
+    public void setUp() {
         project = ProjectBuilder.builder().build()
         project.apply plugin: ReleasePlugin
 
@@ -27,7 +26,7 @@ class PrepareReleaseTaskTest {
     }
 
     @Test
-    public void testConfigureSnapshotVersion() throws Exception {
+    void testConfigureSnapshotVersion() {
         setup:
         project.version = '1.0.0-SNAPSHOT'
 
@@ -42,7 +41,7 @@ class PrepareReleaseTaskTest {
     }
 
     @Test
-    public void testConfigureNonSnapshotVersion() throws Exception {
+    void testConfigureNonSnapshotVersion() {
         setup:
         project.version = '1.0.0'
 
@@ -56,18 +55,47 @@ class PrepareReleaseTaskTest {
         assertFalse( prepareReleaseTask.wasSnapshotVersion() )
     }
 
-    @Ignore
     @Test
-    public void testConfigureWithPropertiesFile() throws Exception {
-        def properties = temporaryFolder.newFile( 'gradle.properties' )
-        properties.withWriter { w -> w.writeLine 'version=1.0.0-SNAPSHOT' }
+    void testConfigureWithEmptyPropertiesFile() {
+        setup:
+        def propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
 
-        Project project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
+        def project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
         project.apply plugin: ReleasePlugin
+        project.version = '1.0.0-SNAPSHOT'
 
-        assertEquals( '1.0.0-SNAPSHOT', project.version )
-        project.tasks.prepareRelease.configure()
-        assertEquals( '1.0.0', project.version )
+        def prepareReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_RELEASE_TASK )
+
+        when:
+        prepareReleaseTask.configure()
+
+        then:
+        def properties = new Properties()
+        propertiesFile.withInputStream { properties.load( it ) }
+
+        assertTrue( properties.isEmpty() )
+    }
+
+    @Test
+    void testConfigureWithPropertiesFile() {
+        setup:
+        def propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
+        propertiesFile.withWriter { w -> w.writeLine 'version=1.0.0-SNAPSHOT' }
+
+        def project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
+        project.apply plugin: ReleasePlugin
+        project.version = '1.0.0-SNAPSHOT' // TODO: Trigger project to read properties file instead.
+
+        def prepareReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_RELEASE_TASK )
+
+        when:
+        prepareReleaseTask.configure()
+
+        then:
+        def properties = new Properties()
+        propertiesFile.withInputStream { properties.load( it ) }
+
+        assertEquals( '1.0.0', properties.version )
     }
 
 }
