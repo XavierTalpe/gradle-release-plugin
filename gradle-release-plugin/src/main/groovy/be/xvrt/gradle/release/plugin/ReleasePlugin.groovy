@@ -8,20 +8,22 @@ import org.gradle.api.execution.TaskExecutionGraph
 class ReleasePlugin implements Plugin<Project> {
 
     static final String PREPARE_RELEASE_TASK = 'prepareRelease'
-    static final String RELEASE_TASK = 'release'
     static final String TAG_RELEASE_TASK = 'tagRelease'
+    static final String PREPARE_NEXT_RELEASE_TASK = 'prepareNextRelease'
+    static final String RELEASE_TASK = 'release'
 
-    static final String TASK_GROUP = 'release'
+    static final String RELEASE_GROUP = 'release'
 
     private Task prepareReleaseTask
-    private Task releaseTask
     private Task tagReleaseTask
+    private Task prepareNextReleaseTask
+    private Task releaseTask
 
     void apply( Project project ) {
         createTasks project
 
         project.afterEvaluate {
-            setTaskDependencies project
+            setBuildTaskDependencies project
         }
 
         project.gradle.taskGraph.whenReady {
@@ -31,25 +33,32 @@ class ReleasePlugin implements Plugin<Project> {
 
     private void createTasks( Project project ) {
         prepareReleaseTask = project.tasks.create( PREPARE_RELEASE_TASK, PrepareReleaseTask )
-        releaseTask = project.tasks.create( RELEASE_TASK, ReleaseTask )
         tagReleaseTask = project.tasks.create( TAG_RELEASE_TASK, TagReleaseTask )
+        prepareNextReleaseTask = project.tasks.create( PREPARE_NEXT_RELEASE_TASK, PrepareNextReleaseTask )
+        releaseTask = project.tasks.create( RELEASE_TASK, ReleaseTask )
 
-        prepareReleaseTask.group = TASK_GROUP
+        prepareReleaseTask.group = RELEASE_GROUP
         prepareReleaseTask.description = 'TODO'
 
-        releaseTask.group = TASK_GROUP
-        releaseTask.description = 'TODO'
-        releaseTask.dependsOn prepareReleaseTask
-
-        tagReleaseTask.group = TASK_GROUP
+        tagReleaseTask.group = RELEASE_GROUP
         tagReleaseTask.description = 'TODO'
-        tagReleaseTask.dependsOn releaseTask
+        tagReleaseTask.dependsOn prepareReleaseTask
+
+        prepareNextReleaseTask.group = RELEASE_GROUP
+        prepareNextReleaseTask.description = 'TODO'
+        prepareNextReleaseTask.dependsOn tagReleaseTask
+
+        releaseTask.group = RELEASE_GROUP
+        releaseTask.description = 'TODO'
+        releaseTask.dependsOn prepareReleaseTask, tagReleaseTask, prepareNextReleaseTask
     }
 
-    private void setTaskDependencies( Project project ) {
+    private void setBuildTaskDependencies( Project project ) {
         def buildTask = project.tasks.findByName 'build'
         if ( buildTask ) {
             releaseTask.dependsOn buildTask
+            tagReleaseTask.dependsOn buildTask
+            prepareNextReleaseTask.dependsOn buildTask
 
             // Using mustRunAfter ensures that prepareRelease is executed first.
             // It also prevents build from automatically executing prepareRelease even

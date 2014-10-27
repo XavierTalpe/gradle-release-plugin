@@ -18,7 +18,7 @@ class PrepareReleaseTask extends RollbackTask {
         originalVersion = project.version
         releaseVersion = buildReleaseVersion originalVersion
 
-        logger.info( LOG_TAG + "setting release version to ${project.version}." )
+        logger.info( LOG_TAG + "setting release version to ${releaseVersion}." )
         def gradleProperties = new GradleProperties( project )
         gradleProperties.saveVersion( releaseVersion )
     }

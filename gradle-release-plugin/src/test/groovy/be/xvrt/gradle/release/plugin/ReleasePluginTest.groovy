@@ -20,12 +20,21 @@ class ReleasePluginTest {
     @Test
     void testAllTasksAddedToProject() {
         def prepareReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_RELEASE_TASK )
+        def tagReleaseTask = project.tasks.findByName( ReleasePlugin.TAG_RELEASE_TASK )
+        def prepareNextReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_NEXT_RELEASE_TASK )
         def releaseTask = project.tasks.findByName( ReleasePlugin.RELEASE_TASK )
 
         assertTrue( prepareReleaseTask instanceof PrepareReleaseTask )
+        assertTrue( tagReleaseTask instanceof TagReleaseTask )
+        assertTrue( prepareNextReleaseTask instanceof PrepareNextReleaseTask )
         assertTrue( releaseTask instanceof ReleaseTask )
 
+        assertTrue( tagReleaseTask.dependsOn.contains( prepareReleaseTask ) )
+        assertTrue( prepareNextReleaseTask.dependsOn.contains( tagReleaseTask ) )
+
         assertTrue( releaseTask.dependsOn.contains( prepareReleaseTask ) )
+        assertTrue( releaseTask.dependsOn.contains( tagReleaseTask ) )
+        assertTrue( releaseTask.dependsOn.contains( prepareNextReleaseTask ) )
     }
 
     @Test
@@ -47,13 +56,17 @@ class ReleasePluginTest {
     void testEnsureReleaseDependsOnBuild() {
         setup:
         def buildTask = project.tasks.create 'build'
-        def releaseTask = project.tasks.findByName ReleasePlugin.RELEASE_TASK
+        def tagReleaseTask = project.tasks.findByName( ReleasePlugin.TAG_RELEASE_TASK )
+        def prepareNextReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_NEXT_RELEASE_TASK )
+        def releaseTask = project.tasks.findByName( ReleasePlugin.RELEASE_TASK )
 
         when:
         project.evaluate()
 
         then:
         releaseTask.dependsOn.contains buildTask
+        tagReleaseTask.dependsOn.contains buildTask
+        prepareNextReleaseTask.dependsOn.contains buildTask
     }
 
 }
