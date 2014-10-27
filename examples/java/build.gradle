@@ -1,13 +1,7 @@
-/*
-plugins {
-    id 'be.xvrt.gradle.release' version '0.0.1'
-}
-*/
-
-// To be replaced with the plugins syntax once available on Gradle repo.
+// TODO: To be replaced with the plugins syntax once available on Gradle repo.
 buildscript {
     repositories {
-        mavenLocal()
+        jcenter()
     }
 
     dependencies {
@@ -15,8 +9,8 @@ buildscript {
     }
 }
 
+apply plugin: 'be.xvrt.release'
 apply plugin: 'java'
-apply plugin: 'release'
 
 repositories {
     mavenCentral()

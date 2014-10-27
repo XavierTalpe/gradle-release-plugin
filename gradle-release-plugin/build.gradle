@@ -58,7 +58,7 @@ publishing {
  */
 bintray {
     user = 'xaviert'
-    key = System.console().readLine( "\nEnter Bintray API key: " )
+    key = bintrayApiKey
 
     publications = ['gradleReleasePlugin']
 
