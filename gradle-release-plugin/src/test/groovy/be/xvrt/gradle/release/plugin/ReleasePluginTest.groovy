@@ -19,10 +19,10 @@ class ReleasePluginTest {
 
     @Test
     void testAllTasksAddedToProject() {
-        def prepareReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_RELEASE_TASK )
-        def tagReleaseTask = project.tasks.findByName( ReleasePlugin.TAG_RELEASE_TASK )
-        def prepareNextReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_NEXT_RELEASE_TASK )
-        def releaseTask = project.tasks.findByName( ReleasePlugin.RELEASE_TASK )
+        def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
+        def tagReleaseTask = project.tasks.getByName ReleasePlugin.TAG_RELEASE_TASK
+        def prepareNextReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_NEXT_RELEASE_TASK
+        def releaseTask = project.tasks.getByName ReleasePlugin.RELEASE_TASK
 
         assertTrue( prepareReleaseTask instanceof PrepareReleaseTask )
         assertTrue( tagReleaseTask instanceof TagReleaseTask )
@@ -41,7 +41,7 @@ class ReleasePluginTest {
     void testEnsurePrepareReleaseIsRunBeforeBuild() {
         setup:
         def buildTask = project.tasks.create 'build'
-        def prepareReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_RELEASE_TASK )
+        def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
 
         when:
         project.evaluate()
@@ -56,9 +56,9 @@ class ReleasePluginTest {
     void testEnsureReleaseDependsOnBuild() {
         setup:
         def buildTask = project.tasks.create 'build'
-        def tagReleaseTask = project.tasks.findByName( ReleasePlugin.TAG_RELEASE_TASK )
-        def prepareNextReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_NEXT_RELEASE_TASK )
-        def releaseTask = project.tasks.findByName( ReleasePlugin.RELEASE_TASK )
+        def tagReleaseTask = project.tasks.getByName ReleasePlugin.TAG_RELEASE_TASK
+        def prepareNextReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_NEXT_RELEASE_TASK
+        def releaseTask = project.tasks.getByName ReleasePlugin.RELEASE_TASK
 
         when:
         project.evaluate()

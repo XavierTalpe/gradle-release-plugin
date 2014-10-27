@@ -4,22 +4,28 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.execution.TaskExecutionGraph
+import org.gradle.api.plugins.Convention
+
+import static be.xvrt.gradle.release.plugin.ReleasePluginConvention.SCM_ROOT_DIR
 
 class ReleasePlugin implements Plugin<Project> {
 
-    static final String PREPARE_RELEASE_TASK = 'prepareRelease'
-    static final String TAG_RELEASE_TASK = 'tagRelease'
-    static final String PREPARE_NEXT_RELEASE_TASK = 'prepareNextRelease'
-    static final String RELEASE_TASK = 'release'
+    public static final String PREPARE_RELEASE_TASK = 'prepareRelease'
+    public static final String TAG_RELEASE_TASK = 'tagRelease'
+    public static final String PREPARE_NEXT_RELEASE_TASK = 'prepareNextRelease'
+    public static final String RELEASE_TASK = 'release'
 
-    static final String RELEASE_GROUP = 'release'
+    public static final String RELEASE_GROUP = 'release'
 
     private Task prepareReleaseTask
     private Task tagReleaseTask
     private Task prepareNextReleaseTask
     private Task releaseTask
 
+    private ReleasePluginConvention releaseConvention
+
     void apply( Project project ) {
+        createConvention project
         createTasks project
 
         project.afterEvaluate {
@@ -29,6 +35,13 @@ class ReleasePlugin implements Plugin<Project> {
         project.gradle.taskGraph.whenReady {
             ensureTaskConfigurationIsRun project.gradle.taskGraph
         }
+    }
+
+    private void createConvention( Project project ) {
+        releaseConvention = new ReleasePluginConvention( project )
+
+        Convention projectConvention = project.getConvention();
+        projectConvention.getPlugins().put( RELEASE_TASK, releaseConvention );
     }
 
     private void createTasks( Project project ) {
@@ -43,10 +56,12 @@ class ReleasePlugin implements Plugin<Project> {
         tagReleaseTask.group = RELEASE_GROUP
         tagReleaseTask.description = 'TODO'
         tagReleaseTask.dependsOn prepareReleaseTask
+        tagReleaseTask.convention.add( SCM_ROOT_DIR, releaseConvention.scmRootDir )
 
         prepareNextReleaseTask.group = RELEASE_GROUP
         prepareNextReleaseTask.description = 'TODO'
         prepareNextReleaseTask.dependsOn tagReleaseTask
+        prepareNextReleaseTask.convention.add( SCM_ROOT_DIR, releaseConvention.scmRootDir )
 
         releaseTask.group = RELEASE_GROUP
         releaseTask.description = 'TODO'

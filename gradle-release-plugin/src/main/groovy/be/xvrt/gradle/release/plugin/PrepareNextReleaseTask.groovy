@@ -35,7 +35,7 @@ class PrepareNextReleaseTask extends RollbackTask {
 
         def nextVersion = version.substring( 0, lastDotIndex ) + incrementedVersionNumber
 
-        def prepareReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_RELEASE_TASK )
+        def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
         if ( prepareReleaseTask.wasSnapshotVersion() ) {
             nextVersion += '-SNAPSHOT'
         }

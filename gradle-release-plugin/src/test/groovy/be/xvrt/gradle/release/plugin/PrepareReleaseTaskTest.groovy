@@ -1,6 +1,7 @@
 package be.xvrt.gradle.release.plugin
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Rule
@@ -15,14 +16,14 @@ class PrepareReleaseTaskTest {
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     private Project project
-    private prepareReleaseTask
+    private Task prepareReleaseTask
 
     @Before
     public void setUp() {
         project = ProjectBuilder.builder().build()
         project.apply plugin: ReleasePlugin
 
-        prepareReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_RELEASE_TASK )
+        prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
     }
 
     @Test
@@ -64,7 +65,7 @@ class PrepareReleaseTaskTest {
         project.apply plugin: ReleasePlugin
         project.version = '1.0.0-SNAPSHOT'
 
-        def prepareReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_RELEASE_TASK )
+        def prepareReleaseTask = project.tasks.getByName( ReleasePlugin.PREPARE_RELEASE_TASK )
 
         when:
         prepareReleaseTask.configure()
@@ -86,7 +87,7 @@ class PrepareReleaseTaskTest {
         project.apply plugin: ReleasePlugin
         project.version = '1.0.0-SNAPSHOT' // TODO: Trigger project to read properties file instead.
 
-        def prepareReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_RELEASE_TASK )
+        def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
 
         when:
         prepareReleaseTask.configure()

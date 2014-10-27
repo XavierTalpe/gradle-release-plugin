@@ -1,14 +1,14 @@
 package be.xvrt.gradle.release.plugin
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertTrue
+import static org.junit.Assert.*
 
 class PrepareNextReleaseTaskTest {
 
@@ -16,16 +16,22 @@ class PrepareNextReleaseTaskTest {
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     private Project project
-    private prepareReleaseTask
-    private prepareNextReleaseTask
+    private Task prepareReleaseTask
+    private Task prepareNextReleaseTask
 
     @Before
     public void setUp() {
         project = ProjectBuilder.builder().build()
         project.apply plugin: ReleasePlugin
 
-        prepareReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_RELEASE_TASK )
-        prepareNextReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_NEXT_RELEASE_TASK )
+        prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
+        prepareNextReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_NEXT_RELEASE_TASK
+    }
+
+    @Test
+    public void testConventions() throws Exception {
+        def scmRootDir = prepareNextReleaseTask.convention.findByName( ReleasePluginConvention.SCM_ROOT_DIR )
+        assertNotNull( scmRootDir )
     }
 
     @Test
@@ -66,8 +72,8 @@ class PrepareNextReleaseTaskTest {
         def project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
         project.apply plugin: ReleasePlugin
 
-        def prepareReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_RELEASE_TASK )
-        def prepareNextReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_NEXT_RELEASE_TASK )
+        def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
+        def prepareNextReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_NEXT_RELEASE_TASK
 
         project.version = '1.0.0-SNAPSHOT'
         prepareReleaseTask.configure()
@@ -91,8 +97,8 @@ class PrepareNextReleaseTaskTest {
         def project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
         project.apply plugin: ReleasePlugin
 
-        def prepareReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_RELEASE_TASK )
-        def prepareNextReleaseTask = project.tasks.findByName( ReleasePlugin.PREPARE_NEXT_RELEASE_TASK )
+        def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
+        def prepareNextReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_NEXT_RELEASE_TASK
 
         project.version = '1.0.0-SNAPSHOT' // TODO: Trigger project to read properties file instead.
         prepareReleaseTask.configure()
