@@ -1,3 +1,15 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5'
+    }
+}
+
+apply plugin: 'com.jfrog.bintray'
+
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
 
@@ -12,12 +24,66 @@ dependencies {
     testCompile 'junit:junit:4.11'
 }
 
+
+/**
+ * Artifacts configuration.
+ */
+task buildSourcesJar( type: Jar, dependsOn: classes ) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives buildSourcesJar
+}
+
+
+/**
+ * Maven publication settings.
+ */
 publishing {
     publications {
-        maven( MavenPublication ) {
+        gradleReleasePlugin( MavenPublication ) {
             from components.java
+
+            artifact buildSourcesJar {
+                classifier 'sources'
+            }
         }
     }
 }
 
-defaultTasks 'test', 'publishToMavenLocal'
+/**
+ * Uploading plugin to Gradle Plugin portal.
+ */
+bintray {
+    user = 'xaviert'
+    key = System.console().readLine( "\nEnter Bintray API key: " )
+
+    publications = ['gradleReleasePlugin']
+
+    dryRun = false
+    publish = false
+
+    pkg {
+        repo = 'gradle-plugins'
+        userOrg = 'xaviert'
+        name = 'gradle-release-plugin'
+        desc = project.description
+
+        websiteUrl = 'https://github.com/XavierTalpe/gradle-release-plugin'
+        issueTrackerUrl = 'https://github.com/XavierTalpe/gradle-release-plugin/issues'
+        vcsUrl = 'https://github.com/XavierTalpe/gradle-release-plugin.git'
+
+        licenses = ['MIT']
+        labels = ['gradle', 'release']
+
+        publicDownloadNumbers = true
+
+        version {
+            name = project.version
+            vcsTag = project.version
+            attributes = ['gradle-plugin': 'be.xvrt.release:be.xvrt:gradle-release-plugin']
+        }
+    }
+}
