@@ -1,7 +1,6 @@
 package be.xvrt.gradle.release.plugin
 
 import be.xvrt.gradle.release.plugin.util.GradleProperties
-import org.gradle.api.tasks.TaskAction
 
 class PrepareNextReleaseTask extends RollbackTask {
 
@@ -11,11 +10,11 @@ class PrepareNextReleaseTask extends RollbackTask {
     String nextVersion
 
     @Override
-    def configure() {
+    void configure() {
     }
 
-    @TaskAction
-    def setNextVersion() {
+    @Override
+    void run() {
         releasedVersion = project.version
         nextVersion = buildNextVersion releasedVersion
 
@@ -25,7 +24,7 @@ class PrepareNextReleaseTask extends RollbackTask {
     }
 
     @Override
-    def rollback() {
+    void rollback( Exception exception ) {
     }
 
     private String buildNextVersion( String version ) {

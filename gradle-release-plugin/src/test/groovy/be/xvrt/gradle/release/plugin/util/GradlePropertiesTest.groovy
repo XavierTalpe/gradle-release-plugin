@@ -16,7 +16,7 @@ class GradlePropertiesTest {
     private GradleProperties gradleProperties
 
     @Before
-    public void setUp() {
+    void setUp() {
         def project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
 
         gradleProperties = new GradleProperties( project )

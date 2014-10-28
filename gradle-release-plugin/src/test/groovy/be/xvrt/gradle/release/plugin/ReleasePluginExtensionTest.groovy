@@ -17,7 +17,7 @@ class ReleasePluginExtensionTest {
     private Project project
 
     @Before
-    public void setUp() {
+    void setUp() {
         project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
         project.apply plugin: ReleasePlugin
     }
@@ -28,14 +28,18 @@ class ReleasePluginExtensionTest {
     }
 
     @Test
-    public void testOverwriteScmRootDir() throws Exception {
+    void testOverwriteValues() throws Exception {
         when:
         project.release {
             scmRootDir = '~/home/xaviert'
+            commitMessage = 'Commit'
+            tagMessage = 'Tag'
         }
 
         then:
         assertEquals( '~/home/xaviert', project.release.scmRootDir )
+        assertEquals( 'Commit', project.release.commitMessage )
+        assertEquals( 'Tag', project.release.tagMessage )
     }
 
 }

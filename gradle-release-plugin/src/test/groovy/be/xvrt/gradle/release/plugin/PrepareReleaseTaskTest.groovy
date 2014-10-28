@@ -19,7 +19,7 @@ class PrepareReleaseTaskTest {
     private Task prepareReleaseTask
 
     @Before
-    public void setUp() {
+    void setUp() {
         project = ProjectBuilder.builder().build()
         project.apply plugin: ReleasePlugin
 

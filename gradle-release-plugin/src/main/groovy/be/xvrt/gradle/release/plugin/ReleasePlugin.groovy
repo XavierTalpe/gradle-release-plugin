@@ -77,6 +77,10 @@ class ReleasePlugin implements Plugin<Project> {
         if ( taskGraph.hasTask( prepareReleaseTask ) ) {
             prepareReleaseTask.configure()
         }
+
+        if ( taskGraph.hasTask( tagReleaseTask ) ) {
+            tagReleaseTask.configure()
+        }
     }
 
 }

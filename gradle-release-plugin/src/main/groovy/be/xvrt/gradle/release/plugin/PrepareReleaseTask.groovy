@@ -14,7 +14,7 @@ class PrepareReleaseTask extends RollbackTask {
     }
 
     @Override
-    def configure() {
+    void configure() {
         originalVersion = project.version
         releaseVersion = buildReleaseVersion originalVersion
 
@@ -23,17 +23,20 @@ class PrepareReleaseTask extends RollbackTask {
         gradleProperties.saveVersion( releaseVersion )
     }
 
-    @Override
-    def rollback() {
-        // TODO
-    }
-
     private String buildReleaseVersion( String version ) {
         if ( version.endsWith( '-SNAPSHOT' ) ) {
             version -= '-SNAPSHOT'
         }
 
         version
+    }
+
+    @Override
+    void run() {
+    }
+
+    @Override
+    void rollback( Exception exception ) {
     }
 
 }

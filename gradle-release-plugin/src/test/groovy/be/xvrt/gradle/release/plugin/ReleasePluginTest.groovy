@@ -12,7 +12,7 @@ class ReleasePluginTest {
     private Project project
 
     @Before
-    public void setUp() {
+    void setUp() {
         project = ProjectBuilder.builder().build()
         project.apply plugin: ReleasePlugin
     }
