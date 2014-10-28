@@ -8,7 +8,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-import static org.junit.Assert.*
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertTrue
 
 class PrepareNextReleaseTaskTest {
 
@@ -26,12 +27,6 @@ class PrepareNextReleaseTaskTest {
 
         prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
         prepareNextReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_NEXT_RELEASE_TASK
-    }
-
-    @Test
-    public void testConventions() throws Exception {
-        def scmRootDir = prepareNextReleaseTask.convention.findByName( ReleasePluginConvention.SCM_ROOT_DIR )
-        assertNotNull( scmRootDir )
     }
 
     @Test

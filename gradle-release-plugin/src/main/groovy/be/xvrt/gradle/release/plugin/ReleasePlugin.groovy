@@ -1,12 +1,8 @@
 package be.xvrt.gradle.release.plugin
-
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.execution.TaskExecutionGraph
-import org.gradle.api.plugins.Convention
-
-import static be.xvrt.gradle.release.plugin.ReleasePluginConvention.SCM_ROOT_DIR
 
 class ReleasePlugin implements Plugin<Project> {
 
@@ -22,10 +18,10 @@ class ReleasePlugin implements Plugin<Project> {
     private Task prepareNextReleaseTask
     private Task releaseTask
 
-    private ReleasePluginConvention releaseConvention
+    private ReleasePluginExtension extension
 
     void apply( Project project ) {
-        createConvention project
+        createExtension project
         createTasks project
 
         project.afterEvaluate {
@@ -37,11 +33,8 @@ class ReleasePlugin implements Plugin<Project> {
         }
     }
 
-    private void createConvention( Project project ) {
-        releaseConvention = new ReleasePluginConvention( project )
-
-        Convention projectConvention = project.getConvention();
-        projectConvention.getPlugins().put( RELEASE_TASK, releaseConvention );
+    private void createExtension( Project project ) {
+        extension = project.extensions.create( RELEASE_TASK, ReleasePluginExtension, project )
     }
 
     private void createTasks( Project project ) {
@@ -56,12 +49,10 @@ class ReleasePlugin implements Plugin<Project> {
         tagReleaseTask.group = RELEASE_GROUP
         tagReleaseTask.description = 'TODO'
         tagReleaseTask.dependsOn prepareReleaseTask
-        tagReleaseTask.convention.add( SCM_ROOT_DIR, releaseConvention.scmRootDir )
 
         prepareNextReleaseTask.group = RELEASE_GROUP
         prepareNextReleaseTask.description = 'TODO'
         prepareNextReleaseTask.dependsOn tagReleaseTask
-        prepareNextReleaseTask.convention.add( SCM_ROOT_DIR, releaseConvention.scmRootDir )
 
         releaseTask.group = RELEASE_GROUP
         releaseTask.description = 'TODO'

@@ -7,8 +7,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 
-import static org.junit.Assert.assertNotNull
-
 class TagReleaseTaskTest {
 
     @Rule
@@ -23,12 +21,6 @@ class TagReleaseTaskTest {
         project.apply plugin: ReleasePlugin
 
         tagReleaseTask = project.tasks.getByName ReleasePlugin.TAG_RELEASE_TASK
-    }
-
-    @org.junit.Test
-    public void testConventions() throws Exception {
-        def scmRootDir = tagReleaseTask.convention.findByName( ReleasePluginConvention.SCM_ROOT_DIR )
-        assertNotNull( scmRootDir )
     }
 
 }

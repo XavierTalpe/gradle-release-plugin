@@ -9,7 +9,7 @@ import org.junit.rules.TemporaryFolder
 
 import static org.junit.Assert.assertEquals
 
-class ReleasePluginConventionTest {
+class ReleasePluginExtensionTest {
 
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -24,11 +24,18 @@ class ReleasePluginConventionTest {
 
     @Test
     void testDefaultScmRootDir() {
-        given:
-        def releaseConvention = new ReleasePluginConvention( project )
+        assertEquals( temporaryFolder.root.toString(), project.release.scmRootDir )
+    }
+
+    @Test
+    public void testOverwriteScmRootDir() throws Exception {
+        when:
+        project.release {
+            scmRootDir = '~/home/xaviert'
+        }
 
         then:
-        assertEquals( temporaryFolder.root.toString(), releaseConvention.scmRootDir )
+        assertEquals( '~/home/xaviert', project.release.scmRootDir )
     }
 
 }
