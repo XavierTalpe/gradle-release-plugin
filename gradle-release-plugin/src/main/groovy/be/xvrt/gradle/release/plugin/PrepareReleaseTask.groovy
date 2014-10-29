@@ -4,7 +4,7 @@ import be.xvrt.gradle.release.plugin.util.GradleProperties
 
 class PrepareReleaseTask extends RollbackTask {
 
-    private static final GString LOG_TAG = ":${ReleasePlugin.PREPARE_RELEASE_TASK} "
+    private static final GString LOG_TAG = ":${ReleasePlugin.PREPARE_RELEASE_TASK}"
 
     String originalVersion
     String releaseVersion
@@ -18,7 +18,7 @@ class PrepareReleaseTask extends RollbackTask {
         originalVersion = project.version
         releaseVersion = buildReleaseVersion originalVersion
 
-        logger.info( LOG_TAG + "setting release version to ${releaseVersion}." )
+        logger.info( "${LOG_TAG} setting release version to ${releaseVersion}." )
         def gradleProperties = new GradleProperties( project )
         gradleProperties.saveVersion( releaseVersion )
     }

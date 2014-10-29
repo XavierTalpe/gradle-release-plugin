@@ -32,12 +32,16 @@ class ReleasePluginExtensionTest {
         when:
         project.release {
             scmRootDir = '~/home/xaviert'
+            scmRemote = 'origin2'
+
             commitMessage = 'Commit'
             tagMessage = 'Tag'
         }
 
         then:
         assertEquals( '~/home/xaviert', project.release.scmRootDir )
+        assertEquals( 'origin2', project.release.scmRemote )
+
         assertEquals( 'Commit', project.release.commitMessage )
         assertEquals( 'Tag', project.release.tagMessage )
     }

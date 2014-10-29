@@ -2,6 +2,8 @@ package be.xvrt.gradle.release.plugin.scm
 
 class ScmHelperFactory {
 
+    private final static Map<File, ScmHelper> CACHE = new HashMap<>()
+
     private ScmHelperFactory() {
     }
 
@@ -10,13 +12,27 @@ class ScmHelperFactory {
     }
 
     static ScmHelper create( File scmRootDir ) {
+        def scmHelper = CACHE.get( scmRootDir )
+
+        if ( scmHelper == null ) {
+            scmHelper = createNew( scmRootDir, scmHelper )
+            CACHE.put scmRootDir, scmHelper
+        }
+
+        scmHelper
+    }
+
+    private static ScmHelper createNew( File scmRootDir, ScmHelper scmHelper ) {
         def gitRepo = new File( scmRootDir, '.git' )
+
         if ( gitRepo.exists() ) {
-            return new GitHelper( gitRepo )
+            scmHelper = new GitHelper( gitRepo )
         }
         else {
-            return new DummyHelper()
+            scmHelper = new DummyHelper()
         }
+
+        scmHelper
     }
 
 }

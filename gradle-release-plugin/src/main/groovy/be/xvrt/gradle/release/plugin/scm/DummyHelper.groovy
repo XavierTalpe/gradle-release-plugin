@@ -10,4 +10,8 @@ class DummyHelper extends ScmHelper {
     void tag( String name, String message ) {
     }
 
+    @Override
+    void push( String remoteName ) {
+    }
+
 }

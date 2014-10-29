@@ -2,9 +2,11 @@ package be.xvrt.gradle.release.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 /**
@@ -29,6 +31,13 @@ public class Test {
         // the Ref holds an ObjectId for any type of object (tree, commit, blob, tree)
         Ref head = repository.getRef("refs/heads/master");
         System.out.println("Ref of refs/heads/master: " + head);
+
+        StoredConfig config = repository.getConfig();
+        Set<String> remote = config.getSubsections("remote");
+        for (String remoteName : remote) {
+            String string = config.getString("remote", remoteName, "url");
+            System.out.println(string);
+        }
 
         repository.close();
     }

@@ -34,14 +34,14 @@ class GitHelperTest {
     @Test
     void testCommit() {
         when:
-        gitHelper.commit( 'Empty commit' )
+        gitHelper.commit( 'commitMessage' )
 
         then:
         Iterable<RevCommit> commitLog = new Git( repository ).log().call();
 
         def nbCommits = 0;
         for ( RevCommit commit : commitLog ) {
-            assertEquals( 'Empty commit', commit.getShortMessage() )
+            assertEquals( 'commitMessage', commit.getShortMessage() )
             nbCommits++;
         }
 
@@ -51,7 +51,7 @@ class GitHelperTest {
     @Test
     void testTag() {
         setup:
-        gitHelper.commit( 'Empty commit' )
+        gitHelper.commit( 'commitMessage' )
 
         when:
         gitHelper.tag( '1.0.0', 'Tagging a release' )
@@ -61,6 +61,15 @@ class GitHelperTest {
 
         assertEquals( 1, allTags.size() )
         assertEquals( 'refs/tags/1.0.0', allTags.get( 0 ).getName() )
+    }
+
+    @Test( expected = ScmException.class )
+    public void testPushWithoutOriginSet() {
+        setup:
+        gitHelper.commit( 'commitMessage' )
+
+        when:
+        gitHelper.push( 'origin' )
     }
 
 }

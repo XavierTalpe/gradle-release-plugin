@@ -32,4 +32,14 @@ class ScmHelperFactoryTest {
         assertTrue( scmHelper instanceof DummyHelper )
     }
 
+    @Test
+    void testCache() {
+        when:
+        def scmHelper1 = ScmHelperFactory.create( temporaryFolder.root )
+        def scmHelper2 = ScmHelperFactory.create( temporaryFolder.root )
+
+        then:
+        assertTrue( scmHelper1 == scmHelper2 )
+    }
+
 }

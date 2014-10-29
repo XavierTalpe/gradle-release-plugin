@@ -10,7 +10,7 @@ class GitHelper extends ScmHelper {
     private final Git git
 
     GitHelper( File gitRepository ) {
-        repository = openRepository( gitRepository )
+        repository = openRepository gitRepository
         git = new Git( repository )
     }
 
@@ -24,19 +24,63 @@ class GitHelper extends ScmHelper {
     }
 
     @Override
-    void commit( String message ) {
-        git.commit()
-           .setAll( true )
-           .setMessage( message )
-           .call();
+    void commit( String message ) throws ScmException {
+        try {
+            git.commit()
+               .setAll( true )
+               .setMessage( message )
+               .call();
+        }
+        catch ( Exception exception ) {
+            throw new ScmException( 'Error committing changes.', exception )
+        }
     }
 
     @Override
-    void tag( String name, String message ) {
-        git.tag()
-           .setName( name )
-           .setMessage( message )
-           .call()
+    void tag( String name, String message ) throws ScmException {
+        try {
+            git.tag()
+               .setName( name )
+               .setMessage( message )
+               .call()
+        } catch ( Exception exception ) {
+            throw new ScmException( 'Error committing changes.', exception )
+        }
+    }
+
+    @Override
+    void push( String remoteName ) throws ScmException {
+        def remoteUri = findRemoteUri remoteName
+        if ( remoteUri == null ) {
+            throw new ScmException( 'Error pushing changes. No remote defined.' )
+        }
+
+        try {
+            git.push().setRemote( remoteUri ).call()
+        } catch ( Exception exception ) {
+            throw new ScmException( 'Error committing changes.', exception )
+        }
+    }
+
+    private String findRemoteUri( String targetRemoteName ) {
+        def config = repository.getConfig();
+        def allRemotes = config.getSubsections( 'remote' );
+
+        def remoteUri = null;
+        if ( allRemotes.size() == 1 ) {
+            def remoteName = allRemotes.iterator().next()
+            remoteUri = config.getString( 'remote', remoteName, 'url' );
+        }
+        else {
+            for ( def remoteName : allRemotes ) {
+                if ( remoteName.equals( targetRemoteName ) ) {
+                    remoteUri = config.getString( 'remote', remoteName, 'url' );
+                    break;
+                }
+            }
+        }
+
+        remoteUri
     }
 
 }
