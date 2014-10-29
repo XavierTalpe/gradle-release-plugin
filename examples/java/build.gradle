@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'be.xvrt:gradle-release-plugin:0.0.1'
+        classpath 'be.xvrt:release-plugin:0.0.2'
     }
 }
 
