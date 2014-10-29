@@ -8,11 +8,14 @@ buildscript {
     }
 }
 
-apply plugin: 'com.jfrog.bintray'
-
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
+
+/**
+ * Project dependencies.
+ */
 repositories {
     mavenCentral()
 }
@@ -55,11 +58,12 @@ publishing {
     }
 }
 
+
 /**
  * Uploading plugin to Gradle Plugin portal.
  */
 bintray {
-    user = 'xaviert'
+    user = bintrayUser
     key = bintrayApiKey
 
     publications = ['gradleReleasePlugin']
@@ -68,9 +72,9 @@ bintray {
     publish = false
 
     pkg {
-        repo = 'gradle-plugins'
-        userOrg = 'xaviert'
-        name = 'gradle-release-plugin'
+        repo = bintrayRepo
+        userOrg = bintrayUser
+        name = project.name
         desc = project.description
 
         websiteUrl = 'https://github.com/XavierTalpe/gradle-release-plugin'
@@ -78,7 +82,7 @@ bintray {
         vcsUrl = 'https://github.com/XavierTalpe/gradle-release-plugin.git'
 
         licenses = ['MIT']
-        labels = ['gradle', 'release']
+        labels = ['gradle', 'release', 'plugin', 'automatic', 'version']
 
         publicDownloadNumbers = true
 
