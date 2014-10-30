@@ -89,7 +89,7 @@ bintray {
         version {
             name = project.version
             vcsTag = project.version
-            attributes = ['gradle-plugin': 'be.xvrt.release:be.xvrt:gradle-release-plugin']
+            attributes = ['gradle-plugin': "be.xvrt.release:${project.group}:${project.name}"]
         }
     }
 }
