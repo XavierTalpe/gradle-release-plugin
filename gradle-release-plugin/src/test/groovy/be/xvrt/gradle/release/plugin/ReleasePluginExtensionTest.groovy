@@ -18,7 +18,7 @@ class ReleasePluginExtensionTest {
 
     @Before
     void setUp() {
-        project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
+        project = ProjectBuilder.builder().withName( 'lib42' ).withProjectDir( temporaryFolder.root ).build()
         project.apply plugin: ReleasePlugin
     }
 
@@ -44,6 +44,19 @@ class ReleasePluginExtensionTest {
 
         assertEquals( 'Commit', project.release.commitMessage )
         assertEquals( 'Tag', project.release.tagMessage )
+    }
+
+    @Test
+    public void testProjectNameInCommitAndTagMessage() throws Exception {
+        when:
+        project.release {
+            commitMessage = "Commit for ${project.name}"
+            tagMessage = "Tag for ${project.name}"
+        }
+
+        then:
+        assertEquals( 'Commit for lib42', project.release.commitMessage )
+        assertEquals( 'Tag for lib42', project.release.tagMessage )
     }
 
 }

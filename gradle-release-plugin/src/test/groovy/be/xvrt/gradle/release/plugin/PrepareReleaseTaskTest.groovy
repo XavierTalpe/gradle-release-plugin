@@ -99,4 +99,26 @@ class PrepareReleaseTaskTest {
         assertEquals( '1.0.0', properties.version )
     }
 
+    @Test
+    void testConfigureWithPropertiesFileContainingSpaces() {
+        setup:
+        def propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
+        propertiesFile.withWriter { w -> w.writeLine 'version = 1.0.0-SNAPSHOT' }
+
+        def project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
+        project.apply plugin: ReleasePlugin
+        project.version = '1.0.0-SNAPSHOT' // TODO: Trigger project to read properties file instead.
+
+        def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
+
+        when:
+        prepareReleaseTask.configure()
+
+        then:
+        def properties = new Properties()
+        propertiesFile.withInputStream { properties.load( it ) }
+
+        assertEquals( '1.0.0', properties.version )
+    }
+
 }
