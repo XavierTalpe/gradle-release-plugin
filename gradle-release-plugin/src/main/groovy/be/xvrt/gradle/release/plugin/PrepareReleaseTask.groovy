@@ -15,6 +15,18 @@ class PrepareReleaseTask extends RollbackTask {
 
     @Override
     void configure() {
+        prepareReleaseVersion()
+    }
+
+    @Override
+    void run() {
+    }
+
+    @Override
+    void rollback( Exception exception ) {
+    }
+
+    private void prepareReleaseVersion() {
         originalVersion = project.version
         releaseVersion = buildReleaseVersion originalVersion
 
@@ -29,14 +41,6 @@ class PrepareReleaseTask extends RollbackTask {
         }
 
         version
-    }
-
-    @Override
-    void run() {
-    }
-
-    @Override
-    void rollback( Exception exception ) {
     }
 
 }

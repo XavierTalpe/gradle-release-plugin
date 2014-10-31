@@ -44,7 +44,7 @@ class ReleasePlugin implements Plugin<Project> {
         releaseTask = project.tasks.create( RELEASE_TASK, ReleaseTask )
 
         prepareReleaseTask.group = RELEASE_GROUP
-        prepareReleaseTask.description = 'TODO'
+        prepareReleaseTask.description = 'Builds the release version of this project.'
 
         tagReleaseTask.group = RELEASE_GROUP
         tagReleaseTask.description = 'TODO'
