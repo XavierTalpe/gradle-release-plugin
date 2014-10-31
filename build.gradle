@@ -1,33 +1,3 @@
 task wrapper( type: Wrapper ) {
     gradleVersion = '2.1'
 }
-
-/*
-publishing {
-    publications {
-        maven( MavenPublication ) {
-            from components.java
-
-            artifact buildSourcesJar {
-                classifier 'sources'
-            }
-
-            artifact buildJavadocJar {
-                classifier 'javadoc'
-            }
-        }
-    }
-    repositories {
-        maven {
-            name 'someserver'
-            credentials {
-                // TODO Use 'nexus' authentication details from your ~/.m2/settings.xml file.
-                username 'user'
-                password 'pass'
-            }
-
-            url 'http://url'
-        }
-    }
-}
-*/
