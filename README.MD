@@ -46,20 +46,20 @@ TODO
 ### Overview
 Task | Description
 --- | ---
-prepareRelease | Builds the release version of this project.
+prepareRelease | Set the version of this project before making the release.
 tagRelease | TODO
 prepareNextRelease | TODO
 release | TODO
 
 
 ### prepareRelease
-The project `version` can either be directly declared in the `build.gradle` file or implicitly via a `gradle.properties` file. Before starting the actual build, the prepareRelease task will remove the '-SNAPSHOT' tag from the current version number (if present). For example. if the version is 1.2-SNAPSHOT, a *1.2* release will be made.
+Before starting the actual build, the prepareRelease task will remove the '-SNAPSHOT' tag from the current version number (if present). For example. if the version is 1.2-SNAPSHOT, a *1.2* release will be made.
 
-If a `gradle.properties` file is present and it already contains a `version` property, then this value will be overwritten (and saved) during the release process. If no such file (or property) is present, no attempt will be made to create (or update) a `gradle.properties` file.
+The project `version` can either be directly declared in the `build.gradle` file or implicitly via a `gradle.properties` file. If a `gradle.properties` file is present and it already contains a `version` property, then this value will be overwritten (and saved) during the release process. If no such file (or property) is present, no attempt will be made to create (or update) a `gradle.properties` file.
 
 
 ### tagRelease
-After the build is sucessfully created, the current state of the project will be committed and tagged. Finally, the version number will be incremented and initialized for the next (snapshot) release.
+After the build is successfully created, the current state of the project will be committed and tagged. Finally, the version number will be incremented and initialized for the next (snapshot) release.
 
 - Commit released version and all modified files
 - Tag previous commit
