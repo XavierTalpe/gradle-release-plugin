@@ -36,6 +36,23 @@ TODO
 - By passing parameter -Pversion from command line (in which case we won't update the file (unless there is one))
 
 
+### Configuring the plugin
+By extending the release task it's possible to configure various options for the release task. The below table shows all configurable properties, what they are for and what their default value is.
+
+Property | Description
+--- | ---
+scmRootDir | The root directory where the SCM is initialized. For GIT this is the directory containing a .git directory. Defaults to the project root directory.
+scmRemote | The name of the remote repository to push to when committing/tagging SCM changes. Only used for GIT. Defaults to origin.
+
+As an example of how to configure any of the above properties, the following snippet overrides the `tagMessage` property with a commit message that mentions the project name.
+
+```
+release {
+  tagMessage = "Tag for ${project.name} version "
+}
+```
+
+
 ## Limitations
 * Gradle 2.0 and up. Lower versions have not (yet) been tested.
 * Currently only supports GIT as SCM.
