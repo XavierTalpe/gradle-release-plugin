@@ -46,14 +46,14 @@ TODO
 ### Overview
 Task | Description
 --- | ---
-prepareRelease | Set the version of this project before making the release.
+prepareRelease | Sets the release version for this project before the release build is started.
 tagRelease | TODO
 prepareNextRelease | TODO
-release | TODO
+release | Parent task of this plugin. Ensures all other tasks are executed at the right time.
 
 
 ### prepareRelease
-Before starting the actual build, the prepareRelease task will remove the '-SNAPSHOT' tag from the current version number (if present). For example. if the version is 1.2-SNAPSHOT, a *1.2* release will be made.
+Before starting the actual build, the prepareRelease task will remove the '-SNAPSHOT' tag from the current version number (if present). For example, if the version is 1.2-SNAPSHOT, a *1.2* release will be made.
 
 The project `version` can either be directly declared in the `build.gradle` file or implicitly via a `gradle.properties` file. If a `gradle.properties` file is present and it already contains a `version` property, then this value will be overwritten (and saved) during the release process. If no such file (or property) is present, no attempt will be made to create (or update) a `gradle.properties` file.
 
@@ -63,6 +63,7 @@ After the build is successfully created, the current state of the project will b
 
 - Commit released version and all modified files
 - Tag previous commit
+- Add example to tag only after uploading archives
 
 ### prepareNextRelease
 - Increment version for next (snapshot) release
@@ -70,5 +71,13 @@ After the build is successfully created, the current state of the project will b
 
 
 ### release
-- Depends on build task to trigger build
-- Wires our tasks together
+The release tasks is responsible for wiring all the other tasks together. It also ensures `prepareRelease` is executed before the `build` task while all other tasks are executed later.
+
+By default the release task will use the `build` task to wire everything together. This task is typically provided by external plugins such as the Java plugin. To override this behaviour, use the following code:
+```
+release.dependsOn customBuild
+tagRelease.dependsOn customBuild
+prepareNextRelease.dependsOn customBuild
+
+customBuild.mustRunAfter prepareRelease
+```

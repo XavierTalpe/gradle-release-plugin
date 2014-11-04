@@ -44,7 +44,7 @@ class ReleasePlugin implements Plugin<Project> {
         releaseTask = project.tasks.create( RELEASE_TASK, ReleaseTask )
 
         prepareReleaseTask.group = RELEASE_GROUP
-        prepareReleaseTask.description = 'Builds the release version of this project.'
+        prepareReleaseTask.description = 'Sets the release version for this project before the release build is started.'
 
         tagReleaseTask.group = RELEASE_GROUP
         tagReleaseTask.description = 'TODO'
@@ -55,7 +55,7 @@ class ReleasePlugin implements Plugin<Project> {
         prepareNextReleaseTask.dependsOn tagReleaseTask
 
         releaseTask.group = RELEASE_GROUP
-        releaseTask.description = 'TODO'
+        releaseTask.description = 'Parent task of this plugin. Ensures all other tasks are executed at the right time.'
         releaseTask.dependsOn prepareReleaseTask, tagReleaseTask, prepareNextReleaseTask
     }
 
