@@ -15,8 +15,10 @@ class PrepareNextReleaseTask extends RollbackTask {
 
     @Override
     void configure() {
-        def releaseExtensions = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )
-        scmHelper = ScmHelperFactory.create( releaseExtensions.scmRootDir )
+        def extensions = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )
+        def scmRootDir = extensions.getAt( ReleasePluginExtension.SCM_ROOT_DIR )
+
+        scmHelper = ScmHelperFactory.create scmRootDir
     }
 
     @Override
@@ -36,9 +38,9 @@ class PrepareNextReleaseTask extends RollbackTask {
     }
 
     private void commitChanges( String nextVersion ) {
-        def releaseExtensions = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )
-        def scmRemote = releaseExtensions.scmRemote
-        def prepareMessage = releaseExtensions.prepareMessage
+        def extensions = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )
+        def scmRemote = extensions.getAt( ReleasePluginExtension.SCM_REMOTE )
+        def prepareMessage = extensions.getAt( ReleasePluginExtension.PREPARE_MSG )
 
         logger.info( "${LOG_TAG} committing release to SCM." )
         scmHelper.commit prepareMessage + nextVersion

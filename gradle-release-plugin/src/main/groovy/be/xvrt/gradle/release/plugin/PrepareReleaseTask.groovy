@@ -36,11 +36,10 @@ class PrepareReleaseTask extends RollbackTask {
     }
 
     private String buildReleaseVersion( String version ) {
-        if ( version.endsWith( '-SNAPSHOT' ) ) {
-            version -= '-SNAPSHOT'
-        }
+        def extensions = project.extensions.getByName( ReleasePlugin.PREPARE_RELEASE_TASK )
+        def releaseVersionClosure = extensions.getAt( PrepareReleaseTaskExtension.RELEASE_VERSION )
 
-        version
+        releaseVersionClosure version
     }
 
 }

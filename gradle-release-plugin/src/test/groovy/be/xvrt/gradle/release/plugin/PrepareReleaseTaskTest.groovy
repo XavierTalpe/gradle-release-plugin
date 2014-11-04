@@ -35,7 +35,6 @@ class PrepareReleaseTaskTest {
         prepareReleaseTask.configure()
 
         then:
-
         assertEquals( '1.0.0-SNAPSHOT', prepareReleaseTask.originalVersion )
         assertEquals( '1.0.0', prepareReleaseTask.releaseVersion )
         assertTrue( prepareReleaseTask.wasSnapshotVersion() )
@@ -50,7 +49,6 @@ class PrepareReleaseTaskTest {
         prepareReleaseTask.configure()
 
         then:
-
         assertEquals( '1.0.0', prepareReleaseTask.originalVersion )
         assertEquals( '1.0.0', prepareReleaseTask.releaseVersion )
         assertFalse( prepareReleaseTask.wasSnapshotVersion() )
@@ -119,6 +117,25 @@ class PrepareReleaseTaskTest {
         propertiesFile.withInputStream { properties.load( it ) }
 
         assertEquals( '1.0.0', properties.version )
+    }
+
+    @Test
+    void testCustomReleaseVersionClosure() {
+        setup:
+        project.version = '1.0.0'
+        project.prepareRelease {
+            releaseVersion = { version ->
+                version + '-RC1'
+            }
+        }
+
+        when:
+        prepareReleaseTask.configure()
+
+        then:
+        assertEquals( '1.0.0', prepareReleaseTask.originalVersion )
+        assertEquals( '1.0.0-RC1', prepareReleaseTask.releaseVersion )
+        assertFalse( prepareReleaseTask.wasSnapshotVersion() )
     }
 
 }

@@ -18,8 +18,6 @@ class ReleasePlugin implements Plugin<Project> {
     private Task prepareNextReleaseTask
     private Task releaseTask
 
-    private ReleasePluginExtension extension
-
     void apply( Project project ) {
         createExtension project
         createTasks project
@@ -34,7 +32,8 @@ class ReleasePlugin implements Plugin<Project> {
     }
 
     private void createExtension( Project project ) {
-        extension = project.extensions.create( RELEASE_TASK, ReleasePluginExtension, project )
+        project.extensions.create( PREPARE_RELEASE_TASK, PrepareReleaseTaskExtension )
+        project.extensions.create( RELEASE_TASK, ReleasePluginExtension, project )
     }
 
     private void createTasks( Project project ) {

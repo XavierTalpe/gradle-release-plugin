@@ -11,17 +11,18 @@ class TagReleaseTask extends RollbackTask {
 
     @Override
     void configure() {
-        def releaseExtensions = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )
-        scmHelper = ScmHelperFactory.create( releaseExtensions.scmRootDir )
+        def extensions = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )
+        def scmRootDir = extensions.getAt( ReleasePluginExtension.SCM_ROOT_DIR )
+
+        scmHelper = ScmHelperFactory.create scmRootDir
     }
 
     @Override
     void run() {
-        def releaseExtensions = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )
-
-        def scmRemote = releaseExtensions.scmRemote
-        def tagMessage = releaseExtensions.tagMessage
-        def commitMessage = releaseExtensions.commitMessage
+        def extensions = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )
+        def scmRemote = extensions.getAt( ReleasePluginExtension.SCM_REMOTE )
+        def tagMessage = extensions.getAt( ReleasePluginExtension.TAG_MSG )
+        def commitMessage = extensions.getAt( ReleasePluginExtension.COMMIT_MSG )
         def releaseVersion = project.version
 
         commit( commitMessage, releaseVersion )
