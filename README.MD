@@ -11,8 +11,9 @@ buildscript {
   repositories {
     jcenter()
   }
+
   dependencies {
-    classpath 'be.xvrt:release-plugin:0.1.+'
+    classpath 'be.xvrt:release-plugin:0.1.2'
   }
 }
 
