@@ -64,7 +64,7 @@ release {
 ### Overview
 Task | Description
 --- | ---
-prepareRelease | Sets the release version for this project before the release build is started.
+prepareRelease | Sets the release version before the release build is started.
 tagRelease | TODO
 prepareNextRelease | TODO
 release | Parent task of this plugin. Ensures all other tasks are executed at the right time.
