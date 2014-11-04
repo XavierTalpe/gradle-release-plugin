@@ -1,12 +1,5 @@
-// TODO: To be replaced with the plugins syntax once available on Gradle repo.
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'be.xvrt:release-plugin:0.0.2'
-    }
+plugins {
+    id 'be.xvrt.release' version '0.1.2'
 }
 
 apply plugin: 'be.xvrt.release'

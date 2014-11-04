@@ -22,7 +22,7 @@ apply plugin: 'be.xvrt.release'
 Alternatively you can also use the new, incubating, plugin mechanism introduced in Gradle 2.1:
 ```
 plugins {
-  id 'be.xvrt.release' version '0.1.1'
+  id 'be.xvrt.release' version '0.1.2'
 }
 ```
 
