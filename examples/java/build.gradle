@@ -2,7 +2,6 @@ plugins {
     id 'be.xvrt.release' version '0.1.2'
 }
 
-apply plugin: 'be.xvrt.release'
 apply plugin: 'java'
 
 repositories {
