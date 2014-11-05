@@ -8,14 +8,14 @@ class ReleasePlugin implements Plugin<Project> {
 
     public static final String PREPARE_RELEASE_TASK = 'prepareRelease'
     public static final String TAG_RELEASE_TASK = 'tagRelease'
-    public static final String PREPARE_NEXT_RELEASE_TASK = 'prepareNextRelease'
+    public static final String UPDATE_VERSION_TASK = 'updateVersion'
     public static final String RELEASE_TASK = 'release'
 
     public static final String RELEASE_GROUP = 'release'
 
     private Task prepareReleaseTask
     private Task tagReleaseTask
-    private Task prepareNextReleaseTask
+    private Task updateVersionTask
     private Task releaseTask
 
     void apply( Project project ) {
@@ -39,7 +39,7 @@ class ReleasePlugin implements Plugin<Project> {
     private void createTasks( Project project ) {
         prepareReleaseTask = project.tasks.create( PREPARE_RELEASE_TASK, PrepareReleaseTask )
         tagReleaseTask = project.tasks.create( TAG_RELEASE_TASK, TagReleaseTask )
-        prepareNextReleaseTask = project.tasks.create( PREPARE_NEXT_RELEASE_TASK, PrepareNextReleaseTask )
+        updateVersionTask = project.tasks.create( UPDATE_VERSION_TASK, UpdateVersionTask )
         releaseTask = project.tasks.create( RELEASE_TASK, ReleaseTask )
 
         prepareReleaseTask.group = RELEASE_GROUP
@@ -49,13 +49,13 @@ class ReleasePlugin implements Plugin<Project> {
         tagReleaseTask.description = 'TODO'
         tagReleaseTask.dependsOn prepareReleaseTask
 
-        prepareNextReleaseTask.group = RELEASE_GROUP
-        prepareNextReleaseTask.description = 'TODO'
-        prepareNextReleaseTask.dependsOn tagReleaseTask
+        updateVersionTask.group = RELEASE_GROUP
+        updateVersionTask.description = 'TODO'
+        updateVersionTask.dependsOn tagReleaseTask
 
         releaseTask.group = RELEASE_GROUP
         releaseTask.description = 'Parent task of this plugin. Ensures all other tasks are executed at the right time.'
-        releaseTask.dependsOn prepareReleaseTask, tagReleaseTask, prepareNextReleaseTask
+        releaseTask.dependsOn prepareReleaseTask, tagReleaseTask, updateVersionTask
     }
 
     private void setBuildTaskDependencies( Project project ) {
@@ -63,7 +63,7 @@ class ReleasePlugin implements Plugin<Project> {
         if ( buildTask ) {
             releaseTask.dependsOn buildTask
             tagReleaseTask.dependsOn buildTask
-            prepareNextReleaseTask.dependsOn buildTask
+            updateVersionTask.dependsOn buildTask
 
             // Using mustRunAfter ensures that prepareRelease is executed first.
             // It also prevents build from automatically executing prepareRelease even

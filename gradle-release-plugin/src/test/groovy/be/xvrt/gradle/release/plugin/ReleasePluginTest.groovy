@@ -21,20 +21,20 @@ class ReleasePluginTest {
     void testAllTasksAddedToProject() {
         def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
         def tagReleaseTask = project.tasks.getByName ReleasePlugin.TAG_RELEASE_TASK
-        def prepareNextReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_NEXT_RELEASE_TASK
+        def updateVersionTask = project.tasks.getByName ReleasePlugin.UPDATE_VERSION_TASK
         def releaseTask = project.tasks.getByName ReleasePlugin.RELEASE_TASK
 
         assertTrue( prepareReleaseTask instanceof PrepareReleaseTask )
         assertTrue( tagReleaseTask instanceof TagReleaseTask )
-        assertTrue( prepareNextReleaseTask instanceof PrepareNextReleaseTask )
+        assertTrue( updateVersionTask instanceof UpdateVersionTask )
         assertTrue( releaseTask instanceof ReleaseTask )
 
         assertTrue( tagReleaseTask.dependsOn.contains( prepareReleaseTask ) )
-        assertTrue( prepareNextReleaseTask.dependsOn.contains( tagReleaseTask ) )
+        assertTrue( updateVersionTask.dependsOn.contains( tagReleaseTask ) )
 
         assertTrue( releaseTask.dependsOn.contains( prepareReleaseTask ) )
         assertTrue( releaseTask.dependsOn.contains( tagReleaseTask ) )
-        assertTrue( releaseTask.dependsOn.contains( prepareNextReleaseTask ) )
+        assertTrue( releaseTask.dependsOn.contains( updateVersionTask ) )
     }
 
     @Test
@@ -57,7 +57,7 @@ class ReleasePluginTest {
         setup:
         def buildTask = project.tasks.create 'build'
         def tagReleaseTask = project.tasks.getByName ReleasePlugin.TAG_RELEASE_TASK
-        def prepareNextReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_NEXT_RELEASE_TASK
+        def updateVersionTask = project.tasks.getByName ReleasePlugin.UPDATE_VERSION_TASK
         def releaseTask = project.tasks.getByName ReleasePlugin.RELEASE_TASK
 
         when:
@@ -66,7 +66,7 @@ class ReleasePluginTest {
         then:
         releaseTask.dependsOn.contains buildTask
         tagReleaseTask.dependsOn.contains buildTask
-        prepareNextReleaseTask.dependsOn.contains buildTask
+        updateVersionTask.dependsOn.contains buildTask
     }
 
 }

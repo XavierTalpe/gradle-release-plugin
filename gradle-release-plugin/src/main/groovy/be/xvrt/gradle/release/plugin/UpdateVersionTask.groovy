@@ -4,9 +4,9 @@ import be.xvrt.gradle.release.plugin.scm.ScmHelper
 import be.xvrt.gradle.release.plugin.scm.ScmHelperFactory
 import be.xvrt.gradle.release.plugin.util.GradleProperties
 
-class PrepareNextReleaseTask extends RollbackTask {
+class UpdateVersionTask extends RollbackTask {
 
-    private static final GString LOG_TAG = ":${ReleasePlugin.PREPARE_NEXT_RELEASE_TASK}"
+    private static final GString LOG_TAG = ":${ReleasePlugin.UPDATE_VERSION_TASK}"
 
     String releasedVersion
     String nextVersion

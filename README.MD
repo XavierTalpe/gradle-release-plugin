@@ -66,7 +66,7 @@ Task | Description
 --- | ---
 prepareRelease | Sets the release version before the release build is started.
 tagRelease | TODO
-prepareNextRelease | TODO
+updateVersion | TODO
 release | Parent task of this plugin. Ensures all other tasks are executed at the right time.
 
 
@@ -83,7 +83,7 @@ After the build is successfully created, the current state of the project will b
 - Tag previous commit
 - Add example to tag only after uploading archives
 
-### prepareNextRelease
+### updateVersion
 - Increment version for next (snapshot) release
 - Commit new version
 
@@ -95,7 +95,7 @@ By default the release task will use the `build` task to wire everything togethe
 ```
 release.dependsOn customBuild
 tagRelease.dependsOn customBuild
-prepareNextRelease.dependsOn customBuild
+updateVersion.dependsOn customBuild
 
 customBuild.mustRunAfter prepareRelease
 ```

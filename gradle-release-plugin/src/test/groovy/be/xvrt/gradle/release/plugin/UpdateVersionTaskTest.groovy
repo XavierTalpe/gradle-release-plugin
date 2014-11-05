@@ -11,14 +11,14 @@ import org.junit.rules.TemporaryFolder
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertTrue
 
-class PrepareNextReleaseTaskTest {
+class UpdateVersionTaskTest {
 
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     private Project project
     private Task prepareReleaseTask
-    private Task prepareNextReleaseTask
+    private Task updateVersionTask
 
     @Before
     void setUp() {
@@ -26,7 +26,7 @@ class PrepareNextReleaseTaskTest {
         project.apply plugin: ReleasePlugin
 
         prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
-        prepareNextReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_NEXT_RELEASE_TASK
+        updateVersionTask = project.tasks.getByName ReleasePlugin.UPDATE_VERSION_TASK
     }
 
     @Test
@@ -36,11 +36,11 @@ class PrepareNextReleaseTaskTest {
         prepareReleaseTask.configure()
 
         when:
-        prepareNextReleaseTask.execute()
+        updateVersionTask.execute()
 
         then:
-        assertEquals( '1.0.0', prepareNextReleaseTask.releasedVersion )
-        assertEquals( '1.0.1-SNAPSHOT', prepareNextReleaseTask.nextVersion )
+        assertEquals( '1.0.0', updateVersionTask.releasedVersion )
+        assertEquals( '1.0.1-SNAPSHOT', updateVersionTask.nextVersion )
         assertEquals( '1.0.1-SNAPSHOT', project.version )
     }
 
@@ -51,11 +51,11 @@ class PrepareNextReleaseTaskTest {
         prepareReleaseTask.configure()
 
         when:
-        prepareNextReleaseTask.execute()
+        updateVersionTask.execute()
 
         then:
-        assertEquals( '1.0.0', prepareNextReleaseTask.releasedVersion )
-        assertEquals( '1.0.1', prepareNextReleaseTask.nextVersion )
+        assertEquals( '1.0.0', updateVersionTask.releasedVersion )
+        assertEquals( '1.0.1', updateVersionTask.nextVersion )
         assertEquals( '1.0.1', project.version )
     }
 
@@ -68,13 +68,13 @@ class PrepareNextReleaseTaskTest {
         project.apply plugin: ReleasePlugin
 
         def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
-        def prepareNextReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_NEXT_RELEASE_TASK
+        def updateVersionTask = project.tasks.getByName ReleasePlugin.UPDATE_VERSION_TASK
 
         project.version = '1.0.0-SNAPSHOT'
         prepareReleaseTask.configure()
 
         when:
-        prepareNextReleaseTask.execute()
+        updateVersionTask.execute()
 
         then:
         def properties = new Properties()
@@ -93,13 +93,13 @@ class PrepareNextReleaseTaskTest {
         project.apply plugin: ReleasePlugin
 
         def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
-        def prepareNextReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_NEXT_RELEASE_TASK
+        def updateVersionTask = project.tasks.getByName ReleasePlugin.UPDATE_VERSION_TASK
 
         project.version = '1.0.0-SNAPSHOT' // TODO: Trigger project to read properties file instead.
         prepareReleaseTask.configure()
 
         when:
-        prepareNextReleaseTask.execute()
+        updateVersionTask.execute()
 
         then:
         def properties = new Properties()
