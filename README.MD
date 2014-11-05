@@ -29,13 +29,18 @@ plugins {
 
 
 ### Execute the release task
-TODO
+To trigger a new release using this plugin, simply run
+```
+$ gradle release
+```
 
+This will automatically trigger an existing `build` task and ensure the correct version is used to build the release.
 
 ### Specifying the version
-TODO
-- Either from a gradle.properties file (in which case we update it)
-- By passing parameter -Pversion from command line (in which case we won't update the file (unless there is one))
+There are multiple options to provide the version for building the project:
+- Initialize the version in your build.gradle file.
+- Add a `version` property to your gradle.properties file. If the build was successful, the updated version will be stored in this file.
+- Passing in a parameter `-Pversion=XXX` from the command line.
 
 
 ## Limitations
@@ -94,7 +99,7 @@ After the build is successfully created, the current state of the project will b
 - Add example to tag only after uploading archives
 
 ### updateVersion
-After the build is successfully created, the updateVersion task is responsible for incrementing the version number so it's ready for the next (snapshot) build. This version number will also be committed to the SCM.
+After the build is successfully created, the updateVersion task is responsible for incrementing the version number so it's ready for the next (snapshot) build. If the original version was a snapshot release, then the new version will also be a snapshot release, otherwise only the version number is incremented. This version number will also be committed to the SCM.
 
 The updateVersion task offers an extensible closure to insert custom logic when setting the next release or snapshot version. The example below demonstrates how to implement a closure that returns 2.0-SNAPSHOT as next snapshot release.
 ```
