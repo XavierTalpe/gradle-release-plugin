@@ -11,14 +11,8 @@ class UpdateVersionTask extends RollbackTask {
     String releasedVersion
     String nextVersion
 
-    private ScmHelper scmHelper
-
     @Override
     void configure() {
-        def extension = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )
-        def scmRootDir = extension.getAt( ReleasePluginExtension.SCM_ROOT_DIR )
-
-        scmHelper = ScmHelperFactory.create scmRootDir
     }
 
     @Override
@@ -26,11 +20,26 @@ class UpdateVersionTask extends RollbackTask {
         releasedVersion = project.version
         nextVersion = buildNextVersion releasedVersion
 
-        incrementVersion( nextVersion )
-        commitChanges( nextVersion )
+        saveVersion nextVersion
+        commitChanges nextVersion
     }
 
-    private void incrementVersion( String nextVersion ) {
+    @Override
+    void rollback( Exception exception ) {
+        throw exception;
+    }
+
+    private String buildNextVersion( String version ) {
+        def extension = project.extensions.getByName( UpdateVersionTaskExtension.NAME )
+        def nextVersionClosure = extension.getAt( UpdateVersionTaskExtension.NEXT_VERSION )
+
+        def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
+        def wasSnapshotVersion = prepareReleaseTask.wasSnapshotVersion()
+
+        nextVersionClosure version, wasSnapshotVersion
+    }
+
+    private void saveVersion( String nextVersion ) {
         logger.info( "${LOG_TAG} setting next version to ${nextVersion}." )
 
         def gradleProperties = new GradleProperties( project )
@@ -42,6 +51,8 @@ class UpdateVersionTask extends RollbackTask {
         def scmRemote = extension.getAt( ReleasePluginExtension.SCM_REMOTE )
         def prepareMessage = extension.getAt( ReleasePluginExtension.PREPARE_MSG )
 
+        def scmHelper = getScmHelper()
+
         logger.info( "${LOG_TAG} committing release to SCM." )
         scmHelper.commit prepareMessage + nextVersion
 
@@ -49,23 +60,11 @@ class UpdateVersionTask extends RollbackTask {
         scmHelper.push scmRemote
     }
 
-    @Override
-    void rollback( Exception exception ) {
-    }
+    private ScmHelper getScmHelper() {
+        def extension = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )
+        def scmRootDir = extension.getAt( ReleasePluginExtension.SCM_ROOT_DIR )
 
-    private String buildNextVersion( String version ) {
-        def lastDotIndex = version.findLastIndexOf { "." }
-        def lastVersion = version.substring( lastDotIndex, version.length() )
-        def incrementedVersionNumber = Integer.parseInt( lastVersion ) + 1
-
-        def nextVersion = version.substring( 0, lastDotIndex ) + incrementedVersionNumber
-
-        def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
-        if ( prepareReleaseTask.wasSnapshotVersion() ) {
-            nextVersion += '-SNAPSHOT'
-        }
-
-        nextVersion
+        ScmHelperFactory.create scmRootDir
     }
 
 }

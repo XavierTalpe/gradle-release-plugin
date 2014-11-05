@@ -1,18 +1,22 @@
 package be.xvrt.gradle.release.plugin
 
+import be.xvrt.gradle.release.plugin.scm.ScmException
 import be.xvrt.gradle.release.plugin.scm.ScmTestUtil
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.revwalk.RevCommit
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
+import static junit.framework.Assert.fail
 import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertTrue
 
 class TagReleaseTaskTest {
 
@@ -45,7 +49,14 @@ class TagReleaseTaskTest {
     void testExecuteGit() {
         when:
         tagReleaseTask.configure()
-        tagReleaseTask.execute()
+
+        try {
+            tagReleaseTask.execute()
+            fail()
+        }
+        catch ( TaskExecutionException expected ) {
+            assertTrue( expected.cause instanceof ScmException )
+        }
 
         then:
         verifyTag()

@@ -33,6 +33,7 @@ class ReleasePlugin implements Plugin<Project> {
 
     private void createExtension( Project project ) {
         project.extensions.create( PREPARE_RELEASE_TASK, PrepareReleaseTaskExtension )
+        project.extensions.create( UPDATE_VERSION_TASK, UpdateVersionTaskExtension )
         project.extensions.create( RELEASE_TASK, ReleasePluginExtension, project )
     }
 
@@ -79,6 +80,10 @@ class ReleasePlugin implements Plugin<Project> {
 
         if ( taskGraph.hasTask( tagReleaseTask ) ) {
             tagReleaseTask.configure()
+        }
+
+        if ( taskGraph.hasTask( updateVersionTask ) ) {
+            updateVersionTask.configure()
         }
     }
 

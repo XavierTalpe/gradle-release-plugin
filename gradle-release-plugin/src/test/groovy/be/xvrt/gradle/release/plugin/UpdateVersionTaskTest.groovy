@@ -1,5 +1,4 @@
 package be.xvrt.gradle.release.plugin
-
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
@@ -106,6 +105,31 @@ class UpdateVersionTaskTest {
         propertiesFile.withInputStream { properties.load( it ) }
 
         assertEquals( '1.0.1-SNAPSHOT', properties.version )
+    }
+
+    @Test
+    void testCustomNextVersionClosure() {
+        setup:
+        project.version = '1.0.0-SNAPSHOT'
+        project.updateVersion {
+            nextVersion = { version, wasSnapshotVersion ->
+                if ( wasSnapshotVersion ) {
+                    version = version + '-SNAPSHOT'
+                }
+
+                version + '-2'
+            }
+        }
+
+        when:
+        prepareReleaseTask.configure()
+        updateVersionTask.execute()
+
+        then:
+        assertEquals( '1.0.0', updateVersionTask.releasedVersion )
+        assertEquals( '1.0.0-SNAPSHOT-2', updateVersionTask.nextVersion )
+        assertEquals( '1.0.0-SNAPSHOT-2', project.version )
+
     }
 
 }

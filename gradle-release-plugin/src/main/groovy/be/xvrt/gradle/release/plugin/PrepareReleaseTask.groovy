@@ -24,15 +24,14 @@ class PrepareReleaseTask extends RollbackTask {
 
     @Override
     void rollback( Exception exception ) {
+        throw exception;
     }
 
     private void prepareReleaseVersion() {
         originalVersion = project.version
         releaseVersion = buildReleaseVersion originalVersion
 
-        logger.info( "${LOG_TAG} setting release version to ${releaseVersion}." )
-        def gradleProperties = new GradleProperties( project )
-        gradleProperties.saveVersion( releaseVersion )
+        saveVersion( releaseVersion )
     }
 
     private String buildReleaseVersion( String version ) {
@@ -40,6 +39,13 @@ class PrepareReleaseTask extends RollbackTask {
         def releaseVersionClosure = extension.getAt( PrepareReleaseTaskExtension.RELEASE_VERSION )
 
         releaseVersionClosure version
+    }
+
+    private void saveVersion( String releaseVersion ) {
+        logger.info( "${LOG_TAG} setting release version to ${releaseVersion}." )
+
+        def gradleProperties = new GradleProperties( project )
+        gradleProperties.saveVersion( releaseVersion )
     }
 
 }

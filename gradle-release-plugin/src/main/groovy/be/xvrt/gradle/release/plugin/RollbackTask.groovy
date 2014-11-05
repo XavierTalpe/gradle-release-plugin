@@ -13,6 +13,7 @@ abstract class RollbackTask extends DefaultTask {
             run()
         }
         catch ( Exception exception ) {
+            exception.printStackTrace()
             rollback( exception )
         }
     }
