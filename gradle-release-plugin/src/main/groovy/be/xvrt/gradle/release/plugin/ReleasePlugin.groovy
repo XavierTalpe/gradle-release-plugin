@@ -51,7 +51,7 @@ class ReleasePlugin implements Plugin<Project> {
         tagReleaseTask.dependsOn prepareReleaseTask
 
         updateVersionTask.group = RELEASE_GROUP
-        updateVersionTask.description = 'TODO'
+        updateVersionTask.description = 'Sets the version for the next snapshot build and commits this change to the SCM.'
         updateVersionTask.dependsOn tagReleaseTask
 
         releaseTask.group = RELEASE_GROUP

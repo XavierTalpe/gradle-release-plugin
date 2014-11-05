@@ -33,6 +33,7 @@ TODO
 
 
 ### Specifying the version
+TODO
 - Either from a gradle.properties file (in which case we update it)
 - By passing parameter -Pversion from command line (in which case we won't update the file (unless there is one))
 
@@ -66,7 +67,7 @@ Task | Description
 --- | ---
 prepareRelease | Sets the release version before the release build is started.
 tagRelease | TODO
-updateVersion | TODO
+updateVersion | Sets the version for the next snapshot build and commits this change to the SCM.
 release | Parent task of this plugin. Ensures all other tasks are executed at the right time.
 
 
@@ -75,8 +76,17 @@ Before starting the actual build, the prepareRelease task will remove the '-SNAP
 
 The project `version` can either be directly declared in the `build.gradle` file or implicitly via a `gradle.properties` file. If a `gradle.properties` file is present and it already contains a `version` property, then this value will be overwritten (and saved) during the release process. If no such file (or property) is present, no attempt will be made to create (or update) a `gradle.properties` file.
 
+The prepareRelease task offers an extendible closure to insert custom logic when setting the release version. The example below demonstrates how to implement a closure that returns 1.0 as release version.
+```
+prepareRelease {
+  releaseVersion = { version ->
+    '1.0'
+  }
+}
+```
 
 ### tagRelease
+TODO
 After the build is successfully created, the current state of the project will be committed and tagged. Finally, the version number will be incremented and initialized for the next (snapshot) release.
 
 - Commit released version and all modified files
@@ -84,9 +94,18 @@ After the build is successfully created, the current state of the project will b
 - Add example to tag only after uploading archives
 
 ### updateVersion
+TODO
 - Increment version for next (snapshot) release
 - Commit new version
 
+The updateVersion task offers an extendible closure to insert custom logic when setting the next release or snapshot version. The example below demonstrates how to implement a closure that returns 2.0-SNAPSHOT as next snapshot release.
+```
+updateVersion {
+  nextVersion = { version, wasSnapshotVersion ->
+    '2.0-SNAPSHOT'
+  }
+}
+```
 
 ### release
 The release tasks is responsible for wiring all the other tasks together. It also ensures `prepareRelease` is executed before the `build` task while all other tasks are executed later.
