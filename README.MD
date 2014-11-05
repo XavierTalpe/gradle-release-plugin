@@ -8,13 +8,13 @@ This release plugin automatically takes care of versioning your releases. Before
 Simply add the following snippet to the top of your Gradle file:
 ``` 
 buildscript {
-  repositories {
-    jcenter()
-  }
+    repositories {
+        jcenter()
+    }
 
-  dependencies {
-    classpath 'be.xvrt:release-plugin:0.1.2'
-  }
+    dependencies {
+        classpath 'be.xvrt:release-plugin:0.1.2'
+    }
 }
 
 apply plugin: 'be.xvrt.release'
@@ -23,7 +23,7 @@ apply plugin: 'be.xvrt.release'
 Alternatively you can also use the new, incubating, plugin mechanism introduced in Gradle 2.1:
 ```
 plugins {
-  id 'be.xvrt.release' version '0.1.2'
+    id 'be.xvrt.release' version '0.1.2'
 }
 ```
 
@@ -38,8 +38,13 @@ TODO
 - By passing parameter -Pversion from command line (in which case we won't update the file (unless there is one))
 
 
-### Configuring the plugin
-By extending the release task it's possible to configure various options for the release task. The below table shows all configurable properties, what they are for and what their default value is.
+## Limitations
+* Gradle 2.0 and up. Lower versions have not (yet) been tested.
+* Currently only supports GIT as SCM.
+
+
+## Configuring the plugin
+By extending the release task it's possible to configure various options for this plugin. The below table shows all configurable properties, what they are for and what their default value is.
 
 Property | Description
 --- | ---
@@ -50,14 +55,9 @@ As an example of how to configure any of the above properties, the following sni
 
 ```
 release {
-  tagMessage = "Tag for ${project.name} version "
+    tagMessage = "Tag for ${project.name} version "
 }
 ```
-
-
-## Limitations
-* Gradle 2.0 and up. Lower versions have not (yet) been tested.
-* Currently only supports GIT as SCM.
 
 
 ## Tasks API
@@ -72,38 +72,36 @@ release | Parent task of this plugin. Ensures all other tasks are executed at th
 
 
 ### prepareRelease
-Before starting the actual build, the prepareRelease task will remove the '-SNAPSHOT' tag from the current version number (if present). For example, if the version is 1.2-SNAPSHOT, a *1.2* release will be made.
+Before starting the actual build, the prepareRelease task will remove the `-SNAPSHOT` tag from the current version number (if present). For example, if the version is `1.2-SNAPSHOT`, a `1.2` release will be made.
 
 The project `version` can either be directly declared in the `build.gradle` file or implicitly via a `gradle.properties` file. If a `gradle.properties` file is present and it already contains a `version` property, then this value will be overwritten (and saved) during the release process. If no such file (or property) is present, no attempt will be made to create (or update) a `gradle.properties` file.
 
-The prepareRelease task offers an extendible closure to insert custom logic when setting the release version. The example below demonstrates how to implement a closure that returns 1.0 as release version.
+The prepareRelease task also offers an extensible closure to insert custom logic when setting the release version. The example below demonstrates how to implement a closure that adds a suffix to the current version.
 ```
 prepareRelease {
-  releaseVersion = { version ->
-    '1.0'
-  }
+    releaseVersion = { version ->
+        version + 'RC1'
+    }
 }
 ```
 
 ### tagRelease
 TODO
-After the build is successfully created, the current state of the project will be committed and tagged. Finally, the version number will be incremented and initialized for the next (snapshot) release.
+After the build is successfully created, the current state of the project will be committed and tagged.
 
 - Commit released version and all modified files
 - Tag previous commit
 - Add example to tag only after uploading archives
 
 ### updateVersion
-TODO
-- Increment version for next (snapshot) release
-- Commit new version
+After the build is successfully created, the updateVersion task is responsible for incrementing the version number so it's ready for the next (snapshot) build. This version number will also be committed to the SCM.
 
-The updateVersion task offers an extendible closure to insert custom logic when setting the next release or snapshot version. The example below demonstrates how to implement a closure that returns 2.0-SNAPSHOT as next snapshot release.
+The updateVersion task offers an extensible closure to insert custom logic when setting the next release or snapshot version. The example below demonstrates how to implement a closure that returns 2.0-SNAPSHOT as next snapshot release.
 ```
 updateVersion {
-  nextVersion = { version, wasSnapshotVersion ->
-    '2.0-SNAPSHOT'
-  }
+    nextVersion = { version, wasSnapshotVersion ->
+        '2.0-SNAPSHOT'
+    }
 }
 ```
 
