@@ -2,7 +2,7 @@ package be.xvrt.gradle.release.plugin.scm
 
 class ScmHelperFactory {
 
-    private final static Map<File, ScmHelper> CACHE = new HashMap<>()
+    private final static Map<File, ScmHelper> CACHE = new HashMap<>( 1 )
 
     private ScmHelperFactory() {
     }
