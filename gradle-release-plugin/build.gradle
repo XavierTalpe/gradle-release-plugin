@@ -87,7 +87,7 @@ bintray {
         vcsUrl = 'https://github.com/XavierTalpe/gradle-release-plugin.git'
 
         licenses = ['MIT']
-        labels = ['gradle', 'release', 'plugin', 'automatic', 'version']
+        labels = ['gradle', 'release', 'plugin', 'automatic', 'version', 'git']
 
         publicDownloadNumbers = true
 
