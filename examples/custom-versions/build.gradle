@@ -46,4 +46,8 @@ release {
 }
 
 
-defaultTasks 'release'
+/**
+ * Additional task for Travis CI build,
+ */
+task( 'check', dependsOn: 'release' ) {
+}

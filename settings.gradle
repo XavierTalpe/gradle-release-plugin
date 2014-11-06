@@ -1,4 +1,6 @@
 include 'gradle-release-plugin'
+
+include 'examples:custom-versions'
 include 'examples:java'
 
 
