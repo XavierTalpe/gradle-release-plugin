@@ -30,8 +30,8 @@ class UpdateVersionTask extends RollbackTask {
     }
 
     private String buildNextVersion( String version ) {
-        def extension = project.extensions.getByName( UpdateVersionTaskExtension.NAME )
-        def nextVersionClosure = extension.getAt( UpdateVersionTaskExtension.NEXT_VERSION )
+        def extension = project.extensions.getByName ReleasePluginExtension.NAME
+        def nextVersionClosure = extension.getAt ReleasePluginExtension.NEXT_VERSION
 
         def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
         def wasSnapshotVersion = prepareReleaseTask.wasSnapshotVersion()

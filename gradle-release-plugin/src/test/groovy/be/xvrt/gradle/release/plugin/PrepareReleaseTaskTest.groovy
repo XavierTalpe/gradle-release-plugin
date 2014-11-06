@@ -123,7 +123,7 @@ class PrepareReleaseTaskTest {
     void testCustomReleaseVersionClosure() {
         setup:
         project.version = '1.0.0'
-        project.prepareRelease {
+        project.release {
             releaseVersion = { version ->
                 version + '-RC1'
             }

@@ -1,4 +1,5 @@
 package be.xvrt.gradle.release.plugin
+
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -32,8 +33,6 @@ class ReleasePlugin implements Plugin<Project> {
     }
 
     private void createExtension( Project project ) {
-        project.extensions.create( PREPARE_RELEASE_TASK, PrepareReleaseTaskExtension )
-        project.extensions.create( UPDATE_VERSION_TASK, UpdateVersionTaskExtension )
         project.extensions.create( RELEASE_TASK, ReleasePluginExtension, project )
     }
 

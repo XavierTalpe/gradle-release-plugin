@@ -81,9 +81,9 @@ Before starting the actual build, the prepareRelease task will remove the `-SNAP
 
 The project `version` can either be directly declared in the `build.gradle` file or implicitly via a `gradle.properties` file. If a `gradle.properties` file is present and it already contains a `version` property, then this value will be overwritten (and saved) during the release process. If no such file (or property) is present, no attempt will be made to create (or update) a `gradle.properties` file.
 
-The prepareRelease task also offers an extensible closure to insert custom logic when setting the release version. The example below demonstrates how to implement a closure that adds a suffix to the current version.
+The release task also offers an extensible closure to insert custom logic when setting the release version. The example below demonstrates how to implement a closure that adds a suffix to the current version.
 ```
-prepareRelease {
+release {
     releaseVersion = { version ->
         version + 'RC1'
     }
@@ -101,9 +101,9 @@ After the build is successfully created, the current state of the project will b
 ### updateVersion
 After the build is successfully created, the updateVersion task is responsible for incrementing the version number so it's ready for the next (snapshot) build. If the original version was a snapshot release, then the new version will also be a snapshot release, otherwise only the version number is incremented. This version number will also be committed to the SCM.
 
-The updateVersion task offers an extensible closure to insert custom logic when setting the next release or snapshot version. The example below demonstrates how to implement a closure that returns 2.0-SNAPSHOT as next snapshot release.
+The release task offers an extensible closure to insert custom logic when setting the next release or snapshot version. The example below demonstrates how to implement a closure that returns 2.0-SNAPSHOT as next snapshot release.
 ```
-updateVersion {
+release {
     nextVersion = { version, wasSnapshotVersion ->
         '2.0-SNAPSHOT'
     }

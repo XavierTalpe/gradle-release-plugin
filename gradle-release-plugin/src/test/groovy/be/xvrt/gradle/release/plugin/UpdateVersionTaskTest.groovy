@@ -111,7 +111,7 @@ class UpdateVersionTaskTest {
     void testCustomNextVersionClosure() {
         setup:
         project.version = '1.0.0-SNAPSHOT'
-        project.updateVersion {
+        project.release {
             nextVersion = { version, wasSnapshotVersion ->
                 if ( wasSnapshotVersion ) {
                     version = version + '-SNAPSHOT'
