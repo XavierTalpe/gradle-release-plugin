@@ -1,0 +1,49 @@
+plugins {
+    id 'be.xvrt.release' version '0.2.2'
+}
+
+
+/**
+ * Dummy build task. In most projects this task
+ * will already be provided by another plugin.
+ * (For example the Java plugin.)
+ */
+task( 'build' ) << {
+    println "I'm building my project with version ${project.version}, hurrah!"
+}
+
+
+/**
+ * Override the logic to set the release version and
+ * the version for the next build. The initial project
+ * version is defined in the gradle.properties file.
+ */
+release {
+    // Executed before building the release.
+    releaseVersion = { version ->
+        version -= '-SNAPSHOT'
+        version += '-RC1'
+
+        println "Configuring release version to ${version}."
+        version
+    }
+
+    // Executed after building the release.
+    nextVersion = { version, wasSnapshotVersion ->
+        version -= '0-RC1'
+        version += '1'
+
+        if ( wasSnapshotVersion ) {
+            version += '-SNAPSHOT'
+        }
+
+        println "Configuring next version to ${version}."
+        version
+    }
+
+    // Prevent the plugin making tags and commits. Useful for testing purposes only.
+    scmDisabled = true
+}
+
+
+defaultTasks 'release'
