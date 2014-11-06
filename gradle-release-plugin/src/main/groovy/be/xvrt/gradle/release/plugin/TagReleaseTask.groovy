@@ -13,16 +13,23 @@ class TagReleaseTask extends RollbackTask {
 
     @Override
     void run() {
-        def extension = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )
-        def scmRemote = extension.getAt( ReleasePluginExtension.SCM_REMOTE )
-        def tagMessage = extension.getAt( ReleasePluginExtension.TAG_MSG )
-        def commitMessage = extension.getAt( ReleasePluginExtension.COMMIT_MSG )
-        def releaseVersion = project.version
+        def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
 
-        def scmHelper = getScmHelper()
-        commit scmHelper, commitMessage, releaseVersion
-        tag scmHelper, releaseVersion, tagMessage
-        push scmHelper, scmRemote
+        def scmDisabled = extension.getAt ReleasePluginExtension.SCM_DISABLED
+        if ( scmDisabled ) {
+            logger.info( "${LOG_TAG} tagging release skipped because SCM support is disabled." )
+        }
+        else {
+            def scmRemote = extension.getAt ReleasePluginExtension.SCM_REMOTE
+            def tagMessage = extension.getAt ReleasePluginExtension.TAG_MSG
+            def commitMessage = extension.getAt ReleasePluginExtension.COMMIT_MSG
+            def releaseVersion = project.version
+
+            def scmHelper = getScmHelper()
+            commit scmHelper, commitMessage, releaseVersion
+            tag scmHelper, releaseVersion, tagMessage
+            push scmHelper, scmRemote
+        }
     }
 
     private void commit( ScmHelper scmHelper, String commitMessage, String releaseVersion ) {

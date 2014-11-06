@@ -1,4 +1,5 @@
 package be.xvrt.gradle.release.plugin
+
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
@@ -129,7 +130,6 @@ class UpdateVersionTaskTest {
         assertEquals( '1.0.0', updateVersionTask.releasedVersion )
         assertEquals( '1.0.0-SNAPSHOT-2', updateVersionTask.nextVersion )
         assertEquals( '1.0.0-SNAPSHOT-2', project.version )
-
     }
 
 }

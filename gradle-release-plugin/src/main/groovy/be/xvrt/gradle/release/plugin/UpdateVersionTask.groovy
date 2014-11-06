@@ -48,16 +48,23 @@ class UpdateVersionTask extends RollbackTask {
 
     private void commitChanges( String nextVersion ) {
         def extension = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )
-        def scmRemote = extension.getAt( ReleasePluginExtension.SCM_REMOTE )
-        def prepareMessage = extension.getAt( ReleasePluginExtension.PREPARE_MSG )
 
-        def scmHelper = getScmHelper()
+        def scmDisabled = extension.getAt ReleasePluginExtension.SCM_DISABLED
+        if ( scmDisabled ) {
+            logger.info( "${LOG_TAG} committing version skipped because SCM support is disabled." )
+        }
+        else {
+            def scmRemote = extension.getAt( ReleasePluginExtension.SCM_REMOTE )
+            def prepareMessage = extension.getAt( ReleasePluginExtension.PREPARE_MSG )
 
-        logger.info( "${LOG_TAG} committing release to SCM." )
-        scmHelper.commit prepareMessage + nextVersion
+            def scmHelper = getScmHelper()
 
-        logger.info( "${LOG_TAG} pushing local changes to ${scmRemote}" )
-        scmHelper.push scmRemote
+            logger.info( "${LOG_TAG} committing release to SCM." )
+            scmHelper.commit prepareMessage + nextVersion
+
+            logger.info( "${LOG_TAG} pushing local changes to ${scmRemote}" )
+            scmHelper.push scmRemote
+        }
     }
 
     private ScmHelper getScmHelper() {

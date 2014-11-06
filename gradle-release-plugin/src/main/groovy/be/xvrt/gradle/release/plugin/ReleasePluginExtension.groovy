@@ -6,6 +6,8 @@ class ReleasePluginExtension {
 
     public static final String NAME = ReleasePlugin.RELEASE_TASK
 
+    // TODO: Document and unit test.
+    public static final String SCM_DISABLED = 'scmDisabled'
     public static final String SCM_ROOT_DIR = 'scmRootDir'
     public static final String SCM_REMOTE = 'scmRemote'
     public static final String SCM_USERNAME = 'scmUsername'
@@ -18,6 +20,7 @@ class ReleasePluginExtension {
     public static final String RELEASE_VERSION = 'releaseVersion'
     public static final String NEXT_VERSION = 'nextVersion'
 
+    boolean scmDisabled;
     String scmRootDir;
     String scmRemote;
 
@@ -29,6 +32,7 @@ class ReleasePluginExtension {
     Closure<String> nextVersion;
 
     ReleasePluginExtension( Project project ) {
+        scmDisabled = false
         scmRootDir = project.rootDir
         scmRemote = 'origin'
 
