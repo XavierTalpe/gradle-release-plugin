@@ -30,13 +30,21 @@ class UpdateVersionTask extends RollbackTask {
     }
 
     private String buildNextVersion( String version ) {
-        def extension = project.extensions.getByName ReleasePluginExtension.NAME
-        def nextVersionClosure = extension.getAt ReleasePluginExtension.NEXT_VERSION
+        // Allow user to directly specify the next version from the
+        // command line using -PnextVersion=XXX. This takes
+        // precedence over executing the closure.
+        if ( project.hasProperty( ReleasePluginExtension.NEXT_VERSION ) ) {
+            project.property ReleasePluginExtension.NEXT_VERSION
+        }
+        else {
+            def extension = project.extensions.getByName ReleasePluginExtension.NAME
+            def nextVersionClosure = extension.getAt ReleasePluginExtension.NEXT_VERSION
 
-        def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
-        def wasSnapshotVersion = prepareReleaseTask.wasSnapshotVersion()
+            def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
+            def wasSnapshotVersion = prepareReleaseTask.wasSnapshotVersion()
 
-        nextVersionClosure version, wasSnapshotVersion
+            nextVersionClosure version, wasSnapshotVersion
+        }
     }
 
     private void saveVersion( String nextVersion ) {

@@ -49,24 +49,17 @@ class ReleasePluginExtension {
         }
 
         nextVersion = { version, wasSnapshotVersion ->
-            // Allow user to directly specify the next version
-            // from the command line using -PnextVersion=XXX.
-            if ( project.hasProperty( NEXT_VERSION ) ) {
-                project.property NEXT_VERSION
+            def lastDotIndex = version.findLastIndexOf { "." }
+            def lastVersion = version.substring( lastDotIndex, version.length() )
+            def incrementedVersionNumber = Integer.parseInt( lastVersion ) + 1
+
+            def nextVersion = version.substring( 0, lastDotIndex ) + incrementedVersionNumber
+
+            if ( wasSnapshotVersion ) {
+                nextVersion += '-SNAPSHOT'
             }
-            else {
-                def lastDotIndex = version.findLastIndexOf { "." }
-                def lastVersion = version.substring( lastDotIndex, version.length() )
-                def incrementedVersionNumber = Integer.parseInt( lastVersion ) + 1
 
-                def nextVersion = version.substring( 0, lastDotIndex ) + incrementedVersionNumber
-
-                if ( wasSnapshotVersion ) {
-                    nextVersion += '-SNAPSHOT'
-                }
-
-                nextVersion
-            }
+            nextVersion
         }
     }
 

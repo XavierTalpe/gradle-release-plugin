@@ -4,6 +4,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -66,14 +67,13 @@ class UpdateVersionTaskTest {
 
         def project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
         project.apply plugin: ReleasePlugin
+        project.version = '1.0.0-SNAPSHOT'
 
         def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
         def updateVersionTask = project.tasks.getByName ReleasePlugin.UPDATE_VERSION_TASK
 
-        project.version = '1.0.0-SNAPSHOT'
-        prepareReleaseTask.configure()
-
         when:
+        prepareReleaseTask.configure()
         updateVersionTask.execute()
 
         then:
@@ -91,14 +91,13 @@ class UpdateVersionTaskTest {
 
         def project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
         project.apply plugin: ReleasePlugin
+        project.version = '1.0.0-SNAPSHOT' // TODO: Trigger project to read properties file instead.
 
         def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
         def updateVersionTask = project.tasks.getByName ReleasePlugin.UPDATE_VERSION_TASK
 
-        project.version = '1.0.0-SNAPSHOT' // TODO: Trigger project to read properties file instead.
-        prepareReleaseTask.configure()
-
         when:
+        prepareReleaseTask.configure()
         updateVersionTask.execute()
 
         then:
@@ -130,6 +129,43 @@ class UpdateVersionTaskTest {
         assertEquals( '1.0.0', updateVersionTask.releasedVersion )
         assertEquals( '1.0.0-SNAPSHOT-2', updateVersionTask.nextVersion )
         assertEquals( '1.0.0-SNAPSHOT-2', project.version )
+    }
+
+    @Ignore
+    @Test
+    void testSetNextVersionProperty() {
+        setup:
+        def propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
+        propertiesFile.withWriter { w ->
+            w.writeLine 'version=1.0.0-SNAPSHOT'
+        }
+
+        def buildFile = temporaryFolder.newFile( 'build.gradle' )
+        buildFile.withWriter { w ->
+            w.writeLine 'buildscript {'
+            w.writeLine '  repositories {'
+            w.writeLine '    flatDir dirs: "/home/xaviert/projects/gradle-release-plugin/gradle-release-plugin/build/libs/"'
+            w.writeLine '  }'
+            w.writeLine '  dependencies {'
+            w.writeLine '    classpath "be.xvrt:be.xvrt.release:0.2.2"'
+            w.writeLine '  }'
+            w.writeLine '}'
+        }
+
+        when:
+        def command = 'gradle release -PnextVersion=2.0.0-SNAPSHOT'
+        def process = command.execute()
+        process.waitFor()
+
+        then:
+        println "return code: ${process.exitValue()}"
+        println "stderr: ${process.err.text}"
+        println "stdout: ${process.in.text}"
+
+        def properties = new Properties()
+        propertiesFile.withInputStream { properties.load( it ) }
+
+        assertEquals( '2.0.0-SNAPSHOT', properties.version )
     }
 
 }
