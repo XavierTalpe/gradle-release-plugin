@@ -37,10 +37,10 @@ $ gradle release
 This will automatically trigger an existing `build` task and ensure the correct version is used to build the release. For projects that don't have a build task or need to modify the default behaviour, see the [release](#release) task documentation.
 
 ### Specifying the version
-There are multiple options to provide the version for building the project:
-- Initialize the version in your build.gradle file.
-- Add a `version` property to your gradle.properties file. If the build was successful, the updated version will be stored in this file.
-- Passing in a parameter `-Pversion=XXX` from the command line.
+There are multiple options to provide the version for building the project. **In order of priority**:
+- Passing in a parameter `-Pversion=XXX` from the command line when invoking Gradle.
+- Set the version in your `build.gradle` file.
+- Add a `version` property to your `gradle.properties` file. If the build was successful, the updated version will also be stored in this file.
 
 
 ## Limitations
