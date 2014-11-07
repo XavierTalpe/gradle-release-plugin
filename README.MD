@@ -34,7 +34,7 @@ To trigger a new release using this plugin, simply run
 $ gradle release
 ```
 
-This will automatically trigger an existing `build` task and ensure the correct version is used to build the release.
+This will automatically trigger an existing `build` task and ensure the correct version is used to build the release. For projects that don't have a build task or need to modify the default behaviour, see the [release](#release) task documentation.
 
 ### Specifying the version
 There are multiple options to provide the version for building the project:
