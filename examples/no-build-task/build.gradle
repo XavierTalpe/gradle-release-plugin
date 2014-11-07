@@ -1,5 +1,0 @@
-plugins {
-    id 'be.xvrt.release' version '0.2.2'
-}
-
-version = '1.0.0-SNAPSHOT'

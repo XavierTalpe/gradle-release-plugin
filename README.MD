@@ -115,9 +115,9 @@ The release tasks is responsible for wiring all the other tasks together. It als
 
 By default the release task will use the `build` task to wire everything together. This task is typically provided by external plugins such as the Java plugin. To override this behaviour, use the following code:
 ```
-release.dependsOn customBuild
-tagRelease.dependsOn customBuild
-updateVersion.dependsOn customBuild
+tasks.release.dependsOn customBuild
+tasks.tagRelease.dependsOn customBuild
+tasks.updateVersion.dependsOn customBuild
 
-customBuild.mustRunAfter prepareRelease
+customBuild.mustRunAfter tasks.prepareRelease
 ```

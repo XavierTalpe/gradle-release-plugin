@@ -1,0 +1,35 @@
+plugins {
+    id 'be.xvrt.release' version '0.2.2'
+}
+
+
+/**
+ * Most projects have a default build task that is provided
+ * by another plugin (for example the Java plugin). In this
+ * example, we have another custom build task: customBuild.
+ */
+task( 'customBuild' ) << {
+    println "I'm building my project with version ${project.version}, hurrah!"
+}
+
+
+/**
+ * To connect the customBuild task with the release
+ * plugin, some manual wiring is required.
+ */
+tasks.release.dependsOn customBuild
+tasks.tagRelease.dependsOn customBuild
+tasks.updateVersion.dependsOn customBuild
+
+customBuild.mustRunAfter tasks.prepareRelease
+
+
+/**
+ * Additional configuration for CI build below. Can be ignored.
+ */
+task( 'check', dependsOn: 'release' ) {
+}
+
+release {
+    scmDisabled = true
+}

@@ -40,14 +40,15 @@ release {
         println "Configuring next version to ${version}."
         version
     }
-
-    // Prevent the plugin making tags and commits. Useful for testing purposes only.
-    scmDisabled = true
 }
 
 
 /**
- * Additional task for Travis CI build,
+ * Additional configuration for CI build below. Can be ignored.
  */
 task( 'check', dependsOn: 'release' ) {
+}
+
+release {
+    scmDisabled = true
 }
