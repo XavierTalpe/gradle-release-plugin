@@ -46,7 +46,7 @@ class ReleasePlugin implements Plugin<Project> {
         prepareReleaseTask.description = 'Sets the release version before the release build is started.'
 
         tagReleaseTask.group = RELEASE_GROUP
-        tagReleaseTask.description = 'TODO'
+        tagReleaseTask.description = 'Commits and tags this release to the SCM.'
         tagReleaseTask.dependsOn prepareReleaseTask
 
         updateVersionTask.group = RELEASE_GROUP

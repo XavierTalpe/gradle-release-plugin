@@ -71,7 +71,7 @@ release {
 Task | Description
 --- | ---
 prepareRelease | Sets the release version before the release build is started.
-tagRelease | TODO
+tagRelease | Commits and tags this release to the SCM.
 updateVersion | Sets the version for the next snapshot build and commits this change to the SCM.
 release | Parent task of this plugin. Ensures all other tasks are executed at the right time.
 
@@ -91,11 +91,9 @@ release {
 ```
 
 ### tagRelease
-TODO
-After the build is successfully created, the current state of the project will be committed and tagged.
+If the release was successfully created, the current state of the project (all modified files) will be committed and tagged.
 
-- Commit released version and all modified files
-- Tag previous commit
+TODO
 - Add example to tag only after uploading archives
 
 ### updateVersion
