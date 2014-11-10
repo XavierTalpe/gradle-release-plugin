@@ -26,7 +26,7 @@ class GradlePropertiesTest {
     void testSaveVersion() {
         setup:
         def propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
-        propertiesFile.withWriter { w -> w.writeLine 'version=1.0.0-SNAPSHOT' }
+        propertiesFile << 'version=1.0.0-SNAPSHOT'
 
         when:
         gradleProperties.saveVersion( '1.0.0' )

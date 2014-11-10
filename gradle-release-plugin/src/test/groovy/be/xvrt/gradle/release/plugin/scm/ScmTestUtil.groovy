@@ -18,6 +18,7 @@ class ScmTestUtil {
         FileRepositoryBuilder.create( new File( directory, ".git" ) );
     }
 
+    // TODO
     static Repository addOrigin( Repository repository, Repository originRepository ) {
         def config = new Config()
         config.setString( "remote", "origin", "pushurl", "short:project.git" );

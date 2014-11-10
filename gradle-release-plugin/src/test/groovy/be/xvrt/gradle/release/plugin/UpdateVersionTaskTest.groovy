@@ -85,7 +85,7 @@ class UpdateVersionTaskTest {
     void testNextReleaseWithPropertiesFile() {
         setup:
         def propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
-        propertiesFile.withWriter { w -> w.writeLine 'version=1.0.0-SNAPSHOT' }
+        propertiesFile << 'version=1.0.0-SNAPSHOT'
 
         def project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
         project.apply plugin: ReleasePlugin
@@ -133,9 +133,7 @@ class UpdateVersionTaskTest {
     void testSetNextVersionProperty() {
         setup:
         def propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
-        propertiesFile.withWriter { w ->
-            w.writeLine 'version=1.0.0-SNAPSHOT'
-        }
+        propertiesFile << 'version=1.0.0-SNAPSHOT'
 
         def buildFile = temporaryFolder.newFile( 'build.gradle' )
         buildFile.withWriter { w ->
