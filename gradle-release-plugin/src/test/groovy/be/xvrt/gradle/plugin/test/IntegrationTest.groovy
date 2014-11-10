@@ -21,10 +21,10 @@ abstract class IntegrationTest {
     }
 
     private void writeBuildFile() {
-        def workingDir = System.getProperty( 'user.dir' )
+        def workingDir = System.getProperty 'user.dir'
         def pluginPath = new File( workingDir, 'build/libs/release-plugin-0.3.0-SNAPSHOT.jar' )
 
-        buildFile = temporaryFolder.newFile( 'build.gradle' )
+        buildFile = temporaryFolder.newFile 'build.gradle'
         buildFile.withWriter { w ->
             w.writeLine 'buildscript {'
             w.writeLine '  dependencies {'
@@ -36,7 +36,7 @@ abstract class IntegrationTest {
     }
 
     private void writePropertiesFile() {
-        propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
+        propertiesFile = temporaryFolder.newFile 'gradle.properties'
     }
 
     protected void appendToBuildFile( String line ) {
@@ -61,7 +61,11 @@ abstract class IntegrationTest {
     }
 
     protected void execute( String task ) {
-        def command = 'gradle ' + task
+        // TODO: Dynamically choose between Gradle command line tool and wrapper.
+        def workingDir = System.getProperty 'user.dir'
+        def gradleWrapper = new File( workingDir, '../gradlew' )
+
+        def command = gradleWrapper.toString() + ' ' + task
         def process = command.execute null, temporaryFolder.root
         process.waitFor()
 
