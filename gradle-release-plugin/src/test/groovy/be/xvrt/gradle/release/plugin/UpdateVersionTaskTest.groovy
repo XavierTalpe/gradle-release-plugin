@@ -1,4 +1,5 @@
 package be.xvrt.gradle.release.plugin
+
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
@@ -127,38 +128,6 @@ class UpdateVersionTaskTest {
         assertEquals( '1.0.0', updateVersionTask.releasedVersion )
         assertEquals( '1.0.0-SNAPSHOT-2', updateVersionTask.nextVersion )
         assertEquals( '1.0.0-SNAPSHOT-2', project.version )
-    }
-
-    @Test
-    void testSetNextVersionProperty() {
-        setup:
-        def propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
-        propertiesFile << 'version=1.0.0-SNAPSHOT'
-
-        def buildFile = temporaryFolder.newFile( 'build.gradle' )
-        buildFile.withWriter { w ->
-            w.writeLine 'buildscript {'
-            w.writeLine '  dependencies {'
-            w.writeLine '    classpath files( "/home/xaviert/projects/gradle-release-plugin/gradle-release-plugin/build/libs/release-plugin-0.3.0-SNAPSHOT.jar" )'
-            w.writeLine '  }'
-            w.writeLine '}'
-            w.writeLine 'apply plugin: "be.xvrt.release"'
-        }
-
-        when:
-        def command = 'gradle release -PnextVersion=2.0.0-SNAPSHOT'
-        def process = command.execute( null, temporaryFolder.root )
-        process.waitFor()
-
-        then:
-        println "return code: ${process.exitValue()}"
-        println "stderr: ${process.err.text}"
-        println "stdout: ${process.in.text}"
-
-        def properties = new Properties()
-        propertiesFile.withInputStream { properties.load( it ) }
-
-        assertEquals( '2.0.0-SNAPSHOT', properties.version )
     }
 
 }
