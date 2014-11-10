@@ -27,7 +27,6 @@ dependencies {
     compile 'org.eclipse.jgit:org.eclipse.jgit:3.5.1.201410131835-r'
 
     testCompile 'junit:junit:4.11'
-    testCompile 'com.netflix.nebula:nebula-test:1.12.+'
 }
 
 compileGroovy {

@@ -1,10 +1,8 @@
 package be.xvrt.gradle.release.plugin
-
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -131,7 +129,6 @@ class UpdateVersionTaskTest {
         assertEquals( '1.0.0-SNAPSHOT-2', project.version )
     }
 
-    @Ignore
     @Test
     void testSetNextVersionProperty() {
         setup:
@@ -143,18 +140,16 @@ class UpdateVersionTaskTest {
         def buildFile = temporaryFolder.newFile( 'build.gradle' )
         buildFile.withWriter { w ->
             w.writeLine 'buildscript {'
-            w.writeLine '  repositories {'
-            w.writeLine '    flatDir dirs: "/home/xaviert/projects/gradle-release-plugin/gradle-release-plugin/build/libs/"'
-            w.writeLine '  }'
             w.writeLine '  dependencies {'
-            w.writeLine '    classpath "be.xvrt:be.xvrt.release:0.2.2"'
+            w.writeLine '    classpath files( "/home/xaviert/projects/gradle-release-plugin/gradle-release-plugin/build/libs/release-plugin-0.3.0-SNAPSHOT.jar" )'
             w.writeLine '  }'
             w.writeLine '}'
+            w.writeLine 'apply plugin: "be.xvrt.release"'
         }
 
         when:
         def command = 'gradle release -PnextVersion=2.0.0-SNAPSHOT'
-        def process = command.execute()
+        def process = command.execute( null, temporaryFolder.root )
         process.waitFor()
 
         then:
