@@ -22,7 +22,7 @@ abstract class IntegrationTest {
 
     private void writeBuildFile() {
         def workingDir = System.getProperty( 'user.dir' )
-        def pluginPath = new File( workingDir, "gradle-release-plugin/build/libs/release-plugin-0.3.0-SNAPSHOT.jar" )
+        def pluginPath = new File( workingDir, 'build/libs/release-plugin-0.3.0-SNAPSHOT.jar' )
 
         buildFile = temporaryFolder.newFile( 'build.gradle' )
         buildFile.withWriter { w ->
