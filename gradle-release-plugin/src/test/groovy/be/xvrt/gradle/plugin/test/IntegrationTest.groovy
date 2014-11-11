@@ -69,10 +69,13 @@ abstract class IntegrationTest {
         def process = command.execute null, temporaryFolder.root
         process.waitFor()
 
-        assertEquals 0, process.exitValue()
-        //        println "return code: ${process.exitValue()}"
-        //        println "stderr: ${process.err.text}"
-        //        println "stdout: ${process.in.text}"
+        def exitValue = process.exitValue()
+        if ( exitValue == 1 ) {
+            System.out.println process.in.text
+            System.err.println process.err.text
+        }
+
+        assertEquals 0, exitValue
     }
 
 }
