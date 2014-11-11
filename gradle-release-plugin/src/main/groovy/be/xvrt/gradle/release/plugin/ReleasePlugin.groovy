@@ -8,6 +8,7 @@ import org.gradle.api.execution.TaskExecutionGraph
 class ReleasePlugin implements Plugin<Project> {
 
     public static final String PREPARE_RELEASE_TASK = 'prepareRelease'
+    public static final String COMMIT_RELEASE_TASK = 'commitRelease'
     public static final String TAG_RELEASE_TASK = 'tagRelease'
     public static final String UPDATE_VERSION_TASK = 'updateVersion'
     public static final String RELEASE_TASK = 'release'
@@ -15,6 +16,7 @@ class ReleasePlugin implements Plugin<Project> {
     public static final String RELEASE_GROUP = 'release'
 
     private Task prepareReleaseTask
+    private Task commitReleaseTask
     private Task tagReleaseTask
     private Task updateVersionTask
     private Task releaseTask
@@ -38,6 +40,7 @@ class ReleasePlugin implements Plugin<Project> {
 
     private void createTasks( Project project ) {
         prepareReleaseTask = project.tasks.create( PREPARE_RELEASE_TASK, PrepareReleaseTask )
+        commitReleaseTask = project.tasks.create( COMMIT_RELEASE_TASK, CommitReleaseTask )
         tagReleaseTask = project.tasks.create( TAG_RELEASE_TASK, TagReleaseTask )
         updateVersionTask = project.tasks.create( UPDATE_VERSION_TASK, UpdateVersionTask )
         releaseTask = project.tasks.create( RELEASE_TASK, ReleaseTask )
@@ -45,9 +48,13 @@ class ReleasePlugin implements Plugin<Project> {
         prepareReleaseTask.group = RELEASE_GROUP
         prepareReleaseTask.description = 'Sets the release version before the release build is started.'
 
+        commitReleaseTask.group = RELEASE_GROUP
+        commitReleaseTask.description = 'Commits any file changes for this release to the SCM.'
+        commitReleaseTask.dependsOn prepareReleaseTask
+
         tagReleaseTask.group = RELEASE_GROUP
-        tagReleaseTask.description = 'Commits and tags this release to the SCM.'
-        tagReleaseTask.dependsOn prepareReleaseTask
+        tagReleaseTask.description = 'Tags this release to the SCM.'
+        tagReleaseTask.dependsOn commitReleaseTask
 
         updateVersionTask.group = RELEASE_GROUP
         updateVersionTask.description = 'Sets the version for the next snapshot build and commits this change to the SCM.'
@@ -62,6 +69,7 @@ class ReleasePlugin implements Plugin<Project> {
         def buildTask = project.tasks.findByName 'build'
         if ( buildTask ) {
             releaseTask.dependsOn buildTask
+            commitReleaseTask.dependsOn buildTask
             tagReleaseTask.dependsOn buildTask
             updateVersionTask.dependsOn buildTask
 
@@ -76,11 +84,12 @@ class ReleasePlugin implements Plugin<Project> {
         if ( taskGraph.hasTask( prepareReleaseTask ) ) {
             prepareReleaseTask.configure()
         }
-
+        if ( taskGraph.hasTask( commitReleaseTask ) ) {
+            commitReleaseTask.configure()
+        }
         if ( taskGraph.hasTask( tagReleaseTask ) ) {
             tagReleaseTask.configure()
         }
-
         if ( taskGraph.hasTask( updateVersionTask ) ) {
             updateVersionTask.configure()
         }

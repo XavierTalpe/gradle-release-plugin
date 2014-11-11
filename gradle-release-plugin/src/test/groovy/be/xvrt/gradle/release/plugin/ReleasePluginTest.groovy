@@ -20,16 +20,19 @@ class ReleasePluginTest {
     @Test
     void testAllTasksAddedToProject() {
         def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
+        def commitReleaseTask = project.tasks.getByName ReleasePlugin.COMMIT_RELEASE_TASK
         def tagReleaseTask = project.tasks.getByName ReleasePlugin.TAG_RELEASE_TASK
         def updateVersionTask = project.tasks.getByName ReleasePlugin.UPDATE_VERSION_TASK
         def releaseTask = project.tasks.getByName ReleasePlugin.RELEASE_TASK
 
         assertTrue( prepareReleaseTask instanceof PrepareReleaseTask )
+        assertTrue( commitReleaseTask instanceof CommitReleaseTask )
         assertTrue( tagReleaseTask instanceof TagReleaseTask )
         assertTrue( updateVersionTask instanceof UpdateVersionTask )
         assertTrue( releaseTask instanceof ReleaseTask )
 
-        assertTrue( tagReleaseTask.dependsOn.contains( prepareReleaseTask ) )
+        assertTrue( commitReleaseTask.dependsOn.contains( prepareReleaseTask ) )
+        assertTrue( tagReleaseTask.dependsOn.contains( commitReleaseTask ) )
         assertTrue( updateVersionTask.dependsOn.contains( tagReleaseTask ) )
 
         assertTrue( releaseTask.dependsOn.contains( prepareReleaseTask ) )
@@ -56,6 +59,7 @@ class ReleasePluginTest {
     void testEnsureReleaseDependsOnBuild() {
         setup:
         def buildTask = project.tasks.create 'build'
+        def commitReleaseTask = project.tasks.getByName ReleasePlugin.COMMIT_RELEASE_TASK
         def tagReleaseTask = project.tasks.getByName ReleasePlugin.TAG_RELEASE_TASK
         def updateVersionTask = project.tasks.getByName ReleasePlugin.UPDATE_VERSION_TASK
         def releaseTask = project.tasks.getByName ReleasePlugin.RELEASE_TASK
@@ -64,9 +68,10 @@ class ReleasePluginTest {
         project.evaluate()
 
         then:
-        releaseTask.dependsOn.contains buildTask
-        tagReleaseTask.dependsOn.contains buildTask
-        updateVersionTask.dependsOn.contains buildTask
+        assertTrue( releaseTask.dependsOn.contains( buildTask ) )
+        assertTrue( commitReleaseTask.dependsOn.contains( buildTask ) )
+        assertTrue( tagReleaseTask.dependsOn.contains( buildTask ) )
+        assertTrue( updateVersionTask.dependsOn.contains( buildTask ) )
     }
 
 }

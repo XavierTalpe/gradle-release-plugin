@@ -4,6 +4,7 @@ import be.xvrt.gradle.release.plugin.scm.ScmException
 import be.xvrt.gradle.release.plugin.scm.ScmTestUtil
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.revwalk.RevCommit
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskExecutionException
@@ -17,7 +18,7 @@ import static junit.framework.Assert.fail
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertTrue
 
-class TagReleaseTaskTest {
+class CommitReleaseTaskTest {
 
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -25,7 +26,7 @@ class TagReleaseTaskTest {
     private Repository gradleRepository
 
     private Project project
-    private Task tagReleaseTask
+    private Task commitReleaseTask
 
     @Before
     void setUp() {
@@ -35,16 +36,16 @@ class TagReleaseTaskTest {
         project.apply plugin: ReleasePlugin
         project.version = '1.0.0'
 
-        tagReleaseTask = project.tasks.getByName ReleasePlugin.TAG_RELEASE_TASK
+        commitReleaseTask = project.tasks.getByName ReleasePlugin.COMMIT_RELEASE_TASK
     }
 
     @Test
     void testExecuteGit() {
         when:
-        tagReleaseTask.configure()
+        commitReleaseTask.configure()
 
         try {
-            tagReleaseTask.execute()
+            commitReleaseTask.execute()
             fail() // TODO Fails due to no origin specified.
         }
         catch ( TaskExecutionException expected ) {
@@ -52,14 +53,42 @@ class TagReleaseTaskTest {
         }
 
         then:
-        verifyTag()
+        verifyCommit()
     }
 
-    private void verifyTag() {
-        def allTags = new Git( gradleRepository ).tagList().call();
+    private void verifyCommit() {
+        Iterable<RevCommit> commitLog = new Git( gradleRepository ).log().call();
 
-        assertEquals( 1, allTags.size() )
-        assertEquals( 'refs/tags/1.0.0', allTags.get( 0 ).getName() )
+        def nbCommits = 0;
+        for ( RevCommit commit : commitLog ) {
+            assertEquals( '[Gradle Release] Commit for 1.0.0.', commit.getShortMessage() )
+            nbCommits++;
+        }
+
+        assertEquals( 1, nbCommits )
+    }
+
+    @Test
+    void 'no commit made when SCM support is disabled'() {
+        setup:
+        project.release {
+            scmDisabled = true
+        }
+
+
+        when:
+        commitReleaseTask.configure()
+        commitReleaseTask.execute()
+
+        then:
+        Iterable<RevCommit> commitLog = new Git( gradleRepository ).log().call();
+
+        def nbCommits = 0;
+        for ( RevCommit commit : commitLog ) {
+            nbCommits++;
+        }
+
+        assertEquals( 0, nbCommits )
     }
 
 }

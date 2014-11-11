@@ -11,7 +11,6 @@ class ReleasePluginExtension {
     public static final String SCM_ROOT_DIR = 'scmRootDir'
     public static final String SCM_REMOTE = 'scmRemote'
 
-    // TODO: Add a commitRelease task before tagRelease
     public static final String RELEASE_COMMIT_MSG = 'releaseCommitMessage'
     public static final String RELEASE_TAG = 'releaseTag'
     public static final String RELEASE_TAG_MSG = 'releaseTagMessage'

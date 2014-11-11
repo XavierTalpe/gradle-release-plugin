@@ -25,7 +25,7 @@ class ReleasePluginExtensionTest {
     @Test
     void testDefaultValues() {
         then:
-        assertFalse project.release.scmDisabled
+        assertFalse( project.release.scmDisabled )
 
         assertEquals( temporaryFolder.root.toString(), project.release.scmRootDir )
         assertEquals( 'origin', project.release.scmRemote )
@@ -53,6 +53,7 @@ class ReleasePluginExtensionTest {
 
         then:
         assertTrue project.release.scmDisabled
+
         assertEquals( '~/home/xaviert', project.release.scmRootDir )
         assertEquals( 'origin2', project.release.scmRemote )
 
