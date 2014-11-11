@@ -5,6 +5,7 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 
 import static org.junit.Assert.assertEquals
+import static org.junit.Assume.assumeFalse
 
 abstract class IntegrationTest {
 
@@ -61,11 +62,10 @@ abstract class IntegrationTest {
     }
 
     protected void execute( String task ) {
-        // TODO: Dynamically choose between Gradle command line tool and wrapper.
-        def workingDir = System.getProperty 'user.dir'
-        def gradleWrapper = new File( workingDir, '../gradlew' )
+        def isTravisCI = Boolean.parseBoolean( System.getenv( 'TRAVIS' ) )
+        assumeFalse 'Skipping integration tests.', isTravisCI
 
-        def command = gradleWrapper.toString() + ' ' + task
+        def command = 'gradle ' + task
         def process = command.execute null, temporaryFolder.root
         process.waitFor()
 
