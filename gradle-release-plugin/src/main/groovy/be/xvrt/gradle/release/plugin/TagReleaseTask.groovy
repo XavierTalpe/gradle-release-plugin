@@ -21,24 +21,30 @@ class TagReleaseTask extends RollbackTask {
         }
         else {
             def scmRemote = extension.getAt ReleasePluginExtension.SCM_REMOTE
-            def tagMessage = extension.getAt ReleasePluginExtension.TAG_MSG
-            def commitMessage = extension.getAt ReleasePluginExtension.COMMIT_MSG
+            def tagName = extension.getAt ReleasePluginExtension.RELEASE_TAG
+            def tagMessage = extension.getAt ReleasePluginExtension.RELEASE_TAG_MSG
+            def commitMessage = extension.getAt ReleasePluginExtension.RELEASE_COMMIT_MSG
             def releaseVersion = project.version
 
             def scmHelper = getScmHelper()
             commit scmHelper, commitMessage, releaseVersion
-            tag scmHelper, releaseVersion, tagMessage
+            tag scmHelper, tagName, tagMessage, releaseVersion
             push scmHelper, scmRemote
         }
     }
 
     private void commit( ScmHelper scmHelper, String commitMessage, String releaseVersion ) {
         logger.info( "${LOG_TAG} committing release to SCM." )
-        scmHelper.commit commitMessage + releaseVersion
+
+        commitMessage = commitMessage.replaceAll( '%version', releaseVersion )
+        scmHelper.commit commitMessage
     }
 
-    private void tag( ScmHelper scmHelper, String releaseVersion, String tagMessage ) {
+    private void tag( ScmHelper scmHelper, String tag, String tagMessage, String releaseVersion ) {
         logger.info( "${LOG_TAG} tagging release to SCM." )
+
+        tag = tag.replaceAll( '%version', releaseVersion )
+        tagMessage = tagMessage.replaceAll( '%version', releaseVersion )
         scmHelper.tag releaseVersion, tagMessage + releaseVersion
     }
 

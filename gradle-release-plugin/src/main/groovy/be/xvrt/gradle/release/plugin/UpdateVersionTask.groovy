@@ -63,7 +63,7 @@ class UpdateVersionTask extends RollbackTask {
         }
         else {
             def scmRemote = extension.getAt( ReleasePluginExtension.SCM_REMOTE )
-            def prepareMessage = extension.getAt( ReleasePluginExtension.PREPARE_MSG )
+            def prepareMessage = extension.getAt( ReleasePluginExtension.UPDATE_VERSION_COMMIT_MSG )
 
             def scmHelper = getScmHelper()
 

@@ -23,7 +23,6 @@ class TagReleaseTaskTest {
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    private Repository originRepository
     private Repository gradleRepository
 
     private Project project
@@ -31,14 +30,9 @@ class TagReleaseTaskTest {
 
     @Before
     void setUp() {
-        def gitOriginDir = temporaryFolder.newFolder()
-        def gradleProjectDir = temporaryFolder.newFolder()
+        gradleRepository = ScmTestUtil.createGitRepository( temporaryFolder.root )
 
-        originRepository = ScmTestUtil.createGitRepository( gitOriginDir )
-        gradleRepository = ScmTestUtil.createGitRepository( gradleProjectDir )
-
-
-        project = ProjectBuilder.builder().withProjectDir( gradleProjectDir ).build()
+        project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
         project.apply plugin: ReleasePlugin
         project.version = '1.0.0'
 
@@ -52,22 +46,15 @@ class TagReleaseTaskTest {
 
         try {
             tagReleaseTask.execute()
-            fail()
+            fail() // TODO Fails due to no origin specified.
         }
         catch ( TaskExecutionException expected ) {
             assertTrue( expected.cause instanceof ScmException )
         }
 
         then:
-        verifyTag()
         verifyCommit()
-    }
-
-    private void verifyTag() {
-        def allTags = new Git( gradleRepository ).tagList().call();
-
-        assertEquals( 1, allTags.size() )
-        assertEquals( 'refs/tags/1.0.0', allTags.get( 0 ).getName() )
+        verifyTag()
     }
 
     private void verifyCommit() {
@@ -75,11 +62,18 @@ class TagReleaseTaskTest {
 
         def nbCommits = 0;
         for ( RevCommit commit : commitLog ) {
-            assertEquals( '[Gradle Release Plugin] Saving release 1.0.0', commit.getShortMessage() )
+            assertEquals( '[Gradle Release] Commit for 1.0.0.', commit.getShortMessage() )
             nbCommits++;
         }
 
         assertEquals( 1, nbCommits )
+    }
+
+    private void verifyTag() {
+        def allTags = new Git( gradleRepository ).tagList().call();
+
+        assertEquals( 1, allTags.size() )
+        assertEquals( 'refs/tags/1.0.0', allTags.get( 0 ).getName() )
     }
 
 }

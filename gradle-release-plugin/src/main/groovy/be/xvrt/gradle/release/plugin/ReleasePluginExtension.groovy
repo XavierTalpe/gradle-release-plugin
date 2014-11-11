@@ -6,39 +6,43 @@ class ReleasePluginExtension {
 
     public static final String NAME = ReleasePlugin.RELEASE_TASK
 
-    // TODO: Document and unit test.
     public static final String SCM_DISABLED = 'scmDisabled'
+
     public static final String SCM_ROOT_DIR = 'scmRootDir'
     public static final String SCM_REMOTE = 'scmRemote'
-    public static final String SCM_USERNAME = 'scmUsername'
-    public static final String SCM_PASSWORD = 'scmPassword'
 
-    public static final String COMMIT_MSG = 'commitMessage'
-    public static final String TAG_MSG = 'tagMessage'
-    public static final String PREPARE_MSG = 'prepareMessage'
+    // TODO: Add a commitRelease task before tagRelease
+    public static final String RELEASE_COMMIT_MSG = 'releaseCommitMessage'
+    public static final String RELEASE_TAG = 'releaseTag'
+    public static final String RELEASE_TAG_MSG = 'releaseTagMessage'
+    public static final String UPDATE_VERSION_COMMIT_MSG = 'updateVersionCommitMessage'
 
     public static final String RELEASE_VERSION = 'releaseVersion'
     public static final String NEXT_VERSION = 'nextVersion'
 
     boolean scmDisabled;
+
     String scmRootDir;
     String scmRemote;
 
-    String commitMessage;
-    String tagMessage;
-    String prepareMessage;
+    String releaseCommitMessage;
+    String releaseTag;
+    String releaseTagMessage;
+    String updateVersionCommitMessage;
 
     Closure<String> releaseVersion;
     Closure<String> nextVersion;
 
     ReleasePluginExtension( Project project ) {
         scmDisabled = false
+
         scmRootDir = project.rootDir
         scmRemote = 'origin'
 
-        commitMessage = '[Gradle Release Plugin] Saving release '
-        tagMessage = '[Gradle Release Plugin] Tag for '
-        prepareMessage = '[Gradle Release Plugin] Preparing for '
+        releaseCommitMessage = '[Gradle Release] Commit for %version.'
+        releaseTag = '%version'
+        releaseTagMessage = '[Gradle Release] Tag for %version.'
+        updateVersionCommitMessage = '[Gradle Release] Preparing for %version.'
 
         releaseVersion = { version ->
             if ( version.endsWith( '-SNAPSHOT' ) ) {

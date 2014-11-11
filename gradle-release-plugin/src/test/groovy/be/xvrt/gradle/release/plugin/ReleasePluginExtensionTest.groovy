@@ -7,7 +7,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-import static org.junit.Assert.assertEquals
+import static org.junit.Assert.*
 
 class ReleasePluginExtensionTest {
 
@@ -18,45 +18,48 @@ class ReleasePluginExtensionTest {
 
     @Before
     void setUp() {
-        project = ProjectBuilder.builder().withName( 'lib42' ).withProjectDir( temporaryFolder.root ).build()
+        project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
         project.apply plugin: ReleasePlugin
     }
 
     @Test
-    void testDefaultScmRootDir() {
+    void testDefaultValues() {
+        then:
+        assertFalse project.release.scmDisabled
+
         assertEquals( temporaryFolder.root.toString(), project.release.scmRootDir )
+        assertEquals( 'origin', project.release.scmRemote )
+
+        assertEquals( '[Gradle Release] Commit for %version.', project.release.releaseCommitMessage )
+        assertEquals( '%version', project.release.releaseTag )
+        assertEquals( '[Gradle Release] Tag for %version.', project.release.releaseTagMessage )
+        assertEquals( '[Gradle Release] Preparing for %version.', project.release.updateVersionCommitMessage )
     }
 
     @Test
-    void testOverwriteValues() throws Exception {
+    void testOverwriteValues() {
         when:
         project.release {
+            scmDisabled = true
+
             scmRootDir = '~/home/xaviert'
             scmRemote = 'origin2'
 
-            commitMessage = 'Commit'
-            tagMessage = 'Tag'
+            releaseCommitMessage = 'releaseCommitMessage'
+            releaseTag = 'releaseTag'
+            releaseTagMessage = 'releaseTagMessage'
+            updateVersionCommitMessage = 'updateVersionCommitMessage'
         }
 
         then:
+        assertTrue project.release.scmDisabled
         assertEquals( '~/home/xaviert', project.release.scmRootDir )
         assertEquals( 'origin2', project.release.scmRemote )
 
-        assertEquals( 'Commit', project.release.commitMessage )
-        assertEquals( 'Tag', project.release.tagMessage )
-    }
-
-    @Test
-    public void testProjectNameInCommitAndTagMessage() throws Exception {
-        when:
-        project.release {
-            commitMessage = "Commit for ${project.name}"
-            tagMessage = "Tag for ${project.name}"
-        }
-
-        then:
-        assertEquals( 'Commit for lib42', project.release.commitMessage )
-        assertEquals( 'Tag for lib42', project.release.tagMessage )
+        assertEquals( 'releaseCommitMessage', project.release.releaseCommitMessage )
+        assertEquals( 'releaseTag', project.release.releaseTag )
+        assertEquals( 'releaseTagMessage', project.release.releaseTagMessage )
+        assertEquals( 'updateVersionCommitMessage', project.release.updateVersionCommitMessage )
     }
 
 }
