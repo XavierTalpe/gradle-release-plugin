@@ -3,7 +3,6 @@ package be.xvrt.gradle.release.plugin
 import be.xvrt.gradle.release.plugin.scm.ScmHelper
 import be.xvrt.gradle.release.plugin.scm.ScmHelperFactory
 
-// TODO: Write test?
 abstract class AbstractScmTask extends AbstractDefaultTask {
 
     protected AbstractScmTask() {
