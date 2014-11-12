@@ -60,10 +60,10 @@ abstract class IntegrationTest {
     }
 
     protected void execute( String task ) {
-        def workingDir = System.getProperty 'user.dir'
-        def gradleWrapper = new File( workingDir, '../gradlew' )
+        def isTravisCI = Boolean.parseBoolean( System.getenv( 'TRAVIS' ) )
+        assumeFalse 'Skipping integration tests.', isTravisCI
 
-        def command = gradleWrapper.toString() + ' ' + task
+        def command = 'gradle ' + task
         def process = command.execute null, temporaryFolder.root
         process.waitFor()
 
