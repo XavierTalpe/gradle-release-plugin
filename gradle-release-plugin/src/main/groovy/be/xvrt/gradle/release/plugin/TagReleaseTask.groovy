@@ -1,12 +1,10 @@
 package be.xvrt.gradle.release.plugin
 
+import be.xvrt.gradle.release.plugin.scm.ScmException
+
 class TagReleaseTask extends AbstractScmTask {
 
     private static final GString LOG_TAG = ":${ReleasePlugin.TAG_RELEASE_TASK}"
-
-    TagReleaseTask() {
-        super( ReleasePlugin.TAG_RELEASE_TASK )
-    }
 
     @Override
     void configure() {
@@ -30,8 +28,24 @@ class TagReleaseTask extends AbstractScmTask {
         }
     }
 
+    private void tag( String tagName, String tagMessage, String releaseVersion ) throws ScmException {
+        logger.info( "${LOG_TAG} tagging release." )
+
+        tagName = injectVersion tagName, releaseVersion
+        tagMessage = injectVersion tagMessage, releaseVersion
+
+        getScmHelper().tag tagName, tagMessage
+    }
+
+    private void push( String scmRemote ) throws ScmException {
+        logger.info "${LOG_TAG} pushing local changes to ${scmRemote}"
+
+        getScmHelper().push scmRemote
+    }
+
     @Override
     void rollback( Exception exception ) {
+        exception.printStackTrace()
         throw exception;
     }
 

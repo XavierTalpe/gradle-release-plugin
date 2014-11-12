@@ -2,7 +2,7 @@ package be.xvrt.gradle.release.plugin
 
 import be.xvrt.gradle.release.plugin.util.GradleProperties
 
-class PrepareReleaseTask extends RollbackTask {
+class PrepareReleaseTask extends AbstractDefaultTask {
 
     private static final GString LOG_TAG = ":${ReleasePlugin.PREPARE_RELEASE_TASK}"
 
@@ -24,6 +24,7 @@ class PrepareReleaseTask extends RollbackTask {
 
     @Override
     void rollback( Exception exception ) {
+        exception.printStackTrace()
         throw exception;
     }
 

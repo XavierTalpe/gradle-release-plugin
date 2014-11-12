@@ -40,24 +40,13 @@ class CommitReleaseTaskTest {
     }
 
     @Test
-    void testExecuteGit() {
+    void 'commit is pushed when no errors occur'() {
         when:
         commitReleaseTask.configure()
-
-        try {
-            commitReleaseTask.execute()
-            fail() // TODO Fails due to no origin specified.
-        }
-        catch ( TaskExecutionException expected ) {
-            assertTrue( expected.cause instanceof ScmException )
-        }
+        commitReleaseTask.execute()
 
         then:
-        verifyCommit()
-    }
-
-    private void verifyCommit() {
-        Iterable<RevCommit> commitLog = new Git( gradleRepository ).log().call();
+        def commitLog = new Git( gradleRepository ).log().call()
 
         def nbCommits = 0;
         for ( RevCommit commit : commitLog ) {
@@ -70,29 +59,47 @@ class CommitReleaseTaskTest {
         assertEquals( 1, nbCommits )
     }
 
+
     @Test
-    void 'no commit made when SCM support is disabled'() {
+    void 'executing the task won\'t create a commit when SCM support is disabled'() {
         setup:
         project.release {
             scmDisabled = true
         }
-
 
         when:
         commitReleaseTask.configure()
         commitReleaseTask.execute()
 
         then:
-        Iterable<RevCommit> commitLog = new Git( gradleRepository ).log().call();
-
-        def nbCommits = 0;
-        for ( RevCommit commit : commitLog ) {
-            if ( !commit.getShortMessage().equals( 'HEAD' ) ) {
-                nbCommits++;
-            }
+        def commitLog = new Git( gradleRepository ).log().call()
+        def nbNewCommits = commitLog.count { commit ->
+            !commit.getShortMessage().equals( 'HEAD' )
         }
 
-        assertEquals( 0, nbCommits )
+        assertEquals( 0, nbNewCommits )
+    }
+
+    @Test
+    void 'commit is rolled back when push fails'() {
+        when:
+        commitReleaseTask.configure()
+
+        try {
+            commitReleaseTask.execute()
+            fail()
+        }
+        catch ( TaskExecutionException expected ) {
+            assertTrue( expected.cause instanceof ScmException )
+        }
+
+        then:
+        def commitLog = new Git( gradleRepository ).log().call()
+        def nbNewCommits = commitLog.count { commit ->
+            !commit.getShortMessage().equals( 'HEAD' )
+        }
+
+        assertEquals( 0, nbNewCommits )
     }
 
 }

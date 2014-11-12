@@ -32,18 +32,17 @@ class GitHelperTest {
     }
 
     @Test
-    void testCommit() {
+    void 'can commit'() {
         when:
-        gitHelper.commit( 'commitMessage' )
+        gitHelper.commit 'commitMessage'
 
         then:
-        Iterable<RevCommit> commitLog = new Git( repository ).log().call();
-
-        def nbCommits = 0;
+        def commitLog = new Git( repository ).log().call()
+        def nbCommits = 0
         for ( RevCommit commit : commitLog ) {
             if ( !commit.getShortMessage().equals( 'HEAD' ) ) {
                 assertEquals( 'commitMessage', commit.getShortMessage() )
-                nbCommits++;
+                nbCommits++
             }
         }
 
@@ -51,12 +50,27 @@ class GitHelperTest {
     }
 
     @Test
-    void testTag() {
+    void 'commit can be rolled back'() {
+        when:
+        gitHelper.commit 'commitMessage'
+        gitHelper.rollbackLastCommit()
+
+        then:
+        def commitLog = new Git( repository ).log().call()
+        def nbNewCommits = commitLog.count { commit ->
+            !commit.getShortMessage().equals( 'HEAD' )
+        }
+
+        assertEquals( 0, nbNewCommits )
+    }
+
+    @Test
+    void 'can tag'() {
         setup:
-        gitHelper.commit( 'commitMessage' )
+        gitHelper.commit 'commitMessage'
 
         when:
-        gitHelper.tag( '1.0.0', 'Tagging a release' )
+        gitHelper.tag '1.0.0', 'Tagging a release'
 
         then:
         def allTags = new Git( repository ).tagList().call();
@@ -66,12 +80,12 @@ class GitHelperTest {
     }
 
     @Test( expected = ScmException.class )
-    public void testPushWithoutOriginSet() {
+    void 'pushing without an origin should fail'() {
         setup:
-        gitHelper.commit( 'commitMessage' )
+        gitHelper.commit 'commitMessage'
 
         when:
-        gitHelper.push( 'origin' )
+        gitHelper.push 'origin'
     }
 
 }

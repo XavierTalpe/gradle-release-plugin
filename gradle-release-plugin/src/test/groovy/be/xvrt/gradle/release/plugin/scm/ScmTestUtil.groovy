@@ -13,12 +13,12 @@ class ScmTestUtil {
     }
 
     static Repository createGitRepository( File directory ) {
-        Git.init().setDirectory( directory ).call();
+        Git.init().setDirectory( directory ).call()
 
-        def repo = FileRepositoryBuilder.create( new File( directory, ".git" ) );
+        def repo = FileRepositoryBuilder.create( new File( directory, ".git" ) )
 
         def git = new Git( repo )
-        git.commit().setAll( true ).setMessage( 'HEAD' ).call();
+        git.commit().setAll( true ).setMessage( 'HEAD' ).call()
 
         repo
     }
@@ -26,10 +26,10 @@ class ScmTestUtil {
     // TODO
     static Repository addOrigin( Repository repository, Repository originRepository ) {
         def config = new Config()
-        config.setString( "remote", "origin", "pushurl", "short:project.git" );
-        config.setString( "url", "https://server/repos/", "name", "short:" );
+        config.setString( "remote", "origin", "pushurl", "short:project.git" )
+        config.setString( "url", "https://server/repos/", "name", "short:" )
 
-        RemoteConfig remoteConfig = new RemoteConfig( new Config(), "origin" );
+        RemoteConfig remoteConfig = new RemoteConfig( new Config(), "origin" )
         remoteConfig.addURI( new URIish( originRepository.getDirectory().toURI().toURL() ) )
 
         def git = new Git( repository )

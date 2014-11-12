@@ -4,12 +4,9 @@ import be.xvrt.gradle.release.plugin.scm.ScmHelper
 import be.xvrt.gradle.release.plugin.scm.ScmHelperFactory
 
 // TODO: Write test?
-abstract class AbstractScmTask extends RollbackTask {
+abstract class AbstractScmTask extends AbstractDefaultTask {
 
-    private final GString logTag
-
-    protected AbstractScmTask( String taskName ) {
-        logTag = ":${taskName}"
+    protected AbstractScmTask() {
     }
 
     protected final boolean isScmSupportDisabled() {
@@ -17,37 +14,14 @@ abstract class AbstractScmTask extends RollbackTask {
         extension.getAt ReleasePluginExtension.SCM_DISABLED
     }
 
-    protected final void commit( String commitMessage, String releaseVersion ) {
-        logger.info( "${logTag} committing release." )
-
-        commitMessage = injectVersion commitMessage, releaseVersion
-
-        getScmHelper().commit commitMessage
-    }
-
-    protected final void tag( String tagName, String tagMessage, String releaseVersion ) {
-        logger.info( "${logTag} tagging release." )
-
-        tagName = injectVersion tagName, releaseVersion
-        tagMessage = injectVersion tagMessage, releaseVersion
-
-        getScmHelper().tag tagName, tagMessage
-    }
-
-    protected final push( String scmRemote ) {
-        logger.info "${logTag} pushing local changes to ${scmRemote}"
-
-        getScmHelper().push scmRemote
-    }
-
-    private ScmHelper getScmHelper() {
+    protected final ScmHelper getScmHelper() {
         def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
         def scmRootDir = extension.getAt ReleasePluginExtension.SCM_ROOT_DIR
 
         ScmHelperFactory.create scmRootDir
     }
 
-    private String injectVersion( String input, String version ) {
+    protected final String injectVersion( String input, String version ) {
         input.replaceAll( '%version', version )
     }
 

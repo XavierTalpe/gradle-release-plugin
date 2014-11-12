@@ -4,7 +4,7 @@ import be.xvrt.gradle.release.plugin.scm.ScmHelper
 import be.xvrt.gradle.release.plugin.scm.ScmHelperFactory
 import be.xvrt.gradle.release.plugin.util.GradleProperties
 
-class UpdateVersionTask extends RollbackTask {
+class UpdateVersionTask extends AbstractDefaultTask {
 
     private static final GString LOG_TAG = ":${ReleasePlugin.UPDATE_VERSION_TASK}"
 
@@ -26,6 +26,7 @@ class UpdateVersionTask extends RollbackTask {
 
     @Override
     void rollback( Exception exception ) {
+        exception.printStackTrace()
         throw exception;
     }
 

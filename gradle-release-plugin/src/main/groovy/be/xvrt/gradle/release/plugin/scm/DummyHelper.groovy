@@ -7,6 +7,10 @@ class DummyHelper extends ScmHelper {
     }
 
     @Override
+    void rollbackLastCommit() {
+    }
+
+    @Override
     void tag( String name, String message ) {
     }
 

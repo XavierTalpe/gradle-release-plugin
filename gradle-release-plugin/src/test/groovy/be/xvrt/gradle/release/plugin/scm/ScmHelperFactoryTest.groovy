@@ -14,10 +14,10 @@ class ScmHelperFactoryTest {
     @Test
     void testCreateGitScmHelper() {
         setup:
-        temporaryFolder.newFolder( '.git' )
+        temporaryFolder.newFolder '.git'
 
         when:
-        def scmHelper = ScmHelperFactory.create( temporaryFolder.root )
+        def scmHelper = ScmHelperFactory.create temporaryFolder.root
 
         then:
         assertTrue( scmHelper instanceof GitHelper )
@@ -26,7 +26,7 @@ class ScmHelperFactoryTest {
     @Test
     void testCreateDummyScmHelper() {
         when:
-        def scmHelper = ScmHelperFactory.create( temporaryFolder.root.getAbsolutePath() )
+        def scmHelper = ScmHelperFactory.create temporaryFolder.root.getAbsolutePath()
 
         then:
         assertTrue( scmHelper instanceof DummyHelper )
@@ -35,8 +35,8 @@ class ScmHelperFactoryTest {
     @Test
     void testCache() {
         when:
-        def scmHelper1 = ScmHelperFactory.create( temporaryFolder.root )
-        def scmHelper2 = ScmHelperFactory.create( temporaryFolder.root )
+        def scmHelper1 = ScmHelperFactory.create temporaryFolder.root
+        def scmHelper2 = ScmHelperFactory.create temporaryFolder.root
 
         then:
         assertTrue( scmHelper1 == scmHelper2 )

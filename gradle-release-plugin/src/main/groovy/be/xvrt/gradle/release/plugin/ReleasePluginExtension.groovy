@@ -2,6 +2,7 @@ package be.xvrt.gradle.release.plugin
 
 import org.gradle.api.Project;
 
+// TODO: Extend setters to validate input from user
 class ReleasePluginExtension {
 
     public static final String NAME = ReleasePlugin.RELEASE_TASK

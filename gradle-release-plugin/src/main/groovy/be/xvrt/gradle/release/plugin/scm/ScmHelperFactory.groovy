@@ -12,7 +12,7 @@ class ScmHelperFactory {
     }
 
     static ScmHelper create( File scmRootDir ) {
-        def scmHelper = CACHE.get( scmRootDir )
+        def scmHelper = CACHE.get scmRootDir
 
         if ( scmHelper == null ) {
             scmHelper = createNew( scmRootDir, scmHelper )
