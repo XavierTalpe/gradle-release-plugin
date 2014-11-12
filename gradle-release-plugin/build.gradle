@@ -49,6 +49,12 @@ artifacts {
 
 
 /**
+ * For the integration tests we require the jar to
+ * be available before the tests are started.
+ */
+tasks.test.dependsOn jar
+
+/**
  * Maven publication settings.
  */
 publishing {
