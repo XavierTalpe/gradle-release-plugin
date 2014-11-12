@@ -15,7 +15,12 @@ class ScmTestUtil {
     static Repository createGitRepository( File directory ) {
         Git.init().setDirectory( directory ).call();
 
-        FileRepositoryBuilder.create( new File( directory, ".git" ) );
+        def repo = FileRepositoryBuilder.create( new File( directory, ".git" ) );
+
+        def git = new Git( repo )
+        git.commit().setAll( true ).setMessage( 'HEAD' ).call();
+
+        repo
     }
 
     // TODO

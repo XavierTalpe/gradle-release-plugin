@@ -41,8 +41,10 @@ class GitHelperTest {
 
         def nbCommits = 0;
         for ( RevCommit commit : commitLog ) {
-            assertEquals( 'commitMessage', commit.getShortMessage() )
-            nbCommits++;
+            if ( !commit.getShortMessage().equals( 'HEAD' ) ) {
+                assertEquals( 'commitMessage', commit.getShortMessage() )
+                nbCommits++;
+            }
         }
 
         assertEquals( 1, nbCommits )

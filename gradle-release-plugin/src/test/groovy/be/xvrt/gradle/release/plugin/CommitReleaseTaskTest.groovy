@@ -61,8 +61,10 @@ class CommitReleaseTaskTest {
 
         def nbCommits = 0;
         for ( RevCommit commit : commitLog ) {
-            assertEquals( '[Gradle Release] Commit for 1.0.0.', commit.getShortMessage() )
-            nbCommits++;
+            if ( !commit.getShortMessage().equals( 'HEAD' ) ) {
+                assertEquals( '[Gradle Release] Commit for 1.0.0.', commit.getShortMessage() )
+                nbCommits++;
+            }
         }
 
         assertEquals( 1, nbCommits )
@@ -85,7 +87,9 @@ class CommitReleaseTaskTest {
 
         def nbCommits = 0;
         for ( RevCommit commit : commitLog ) {
-            nbCommits++;
+            if ( !commit.getShortMessage().equals( 'HEAD' ) ) {
+                nbCommits++;
+            }
         }
 
         assertEquals( 0, nbCommits )

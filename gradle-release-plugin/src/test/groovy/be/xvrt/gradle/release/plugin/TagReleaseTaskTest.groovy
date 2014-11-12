@@ -29,7 +29,7 @@ class TagReleaseTaskTest {
 
     @Before
     void setUp() {
-        gradleRepository = ScmTestUtil.createGitRepository( temporaryFolder.root )
+        gradleRepository = ScmTestUtil.createGitRepository temporaryFolder.root
 
         project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
         project.apply plugin: ReleasePlugin
