@@ -4,7 +4,6 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 
 import static org.junit.Assert.assertEquals
-import static org.junit.Assume.assumeFalse
 
 abstract class IntegrationTest {
 
@@ -22,7 +21,7 @@ abstract class IntegrationTest {
 
     private void writeBuildFile() {
         def workingDir = System.getProperty 'user.dir'
-        def pluginPath = new File( workingDir, 'build/libs/release-plugin-0.3.0-SNAPSHOT.jar' )
+        def pluginPath = new File( workingDir, 'build/libs/gradle-release-plugin-0.3.0-SNAPSHOT.jar' )
 
         buildFile = temporaryFolder.newFile 'build.gradle'
         buildFile.withWriter { w ->
@@ -61,10 +60,10 @@ abstract class IntegrationTest {
     }
 
     protected void execute( String task ) {
-        def isTravisCI = Boolean.parseBoolean( System.getenv( 'TRAVIS' ) )
-        assumeFalse 'Skipping integration tests.', isTravisCI
+        def workingDir = System.getProperty 'user.dir'
+        def gradleWrapper = new File( workingDir, '../gradlew' )
 
-        def command = 'gradle ' + task
+        def command = gradleWrapper.toString() + ' ' + task
         def process = command.execute null, temporaryFolder.root
         process.waitFor()
 
