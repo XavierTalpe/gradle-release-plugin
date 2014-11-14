@@ -30,9 +30,10 @@ class CommitReleaseTaskTest {
 
     @Before
     void setUp() {
-        gradleRepository = ScmTestUtil.createGitRepository( temporaryFolder.root )
+        def repoFolder = temporaryFolder.newFolder()
+        gradleRepository = ScmTestUtil.createGitRepository repoFolder
 
-        project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
+        project = ProjectBuilder.builder().withProjectDir( repoFolder ).build()
         project.apply plugin: ReleasePlugin
         project.version = '1.0.0'
 
@@ -41,6 +42,9 @@ class CommitReleaseTaskTest {
 
     @Test
     void 'commit is pushed when no errors occur'() {
+        setup:
+        ScmTestUtil.createOrigin gradleRepository, temporaryFolder.newFolder()
+
         when:
         commitReleaseTask.configure()
         commitReleaseTask.execute()

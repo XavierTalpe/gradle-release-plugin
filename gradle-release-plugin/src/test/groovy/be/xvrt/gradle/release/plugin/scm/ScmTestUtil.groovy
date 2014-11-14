@@ -20,7 +20,9 @@ class ScmTestUtil {
         repo
     }
 
-    static void addOrigin( Repository repository, Repository originRepository ) {
+    static void createOrigin( Repository repository, File originDir ) {
+        def originRepository = createGitRepository originDir
+
         def configFile = new File( repository.getDirectory(), 'config' )
         configFile << '[remote "origin"]'
         configFile << "\n\turl = file://${originRepository.getDirectory()}"
