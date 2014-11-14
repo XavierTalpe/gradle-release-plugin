@@ -1,0 +1,27 @@
+plugins {
+    id 'be.xvrt.release' version '0.3.0'
+}
+
+
+/**
+ * Override the commit and tag messages when interacting
+ * with the SCM. The %version token is automatically replaced
+ * with the proper version number.
+ */
+release {
+    releaseCommitMessage = "${project.name} v%version."
+    releaseTag = '%version.'
+    releaseTagMessage = 'Tag for %version.'
+    updateVersionCommitMessage = 'Preparing for %version.'
+}
+
+
+/**
+ * Additional configuration for CI build below. Can be ignored.
+ */
+task( 'check', dependsOn: 'release' ) {
+}
+
+release {
+    scmDisabled = true
+}

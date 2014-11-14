@@ -4,16 +4,6 @@ plugins {
 
 
 /**
- * Dummy build task. In most projects this task
- * will already be provided by another plugin.
- * (For example the Java plugin.)
- */
-task( 'build' ) << {
-    println "I'm building my project with version ${project.version}, hurrah!"
-}
-
-
-/**
  * Override the logic to set the release version and
  * the version for the next build. The initial project
  * version is defined in the gradle.properties file.
