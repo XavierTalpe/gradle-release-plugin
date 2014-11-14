@@ -10,6 +10,7 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -82,6 +83,12 @@ class CommitReleaseTaskTest {
         }
 
         assertEquals( 0, nbNewCommits )
+    }
+
+    @Ignore
+    @Test
+    public void 'override commit message'() throws Exception {
+        // TODO
     }
 
     @Test

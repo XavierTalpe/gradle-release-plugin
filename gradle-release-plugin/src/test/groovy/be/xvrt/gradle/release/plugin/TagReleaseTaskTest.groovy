@@ -9,6 +9,7 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -39,27 +40,61 @@ class TagReleaseTaskTest {
     }
 
     @Test
-    void testExecuteGit() {
+    void 'tag is pushed when no errors occur'() {
+        setup:
+        ScmTestUtil.createOrigin gradleRepository, temporaryFolder.newFolder()
+
+        when:
+        tagReleaseTask.configure()
+        tagReleaseTask.execute()
+
+        then:
+        def tagList = new Git( gradleRepository ).tagList().call();
+
+        assertEquals( 1, tagList.size() )
+        assertEquals( 'refs/tags/1.0.0', tagList.get( 0 ).getName() )
+    }
+
+    @Test
+    void 'executing the task won\'t create a tag when SCM support is disabled'() {
+        setup:
+        project.release {
+            scmDisabled = true
+        }
+
+        when:
+        tagReleaseTask.configure()
+        tagReleaseTask.execute()
+
+        then:
+        def tagList = new Git( gradleRepository ).tagList().call();
+        assertEquals( 0, tagList.size() )
+    }
+
+    @Ignore
+    @Test
+    public void 'override tag message'() throws Exception {
+        // TODO
+    }
+
+    // TODO #6 Rollback changes
+    @Ignore
+    @Test
+    void 'tag is rolled back when push fails'() {
         when:
         tagReleaseTask.configure()
 
         try {
             tagReleaseTask.execute()
-            fail() // TODO Fails due to no origin specified.
+            fail()
         }
         catch ( TaskExecutionException expected ) {
             assertTrue( expected.cause instanceof ScmException )
         }
 
         then:
-        verifyTag()
-    }
-
-    private void verifyTag() {
-        def allTags = new Git( gradleRepository ).tagList().call();
-
-        assertEquals( 1, allTags.size() )
-        assertEquals( 'refs/tags/1.0.0', allTags.get( 0 ).getName() )
+        def tagList = new Git( gradleRepository ).tagList().call();
+        assertEquals( 0, tagList.size() )
     }
 
 }

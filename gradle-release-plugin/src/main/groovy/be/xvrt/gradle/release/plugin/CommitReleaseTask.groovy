@@ -13,7 +13,7 @@ class CommitReleaseTask extends AbstractScmTask {
     @Override
     void run() {
         if ( isScmSupportDisabled() ) {
-            logger.info( "${LOG_TAG} committing release skipped because SCM support is disabled." )
+            logger.info "${LOG_TAG} skipping commitRelease because SCM support is disabled."
         }
         else {
             commitChanges()
@@ -39,7 +39,7 @@ class CommitReleaseTask extends AbstractScmTask {
     }
 
     private void commit( String commitMessage, String releaseVersion ) throws ScmException {
-        logger.info( "${LOG_TAG} committing release." )
+        logger.info "${LOG_TAG} committing local changes."
 
         commitMessage = injectVersion commitMessage, releaseVersion
 
@@ -47,13 +47,13 @@ class CommitReleaseTask extends AbstractScmTask {
     }
 
     private void push( String scmRemote ) throws ScmException {
-        logger.info "${LOG_TAG} pushing local changes to ${scmRemote}"
+        logger.info "${LOG_TAG} pushing local commit to ${scmRemote}."
 
         getScmHelper().push scmRemote
     }
 
     private void rollbackCommit() throws ScmException {
-        logger.info( "${LOG_TAG} rolling back commit due to error." )
+        logger.info "${LOG_TAG} rolling back commit due to error."
 
         getScmHelper().rollbackLastCommit()
     }

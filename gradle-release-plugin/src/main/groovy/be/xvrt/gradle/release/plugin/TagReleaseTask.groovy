@@ -13,7 +13,7 @@ class TagReleaseTask extends AbstractScmTask {
     @Override
     void run() {
         if ( isScmSupportDisabled() ) {
-            logger.info( "${LOG_TAG} tagging release skipped because SCM support is disabled." )
+            logger.info "${LOG_TAG} skipping tagRelease because SCM support is disabled."
         }
         else {
             def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
@@ -29,7 +29,7 @@ class TagReleaseTask extends AbstractScmTask {
     }
 
     private void tag( String tagName, String tagMessage, String releaseVersion ) throws ScmException {
-        logger.info( "${LOG_TAG} tagging release." )
+        logger.info "${LOG_TAG} tagging release."
 
         tagName = injectVersion tagName, releaseVersion
         tagMessage = injectVersion tagMessage, releaseVersion
@@ -38,14 +38,14 @@ class TagReleaseTask extends AbstractScmTask {
     }
 
     private void push( String scmRemote ) throws ScmException {
-        logger.info "${LOG_TAG} pushing local changes to ${scmRemote}"
+        logger.info "${LOG_TAG} pushing local tag to ${scmRemote}"
 
         getScmHelper().push scmRemote
     }
 
     @Override
     void rollback( Exception exception ) {
-        exception.printStackTrace()
+        // TODO #6 Rollback changes
         throw exception;
     }
 

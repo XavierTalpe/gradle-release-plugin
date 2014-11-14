@@ -24,7 +24,7 @@ class PrepareReleaseTask extends AbstractDefaultTask {
 
     @Override
     void rollback( Exception exception ) {
-        exception.printStackTrace()
+        // TODO #6 Rollback changes
         throw exception;
     }
 
@@ -32,7 +32,7 @@ class PrepareReleaseTask extends AbstractDefaultTask {
         originalVersion = project.version
         releaseVersion = buildReleaseVersion originalVersion
 
-        saveVersion( releaseVersion )
+        saveVersion releaseVersion
     }
 
     private String buildReleaseVersion( String version ) {
@@ -43,7 +43,7 @@ class PrepareReleaseTask extends AbstractDefaultTask {
     }
 
     private void saveVersion( String releaseVersion ) {
-        logger.info( "${LOG_TAG} setting release version to ${releaseVersion}." )
+        logger.info "${LOG_TAG} setting release version to ${releaseVersion}."
 
         def gradleProperties = new GradleProperties( project )
         gradleProperties.saveVersion( releaseVersion )
