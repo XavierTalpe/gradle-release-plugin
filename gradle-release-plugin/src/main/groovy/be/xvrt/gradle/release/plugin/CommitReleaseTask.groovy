@@ -38,20 +38,6 @@ class CommitReleaseTask extends AbstractScmTask {
         throw exception;
     }
 
-    private void commit( String commitMessage, String releaseVersion ) throws ScmException {
-        logger.info "${LOG_TAG} committing local changes."
-
-        commitMessage = injectVersion commitMessage, releaseVersion
-
-        getScmHelper().commit commitMessage
-    }
-
-    private void push( String scmRemote ) throws ScmException {
-        logger.info "${LOG_TAG} pushing local commit to ${scmRemote}."
-
-        getScmHelper().push scmRemote
-    }
-
     private void rollbackCommit() throws ScmException {
         logger.info "${LOG_TAG} rolling back commit due to error."
 

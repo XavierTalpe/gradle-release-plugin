@@ -1,5 +1,6 @@
 package be.xvrt.gradle.release.plugin
 
+import be.xvrt.gradle.release.plugin.scm.ScmException
 import be.xvrt.gradle.release.plugin.scm.ScmHelper
 import be.xvrt.gradle.release.plugin.scm.ScmHelperFactory
 
@@ -15,6 +16,29 @@ abstract class AbstractScmTask extends AbstractDefaultTask {
         extension.getAt ReleasePluginExtension.SCM_DISABLED
     }
 
+    protected final void commit( String commitMessage, String version ) throws ScmException {
+        logger.info ":${name} committing local changes."
+
+        commitMessage = injectVersion commitMessage, version
+
+        getScmHelper().commit commitMessage
+    }
+
+    protected final void tag( String tagName, String tagMessage, String version ) throws ScmException {
+        logger.info ":${name} tagging release."
+
+        tagName = injectVersion tagName, version
+        tagMessage = injectVersion tagMessage, version
+
+        getScmHelper().tag tagName, tagMessage
+    }
+
+    protected final void push( String scmRemote ) throws ScmException {
+        logger.info ":${name} pushing local changes to ${scmRemote}."
+
+        getScmHelper().push scmRemote
+    }
+
     protected final ScmHelper getScmHelper() {
         if ( scmHelper == null ) {
             def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
@@ -26,7 +50,7 @@ abstract class AbstractScmTask extends AbstractDefaultTask {
         scmHelper
     }
 
-    protected final String injectVersion( String input, String version ) {
+    private String injectVersion( String input, String version ) {
         input.replaceAll( '%version', version )
     }
 

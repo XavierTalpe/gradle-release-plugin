@@ -1,6 +1,5 @@
 package be.xvrt.gradle.release.plugin
 
-import be.xvrt.gradle.release.plugin.scm.ScmException
 import be.xvrt.gradle.release.plugin.util.GradleProperties
 
 class UpdateVersionTask extends AbstractScmTask {
@@ -22,7 +21,7 @@ class UpdateVersionTask extends AbstractScmTask {
         saveVersion nextVersion
 
         if ( isScmSupportDisabled() ) {
-            logger.info "${LOG_TAG} skipping updateVersion commit because SCM support is disabled."
+            logger.info ":${LOG_TAG} skipping updateVersion commit because SCM support is disabled."
         }
         else {
             commitChanges nextVersion
@@ -73,20 +72,6 @@ class UpdateVersionTask extends AbstractScmTask {
             commit updateVersionMessage, nextVersion
             push scmRemote
         }
-    }
-
-    private void commit( String commitMessage, String nextVersion ) throws ScmException {
-        logger.info "${LOG_TAG} committing local changes."
-
-        commitMessage = injectVersion commitMessage, nextVersion
-
-        getScmHelper().commit commitMessage
-    }
-
-    private void push( String scmRemote ) throws ScmException {
-        logger.info "${LOG_TAG} pushing local commit to ${scmRemote}."
-
-        getScmHelper().push scmRemote
     }
 
 }
