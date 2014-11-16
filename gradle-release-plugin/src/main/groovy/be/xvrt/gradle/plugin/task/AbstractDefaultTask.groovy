@@ -1,4 +1,4 @@
-package be.xvrt.gradle.release.plugin
+package be.xvrt.gradle.plugin.task
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction

@@ -1,5 +1,6 @@
 package be.xvrt.gradle.release.plugin
 
+import be.xvrt.gradle.plugin.task.AbstractDefaultTask
 import be.xvrt.gradle.release.plugin.util.GradleProperties
 
 class PrepareReleaseTask extends AbstractDefaultTask {

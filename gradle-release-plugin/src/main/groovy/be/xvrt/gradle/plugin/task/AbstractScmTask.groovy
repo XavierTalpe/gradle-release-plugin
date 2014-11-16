@@ -1,5 +1,7 @@
-package be.xvrt.gradle.release.plugin
+package be.xvrt.gradle.plugin.task
 
+import be.xvrt.gradle.release.plugin.ReleasePlugin
+import be.xvrt.gradle.release.plugin.ReleasePluginExtension
 import be.xvrt.gradle.release.plugin.scm.ScmException
 import be.xvrt.gradle.release.plugin.scm.ScmHelper
 import be.xvrt.gradle.release.plugin.scm.ScmHelperFactory

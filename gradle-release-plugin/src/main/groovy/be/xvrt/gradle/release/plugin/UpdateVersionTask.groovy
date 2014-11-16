@@ -1,5 +1,6 @@
 package be.xvrt.gradle.release.plugin
 
+import be.xvrt.gradle.plugin.task.AbstractScmTask
 import be.xvrt.gradle.release.plugin.scm.ScmException
 import be.xvrt.gradle.release.plugin.util.GradleProperties
 
