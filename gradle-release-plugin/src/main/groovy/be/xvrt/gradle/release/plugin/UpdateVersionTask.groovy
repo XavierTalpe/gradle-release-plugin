@@ -4,8 +4,6 @@ import be.xvrt.gradle.release.plugin.util.GradleProperties
 
 class UpdateVersionTask extends AbstractScmTask {
 
-    private static final GString LOG_TAG = ":${ReleasePlugin.UPDATE_VERSION_TASK}"
-
     String releasedVersion
     String nextVersion
 
@@ -21,7 +19,7 @@ class UpdateVersionTask extends AbstractScmTask {
         saveVersion nextVersion
 
         if ( isScmSupportDisabled() ) {
-            logger.info ":${LOG_TAG} skipping updateVersion commit because SCM support is disabled."
+            logger.info ":${name} skipping updateVersion commit because SCM support is disabled."
         }
         else {
             commitChanges nextVersion
@@ -53,7 +51,7 @@ class UpdateVersionTask extends AbstractScmTask {
     }
 
     private void saveVersion( String nextVersion ) {
-        logger.info( "${LOG_TAG} setting next version to ${nextVersion}." )
+        logger.info( "${name} setting next version to ${nextVersion}." )
 
         def gradleProperties = new GradleProperties( project )
         gradleProperties.saveVersion nextVersion
@@ -61,7 +59,7 @@ class UpdateVersionTask extends AbstractScmTask {
 
     private void commitChanges( String nextVersion ) {
         if ( isScmSupportDisabled() ) {
-            logger.info "${LOG_TAG} skipping updateVersion commit because SCM support is disabled."
+            logger.info "${name} skipping updateVersion commit because SCM support is disabled."
         }
         else {
             def extension = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )

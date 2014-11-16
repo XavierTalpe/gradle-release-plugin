@@ -4,8 +4,6 @@ import be.xvrt.gradle.release.plugin.util.GradleProperties
 
 class PrepareReleaseTask extends AbstractDefaultTask {
 
-    private static final GString LOG_TAG = ":${ReleasePlugin.PREPARE_RELEASE_TASK}"
-
     String originalVersion
     String releaseVersion
 
@@ -43,7 +41,7 @@ class PrepareReleaseTask extends AbstractDefaultTask {
     }
 
     private void saveVersion( String releaseVersion ) {
-        logger.info "${LOG_TAG} setting release version to ${releaseVersion}."
+        logger.info "${name} setting release version to ${releaseVersion}."
 
         def gradleProperties = new GradleProperties( project )
         gradleProperties.saveVersion( releaseVersion )

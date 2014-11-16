@@ -4,8 +4,6 @@ import be.xvrt.gradle.release.plugin.scm.ScmException
 
 class CommitReleaseTask extends AbstractScmTask {
 
-    private static final GString LOG_TAG = ":${ReleasePlugin.COMMIT_RELEASE_TASK}"
-
     @Override
     void configure() {
     }
@@ -13,7 +11,7 @@ class CommitReleaseTask extends AbstractScmTask {
     @Override
     void run() {
         if ( isScmSupportDisabled() ) {
-            logger.info "${LOG_TAG} skipping commitRelease because SCM support is disabled."
+            logger.info "${name} skipping commitRelease because SCM support is disabled."
         }
         else {
             commitChanges()
@@ -39,7 +37,7 @@ class CommitReleaseTask extends AbstractScmTask {
     }
 
     private void rollbackCommit() throws ScmException {
-        logger.info "${LOG_TAG} rolling back commit due to error."
+        logger.info "${name} rolling back commit due to error."
 
         getScmHelper().rollbackLastCommit()
     }

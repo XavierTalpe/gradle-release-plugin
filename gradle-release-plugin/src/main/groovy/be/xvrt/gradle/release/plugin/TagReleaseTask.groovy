@@ -2,8 +2,6 @@ package be.xvrt.gradle.release.plugin
 
 class TagReleaseTask extends AbstractScmTask {
 
-    private static final GString LOG_TAG = ":${ReleasePlugin.TAG_RELEASE_TASK}"
-
     @Override
     void configure() {
     }
@@ -11,7 +9,7 @@ class TagReleaseTask extends AbstractScmTask {
     @Override
     void run() {
         if ( isScmSupportDisabled() ) {
-            logger.info "${LOG_TAG} skipping tagRelease because SCM support is disabled."
+            logger.info "${name} skipping tagRelease because SCM support is disabled."
         }
         else {
             def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
