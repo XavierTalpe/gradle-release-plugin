@@ -135,6 +135,7 @@ class UpdateVersionTaskTest {
     @Ignore
     @Test
     void 'gradle.properties file is updated when no errors occur'() {
+        // TODO
     }
 
     @Test
