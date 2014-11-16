@@ -1,10 +1,10 @@
 package be.xvrt.gradle.plugin.task
 
-import be.xvrt.gradle.release.plugin.ReleasePlugin
-import be.xvrt.gradle.release.plugin.ReleasePluginExtension
-import be.xvrt.gradle.release.plugin.scm.ScmException
-import be.xvrt.gradle.release.plugin.scm.ScmHelper
-import be.xvrt.gradle.release.plugin.scm.ScmHelperFactory
+import be.xvrt.gradle.plugin.release.ReleasePlugin
+import be.xvrt.gradle.plugin.release.ReleasePluginExtension
+import be.xvrt.gradle.plugin.release.scm.ScmException
+import be.xvrt.gradle.plugin.release.scm.ScmHelper
+import be.xvrt.gradle.plugin.release.scm.ScmHelperFactory
 
 abstract class AbstractScmTask extends AbstractDefaultTask {
 
