@@ -1,10 +1,9 @@
 package be.xvrt.gradle.release.plugin
 
-import be.xvrt.gradle.release.plugin.scm.ScmHelper
-import be.xvrt.gradle.release.plugin.scm.ScmHelperFactory
+import be.xvrt.gradle.release.plugin.scm.ScmException
 import be.xvrt.gradle.release.plugin.util.GradleProperties
 
-class UpdateVersionTask extends AbstractDefaultTask {
+class UpdateVersionTask extends AbstractScmTask {
 
     private static final GString LOG_TAG = ":${ReleasePlugin.UPDATE_VERSION_TASK}"
 
@@ -21,12 +20,18 @@ class UpdateVersionTask extends AbstractDefaultTask {
         nextVersion = buildNextVersion releasedVersion
 
         saveVersion nextVersion
-        commitChanges nextVersion
+
+        if ( isScmSupportDisabled() ) {
+            logger.info "${LOG_TAG} skipping updateVersion commit because SCM support is disabled."
+        }
+        else {
+            commitChanges nextVersion
+        }
     }
 
     @Override
     void rollback( Exception exception ) {
-        exception.printStackTrace()
+        // TODO #6 Rollback changes
         throw exception;
     }
 
@@ -52,35 +57,36 @@ class UpdateVersionTask extends AbstractDefaultTask {
         logger.info( "${LOG_TAG} setting next version to ${nextVersion}." )
 
         def gradleProperties = new GradleProperties( project )
-        gradleProperties.saveVersion( nextVersion )
+        gradleProperties.saveVersion nextVersion
     }
 
     private void commitChanges( String nextVersion ) {
-        def extension = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )
-
-        def scmDisabled = extension.getAt ReleasePluginExtension.SCM_DISABLED
-        if ( scmDisabled ) {
-            logger.info( "${LOG_TAG} committing version skipped because SCM support is disabled." )
+        if ( isScmSupportDisabled() ) {
+            logger.info "${LOG_TAG} skipping updateVersion commit because SCM support is disabled."
         }
         else {
-            def scmRemote = extension.getAt( ReleasePluginExtension.SCM_REMOTE )
-            def prepareMessage = extension.getAt( ReleasePluginExtension.UPDATE_VERSION_COMMIT_MSG )
+            def extension = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )
 
-            def scmHelper = getScmHelper()
+            def updateVersionMessage = extension.getAt( ReleasePluginExtension.UPDATE_VERSION_COMMIT_MSG )
+            def scmRemote = extension.getAt ReleasePluginExtension.SCM_REMOTE
 
-            logger.info( "${LOG_TAG} committing release to SCM." )
-            scmHelper.commit prepareMessage + nextVersion
-
-            logger.info( "${LOG_TAG} pushing local changes to ${scmRemote}" )
-            scmHelper.push scmRemote
+            commit updateVersionMessage, nextVersion
+            push scmRemote
         }
     }
 
-    private ScmHelper getScmHelper() {
-        def extension = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )
-        def scmRootDir = extension.getAt( ReleasePluginExtension.SCM_ROOT_DIR )
+    private void commit( String commitMessage, String nextVersion ) throws ScmException {
+        logger.info "${LOG_TAG} committing local changes."
 
-        ScmHelperFactory.create scmRootDir
+        commitMessage = injectVersion commitMessage, nextVersion
+
+        getScmHelper().commit commitMessage
+    }
+
+    private void push( String scmRemote ) throws ScmException {
+        logger.info "${LOG_TAG} pushing local commit to ${scmRemote}."
+
+        getScmHelper().push scmRemote
     }
 
 }

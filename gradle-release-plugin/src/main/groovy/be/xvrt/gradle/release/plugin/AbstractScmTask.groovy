@@ -5,6 +5,8 @@ import be.xvrt.gradle.release.plugin.scm.ScmHelperFactory
 
 abstract class AbstractScmTask extends AbstractDefaultTask {
 
+    private scmHelper
+
     protected AbstractScmTask() {
     }
 
@@ -14,10 +16,14 @@ abstract class AbstractScmTask extends AbstractDefaultTask {
     }
 
     protected final ScmHelper getScmHelper() {
-        def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
-        def scmRootDir = extension.getAt ReleasePluginExtension.SCM_ROOT_DIR
+        if ( scmHelper == null ) {
+            def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
+            def scmRootDir = extension.getAt ReleasePluginExtension.SCM_ROOT_DIR
 
-        ScmHelperFactory.create scmRootDir
+            scmHelper = ScmHelperFactory.create scmRootDir
+        }
+
+        scmHelper
     }
 
     protected final String injectVersion( String input, String version ) {
