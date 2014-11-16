@@ -71,10 +71,25 @@ class TagReleaseTaskTest {
         assertEquals( 0, tagList.size() )
     }
 
-    @Ignore
     @Test
-    public void 'override tag message'() throws Exception {
-        // TODO
+    public void 'override tag name and message'() throws Exception {
+        setup:
+        ScmTestUtil.createOrigin gradleRepository, temporaryFolder.newFolder()
+
+        project.release {
+            releaseTag = '0.2.3'
+            releaseTagMessage = 'Custom tag for %version.'
+        }
+
+        when:
+        tagReleaseTask.configure()
+        tagReleaseTask.execute()
+
+        then:
+        def tagList = new Git( gradleRepository ).tagList().call();
+
+        assertEquals( 1, tagList.size() )
+        assertEquals( 'refs/tags/0.2.3', tagList.get( 0 ).getName() )
     }
 
     // TODO #6 Rollback changes

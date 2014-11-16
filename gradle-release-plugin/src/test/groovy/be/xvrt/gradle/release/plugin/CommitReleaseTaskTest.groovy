@@ -1,5 +1,4 @@
 package be.xvrt.gradle.release.plugin
-
 import be.xvrt.gradle.release.plugin.scm.ScmException
 import be.xvrt.gradle.release.plugin.scm.ScmTestUtil
 import org.eclipse.jgit.api.Git
@@ -10,7 +9,6 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -85,10 +83,31 @@ class CommitReleaseTaskTest {
         assertEquals( 0, nbNewCommits )
     }
 
-    @Ignore
     @Test
     public void 'override commit message'() throws Exception {
-        // TODO
+        setup:
+        ScmTestUtil.createOrigin gradleRepository, temporaryFolder.newFolder()
+
+        project.release {
+            releaseCommitMessage = 'Custom commit for %version.'
+        }
+
+        when:
+        commitReleaseTask.configure()
+        commitReleaseTask.execute()
+
+        then:
+        def commitLog = new Git( gradleRepository ).log().call()
+
+        def nbCommits = 0;
+        for ( RevCommit commit : commitLog ) {
+            if ( !commit.getShortMessage().equals( 'HEAD' ) ) {
+                assertEquals( 'Custom commit for 1.0.0.', commit.getShortMessage() )
+                nbCommits++;
+            }
+        }
+
+        assertEquals( 1, nbCommits )
     }
 
     @Test

@@ -1,5 +1,6 @@
 package be.xvrt.gradle.release.plugin
 
+import be.xvrt.gradle.release.plugin.scm.ScmException
 import be.xvrt.gradle.release.plugin.util.GradleProperties
 
 class UpdateVersionTask extends AbstractScmTask {
@@ -28,7 +29,8 @@ class UpdateVersionTask extends AbstractScmTask {
 
     @Override
     void rollback( Exception exception ) {
-        // TODO #6 Rollback changes
+        rollbackCommit()
+
         throw exception;
     }
 
@@ -70,6 +72,12 @@ class UpdateVersionTask extends AbstractScmTask {
             commit updateVersionMessage, nextVersion
             push scmRemote
         }
+    }
+
+    private void rollbackCommit() throws ScmException {
+        logger.info "${name} rolling back commit due to error."
+
+        getScmHelper().rollbackLastCommit()
     }
 
 }
