@@ -37,18 +37,15 @@ To trigger the release process (including automated commits and tagging!), simpl
 $ gradle release
 ```
 
-This will automatically trigger an existing `build` task and ensure the correct version is used to build the release artifacts. The release will be committed, tagged including preparations for the next release.
+This will automatically trigger an existing `build` task and ensure the correct version is used to build the release artifacts. The release will be committed and tagged. Preparations for the next release will also be committed.
 
 For projects that don't have a build task or need to modify the default behaviour, see the [release](#release) task documentation.
 
 ### Specifying the (release) version
 There are multiple options to provide the version for building the project. **In order of priority**:
-- Passing in a parameter `-Pversion=XXX` from the command line when invoking Gradle.
-  (Useful for parametrized CI builds).
-- Set the version in your `build.gradle` file.
-  (This version number won't be updated and committed after the release is made.)
-- Add a `version` property to your `gradle.properties` file.
-  If the build was successful, the updated version will be committed to this file.
+- Passing in a parameter `-Pversion=XXX` from the command line when invoking Gradle, useful for parametrized CI builds.
+- Set the version in your `build.gradle` file. This version number **won't** be updated and committed if the release was successful.
+- Add a `version` property to your `gradle.properties` file. This version number **will** be updated and committed if the release was successful.
 
 
 ## Limitations
