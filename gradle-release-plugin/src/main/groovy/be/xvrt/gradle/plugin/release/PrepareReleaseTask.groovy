@@ -9,7 +9,7 @@ class PrepareReleaseTask extends AbstractDefaultTask {
     String releaseVersion
 
     boolean wasSnapshotVersion() {
-        return originalVersion.endsWith( '-SNAPSHOT' )
+        return originalVersion.contains( 'SNAPSHOT' )
     }
 
     @Override
