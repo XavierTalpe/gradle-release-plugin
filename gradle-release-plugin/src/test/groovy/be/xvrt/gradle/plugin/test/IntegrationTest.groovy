@@ -22,7 +22,7 @@ abstract class IntegrationTest {
     private void writeBuildFile() {
         def workingDir = System.getProperty 'user.dir'
         // TODO: Dynamically retrieve latest JAR file in folder instead of explicit version number.
-        def pluginPath = new File( workingDir, 'build/libs/gradle-release-plugin-0.3.0.jar' )
+        def pluginPath = new File( workingDir, 'build/libs/gradle-release-plugin-0.4.0-SNAPSHOT.jar' )
 
         buildFile = temporaryFolder.newFile 'build.gradle'
         buildFile.withWriter { w ->
