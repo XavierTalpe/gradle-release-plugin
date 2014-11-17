@@ -1,6 +1,6 @@
 # Gradle Release Plugin [![Travis](https://travis-ci.org/XavierTalpe/gradle-release-plugin.svg?branch=master)](https://travis-ci.org/XavierTalpe/gradle-release-plugin)
 
-Plugin that automatically prepares and increments the project version when making releases.
+Automatically prepares and increments the version number before and after making a release. Commits and tags releases as well.
 
 Before starting the build, the `SNAPSHOT` tag (if present) will be removed from the current project version. After the build is successfully created, the current version of the project will be committed and tagged. Finally, the version number will be incremented and initialized for the next (SNAPSHOT) release.
 
