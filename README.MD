@@ -60,32 +60,32 @@ The **release** task is the main entry point for configuring this plugin. The be
 
 Property | Description
 --- | ---
-releaseVersion | Closure containing the logic to build the release version. By default removes `-SNAPSHOT` from the initial version.
-nextVersion | Closure containing the logic to build the next (`-SNAPSHOT`) version. By default adds `-SNAPSHOT` to the **release version** if the initial version contained `SNAPSHOT`.
+releaseVersion | Closure containing the logic to build the release version. By default removes a trailing `-SNAPSHOT` tag from the initial version (if present).
+nextVersion | Closure containing the logic to build the next (`-SNAPSHOT`) version. By default adds `-SNAPSHOT` to the **release version** if the initial version also contained `SNAPSHOT`.
 scmDisabled | Disables all commit, tagging and pushing functionality. Effectively makes it look as if the project does not use an SCM. Useful for testing or demonstration purposes. Defaults to `false`.
-scmRootDir | The root directory where the SCM is initialized. For GIT this is the directory containing a .git directory. Defaults to the project root directory.
+scmRootDir | The root directory where the SCM is initialized. For GIT this is the directory containing a `.git` directory. Defaults to the project's root directory.
 scmRemote | The name of the remote repository to push to when committing/tagging SCM changes. Only used for GIT. Defaults to `origin`.
-releaseCommitMessage | Commit message to save the project state after building the release. Defaults to `[Gradle Release] Commit for %version`.
-releaseTag | Tag (name) to annotate the project state after building the release. Defaults to `%version`
-releaseTagMessage | Tag message for the `releaseTag` property. Defaults to `[Gradle Release] Tag for %version.`
-updateVersionCommitMessage | Commit message to prepare the project state for the next build. Defaults to `[Gradle Release] Preparing for %version.`
+releaseCommitMessage | Commit message to save the project state after building the release. Defaults to `[Gradle Release] Commit for %version.`.
+releaseTag | Tag (name) to annotate the project state after building the release. Defaults to `%version`.
+releaseTagMessage | Tag message for the `releaseTag` property. Defaults to `[Gradle Release] Tag for %version.`.
+updateVersionCommitMessage | Commit message to prepare the project state for the next build. Defaults to `[Gradle Release] Preparing for %version.`.
 
-As an example of how to configure any of the above properties, the following snippet overrides the `releaseCommitMessage` property with a commit message that mentions the project name. It also configures a closure to customize the release version:
+As an example of how to configure any of the above properties, the following snippet overrides the `releaseVersion` closure to customize the release version logic. The `releaseCommitMessage` property is replaced with a commit message that mentions the project name:
 
 ```
 release {
-    releaseCommitMessage = "${project.name} v%version."
-
     releaseVersion = { version ->
         version -= '-SNAPSHOT'
         version += '-RC1'
 
         version
     }
+    
+    releaseCommitMessage = "${project.name} v%version."
 }
 ```
 
-More **detailed examples** of how to configure this plugin can be found in the [examples](https://github.com/XavierTalpe/gradle-release-plugin/tree/master/examples) folder of this project's root directory.
+More **detailed examples** of how to configure this plugin can be found in the [examples](https://github.com/XavierTalpe/gradle-release-plugin/tree/master/examples) folder.
 
 
 ## Tasks API
