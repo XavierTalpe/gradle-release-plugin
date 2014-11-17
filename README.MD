@@ -1,6 +1,9 @@
 # Gradle Release Plugin [![Travis](https://travis-ci.org/XavierTalpe/gradle-release-plugin.svg?branch=master)](https://travis-ci.org/XavierTalpe/gradle-release-plugin)
 
-This release plugin automatically takes care of versioning your releases. Before starting the build, the '-SNAPSHOT' tag  will be removed from the version number (if any). After the build is sucessfully created, the current state of the project will be committed and tagged. Finally, the version number will be incremented and initialized for the next (snapshot) release.
+Plugin that automatically sets the proper release version and increments the (SNAPSHOT) version after the release was successful.
+
+Before starting the build, the '-SNAPSHOT' tag (if present) will be removed from the current project version. After the build is successfully created, the current version of the project will be committed and tagged. Finally, the version number will be incremented and initialized for the next (SNAPSHOT) release.
+
 
 ## How to use this plugin
 
@@ -13,7 +16,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'be.xvrt:release-plugin:0.2.2'
+        classpath 'be.xvrt:release-plugin:0.3.0'
     }
 }
 
@@ -23,46 +26,65 @@ apply plugin: 'be.xvrt.release'
 Alternatively you can also use the new, incubating, plugin mechanism introduced in Gradle 2.1:
 ```
 plugins {
-    id 'be.xvrt.release' version '0.2.2'
+    id 'be.xvrt.release' version '0.3.0'
 }
 ```
 
 
 ### Execute the release task
-To trigger a new release using this plugin, simply run
+To trigger an automated release, simply run
 ```
 $ gradle release
 ```
 
-This will automatically trigger an existing `build` task and ensure the correct version is used to build the release. For projects that don't have a build task or need to modify the default behaviour, see the [release](#release) task documentation.
+This will automatically trigger the existing `build` task and ensure the correct version is used to build the release artifacts. For projects that don't have a build task or need to modify the default behaviour, see the [release](#release) task documentation.
 
-### Specifying the version
+### Specifying the (release) version
 There are multiple options to provide the version for building the project. **In order of priority**:
-- Passing in a parameter `-Pversion=XXX` from the command line when invoking Gradle.
-- Set the version in your `build.gradle` file.
-- Add a `version` property to your `gradle.properties` file. If the build was successful, the updated version will also be stored in this file.
+- Passing in a parameter `-Pversion=XXX` from the command line when invoking Gradle. (Useful for parametrized CI builds).
+- Set the version in your `build.gradle` file. (Note: this version won't be updated and committed after the release is made.)
+- Add a `version` property to your `gradle.properties` file. If the build was successful, the updated version will be committed to this file.
 
 
 ## Limitations
 * Gradle 2.0 and up. Lower versions have not (yet) been tested.
 * Currently only supports GIT as SCM.
+* Not tested in combination with the Android plugin.
 
 
 ## Configuring the plugin
-By extending the release task it's possible to configure various options for this plugin. The below table shows all configurable properties, what they are for and what their default value is.
+The **release** task is the main entry point for configuring this plugin. The below table shows all **configurable properties**, what they are for and what their default value is.
 
 Property | Description
 --- | ---
+releaseVersion | TODO
+nextVersion | TODO
+|
+scmDisabled | TODO
 scmRootDir | The root directory where the SCM is initialized. For GIT this is the directory containing a .git directory. Defaults to the project root directory.
 scmRemote | The name of the remote repository to push to when committing/tagging SCM changes. Only used for GIT. Defaults to origin.
+|
+releaseCommitMessage | TODO
+releaseTag | TODO
+releaseTagMessage | TODO
+updateVersionCommitMessage | TODO
 
-As an example of how to configure any of the above properties, the following snippet overrides the `tagMessage` property with a commit message that mentions the project name.
+As an example of how to configure any of the above properties, the following snippet overrides the `releaseCommitMessage` property with a commit message that mentions the project name. It also configures a closure to customize the release version:
 
 ```
 release {
-    tagMessage = "Tag for ${project.name} version "
+    releaseCommitMessage = "${project.name} v%version."
+
+    releaseVersion = { version ->
+        version -= '-SNAPSHOT'
+        version += '-RC1'
+
+        version
+    }
 }
 ```
+
+More **detailed examples** of how to configure this plugin can be found in the [examples](https://github.com/XavierTalpe/gradle-release-plugin/tree/master/examples) folder of this project's root directory.
 
 
 ## Tasks API
@@ -71,7 +93,8 @@ release {
 Task | Description
 --- | ---
 prepareRelease | Sets the release version before the release build is started.
-tagRelease | Commits and tags this release to the SCM.
+commitRelease | TODO
+tagRelease | TODO
 updateVersion | Sets the version for the next snapshot build and commits this change to the SCM.
 release | Parent task of this plugin. Ensures all other tasks are executed at the right time.
 
