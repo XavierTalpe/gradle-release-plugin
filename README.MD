@@ -100,6 +100,9 @@ updateVersion | Sets the version for the next snapshot build and commits this ch
 release | Parent task of this plugin. Ensures all other tasks are executed at the right time.
 
 
+TODO
+- Add example to commit only after uploading archives
+
 ### prepareRelease
 Before starting the actual build, the `prepareRelease` task will remove the `-SNAPSHOT` tag from the current version number (if present). For example, if the version is `1.2-SNAPSHOT`, a `1.2` release will be made.
 
@@ -110,7 +113,7 @@ There are three options to provide the project version. These are, in order of p
 
 If a `gradle.properties` file is present and it already contains a `version` property, then this value will be updated and committed during the release process. If no such file (or property) is present, no attempt will be made to create (or update) the `gradle.properties` file. Similarly, if the `version` property was defined in the `build.gradle` file, that property also won't be updated.
 
-The release task also offers an extensible closure to insert custom logic when setting the release version. The example below demonstrates how to implement a closure that adds a suffix to the current version.
+Using the `release` task it's also possible to override the logic to configure the release version. The following code snippet demonstrates how to implement a closure that adds an `RC1` suffix to the current version:
 ```
 release {
     releaseVersion = { version ->
@@ -120,18 +123,15 @@ release {
 ```
 
 ### commitRelease
-TODO
+Executed if the build was successful. Takes care of committing all changes files (gradle.properties and other) to the SCM. The commit message for this task can be overriden by specifying the `releaseCommitMessage` property. See the [custom messages example](https://github.com/XavierTalpe/gradle-release-plugin/tree/master/examples/custom-messages) for more information.
 
 ### tagRelease
-If the release was successfully created, the current state of the project (all modified files) will be committed and tagged.
-
-TODO
-- Add example to tag only after uploading archives
+Executed if the build was successful. Takes care of tagging the current release. The tag name and tag message for this task can be overriden by specifying the `releaseTag` or `releaseTagMessage` property. See the [custom messages example](https://github.com/XavierTalpe/gradle-release-plugin/tree/master/examples/custom-messages) for more information.
 
 ### updateVersion
-After the build is successfully created, the updateVersion task is responsible for incrementing the version number so it's ready for the next (snapshot) build. If the original version was a snapshot release, then the new version will also be a snapshot release, otherwise only the version number is incremented. This version number will also be committed to the SCM.
+Executed if the build was successful. The `updateVersion` task is responsible for incrementing the version number so it's ready for the next (snapshot) build. If the original version was a snapshot release, then the new version will also be a snapshot release, otherwise the version number is only incremented. This new version number will also be committed to the SCM.
 
-The release task offers an extensible closure to insert custom logic when setting the next release or snapshot version. The example below demonstrates how to implement a closure that returns 2.0-SNAPSHOT as next snapshot release.
+Using the `release` task it's also possible to override the logic to configure the next version. The code snippet below demonstrates how to implement a closure that returns `2.0-SNAPSHOT` as next snapshot release.
 ```
 release {
     nextVersion = { version, wasSnapshotVersion ->
