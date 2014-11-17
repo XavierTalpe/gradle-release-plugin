@@ -2,7 +2,7 @@
 
 Plugin that automatically prepares and increments the project version when making releases.
 
-Before starting the build, the 'SNAPSHOT' tag (if present) will be removed from the current project version. After the build is successfully created, the current version of the project will be committed and tagged. Finally, the version number will be incremented and initialized for the next (SNAPSHOT) release.
+Before starting the build, the `SNAPSHOT` tag (if present) will be removed from the current project version. After the build is successfully created, the current version of the project will be committed and tagged. Finally, the version number will be incremented and initialized for the next (SNAPSHOT) release.
 
 
 ## How to use this plugin
