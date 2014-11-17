@@ -1,15 +1,5 @@
 plugins {
-    id 'be.xvrt.release' version '0.2.2'
-}
-
-
-/**
- * Dummy build task. In most projects this task
- * will already be provided by another plugin.
- * (For example the Java plugin.)
- */
-task( 'build' ) << {
-    println "I'm building my project with version ${project.version}, hurrah!"
+    id 'be.xvrt.release' version '0.3.0'
 }
 
 
