@@ -1,8 +1,8 @@
 # Gradle Release Plugin [![Travis](https://travis-ci.org/XavierTalpe/gradle-release-plugin.svg?branch=master)](https://travis-ci.org/XavierTalpe/gradle-release-plugin)
 
-Plugin that automatically sets the proper release version and increments the (SNAPSHOT) version after the release was successful.
+Plugin that automatically prepares and increments the project version when making releases.
 
-Before starting the build, the '-SNAPSHOT' tag (if present) will be removed from the current project version. After the build is successfully created, the current version of the project will be committed and tagged. Finally, the version number will be incremented and initialized for the next (SNAPSHOT) release.
+Before starting the build, the `SNAPSHOT` tag (if present) will be removed from the current project version. After the build is successfully created, the current version of the project will be committed and tagged. Finally, the version number will be incremented and initialized for the next (SNAPSHOT) release.
 
 
 ## How to use this plugin
@@ -32,24 +32,27 @@ plugins {
 
 
 ### Execute the release task
-To trigger an automated release, simply run
+To trigger the release process (including automated commits and tagging!), simply run:
 ```
 $ gradle release
 ```
 
-This will automatically trigger the existing `build` task and ensure the correct version is used to build the release artifacts. For projects that don't have a build task or need to modify the default behaviour, see the [release](#release) task documentation.
+This will automatically trigger an existing `build` task and ensure the correct version is used to build the release artifacts. The release will be committed and tagged. Preparations for the next release will also be committed.
+
+For projects that don't have a build task or need to modify the default behaviour, see the [release](#release) task documentation.
 
 ### Specifying the (release) version
 There are multiple options to provide the version for building the project. **In order of priority**:
-- Passing in a parameter `-Pversion=XXX` from the command line when invoking Gradle. (Useful for parametrized CI builds).
-- Set the version in your `build.gradle` file. (Note: this version won't be updated and committed after the release is made.)
-- Add a `version` property to your `gradle.properties` file. If the build was successful, the updated version will be committed to this file.
+- Passing in a parameter `-Pversion=XXX` from the command line when invoking Gradle, useful for parametrized CI builds.
+- Set the version in your `build.gradle` file. This version number **won't** be updated and committed if the release was successful.
+- Add a `version` property to your `gradle.properties` file. This version number **will** be updated and committed if the release was successful.
 
 
 ## Limitations
 * Gradle 2.0 and up. Lower versions have not (yet) been tested.
 * Currently only supports GIT as SCM.
 * Not tested in combination with the Android plugin.
+* Feel free to help in solving these limitations!
 
 
 ## Configuring the plugin
