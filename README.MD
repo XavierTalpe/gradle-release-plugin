@@ -43,8 +43,8 @@ For projects that don't have a build task or need to modify the default behaviou
 
 ### Specifying the (release) version
 There are multiple options to provide the version for building the project. **In order of priority**:
-- Passing in a parameter `-Pversion=XXX` from the command line when invoking Gradle, useful for parametrized CI builds.
-- Set the version in your `build.gradle` file. This version number **won't** be updated and committed if the release was successful.
+- Pass in a parameter `-Pversion=XXX` from the command line when invoking Gradle, useful for parametrized CI builds.
+- Set a `version` property in your `build.gradle` file. This version number **won't** be updated and committed if the release was successful.
 - Add a `version` property to your `gradle.properties` file. This version number **will** be updated and committed if the release was successful.
 
 
@@ -94,16 +94,21 @@ More **detailed examples** of how to configure this plugin can be found in the [
 Task | Description
 --- | ---
 prepareRelease | Sets the release version before the release build is started.
-commitRelease | TODO
-tagRelease | TODO
+commitRelease | Commits any file changes for this release to the SCM.
+tagRelease | Tags this release to the SCM.
 updateVersion | Sets the version for the next snapshot build and commits this change to the SCM.
 release | Parent task of this plugin. Ensures all other tasks are executed at the right time.
 
 
 ### prepareRelease
-Before starting the actual build, the prepareRelease task will remove the `-SNAPSHOT` tag from the current version number (if present). For example, if the version is `1.2-SNAPSHOT`, a `1.2` release will be made.
+Before starting the actual build, the `prepareRelease` task will remove the `-SNAPSHOT` tag from the current version number (if present). For example, if the version is `1.2-SNAPSHOT`, a `1.2` release will be made.
 
-The project `version` can either be directly declared in the `build.gradle` file or implicitly via a `gradle.properties` file. If a `gradle.properties` file is present and it already contains a `version` property, then this value will be overwritten (and saved) during the release process. If no such file (or property) is present, no attempt will be made to create (or update) a `gradle.properties` file.
+There are three options to provide the project version. These are, in order of priority:
+- Pass in a parameter `-Pversion=XXX` from the command line.
+- Set a `version` property in your `build.gradle` file.
+- Add a `version` property to your `gradle.properties` file.
+
+If a `gradle.properties` file is present and it already contains a `version` property, then this value will be updated and committed during the release process. If no such file (or property) is present, no attempt will be made to create (or update) the `gradle.properties` file. Similarly, if the `version` property was defined in the `build.gradle` file, that property also won't be updated.
 
 The release task also offers an extensible closure to insert custom logic when setting the release version. The example below demonstrates how to implement a closure that adds a suffix to the current version.
 ```
@@ -113,6 +118,9 @@ release {
     }
 }
 ```
+
+### commitRelease
+TODO
 
 ### tagRelease
 If the release was successfully created, the current state of the project (all modified files) will be committed and tagged.
@@ -135,9 +143,10 @@ release {
 ### release
 The release tasks is responsible for wiring all the other tasks together. It also ensures `prepareRelease` is executed before the `build` task while all other tasks are executed later.
 
-By default the release task will use the `build` task to wire everything together. This task is typically provided by external plugins such as the Java plugin. To override this behaviour, use the following code:
+By default the release task will use the `build` task to wire everything together. This task is typically provided by external plugins such as the Java plugin. In case no such task is available, you can manually connect the `release` with another `customBuild` task:
 ```
 tasks.release.dependsOn customBuild
+tasks.commitRelease.dependsOn customBuild
 tasks.tagRelease.dependsOn customBuild
 tasks.updateVersion.dependsOn customBuild
 

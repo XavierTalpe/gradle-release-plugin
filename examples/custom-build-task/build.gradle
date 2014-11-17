@@ -18,6 +18,7 @@ task( 'customBuild' ) << {
  * plugin, some manual wiring is required.
  */
 tasks.release.dependsOn customBuild
+tasks.commitRelease.dependsOn customBuild
 tasks.tagRelease.dependsOn customBuild
 tasks.updateVersion.dependsOn customBuild
 
