@@ -1,4 +1,5 @@
 package be.xvrt.gradle.plugin.test
+
 import org.junit.Before
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -20,9 +21,7 @@ abstract class IntegrationTest {
     }
 
     private void writeBuildFile() {
-        def workingDir = System.getProperty 'user.dir'
-        // TODO: Dynamically retrieve latest JAR file in folder instead of explicit version number.
-        def pluginPath = new File( workingDir, 'build/libs/gradle-release-plugin-0.4.0-SNAPSHOT.jar' )
+        def pluginPath = findPluginPath()
 
         buildFile = temporaryFolder.newFile 'build.gradle'
         buildFile.withWriter { w ->
@@ -33,6 +32,17 @@ abstract class IntegrationTest {
             w.writeLine '}'
             w.writeLine 'apply plugin: "be.xvrt.release"'
         }
+    }
+
+    private String findPluginPath() {
+        def workingDir = System.getProperty 'user.dir'
+
+        def libsDir = new File( workingDir, 'build/libs/' )
+        def jarFiles = libsDir.listFiles()
+        Arrays.sort( jarFiles );
+
+        def highestBuild = jarFiles[ jarFiles.length - 1 ]
+        highestBuild.getAbsolutePath()
     }
 
     private void writePropertiesFile() {
