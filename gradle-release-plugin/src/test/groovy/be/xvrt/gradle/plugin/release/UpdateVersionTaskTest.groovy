@@ -132,12 +132,6 @@ class UpdateVersionTaskTest {
         assertEquals( 1, nbCommits )
     }
 
-    @Ignore
-    @Test
-    void 'gradle.properties file is updated when no errors occur'() {
-        // TODO
-    }
-
     @Test
     void 'executing the task won\'t create a commit when SCM support is disabled'() {
         setup:
