@@ -3,15 +3,21 @@ package be.xvrt.gradle.plugin.release.scm
 class DummyHelper extends ScmHelper {
 
     @Override
-    void commit( String message ) {
+    Commit commit( String message ) {
+        new Commit( '' )
     }
 
     @Override
-    void rollbackLastCommit() {
+    void deleteCommit( Commit commit ) {
     }
 
     @Override
-    void tag( String name, String message ) {
+    Tag tag( String name, String message ) {
+        new Tag( '' )
+    }
+
+    @Override
+    void deleteTag( Tag tag ) {
     }
 
     @Override

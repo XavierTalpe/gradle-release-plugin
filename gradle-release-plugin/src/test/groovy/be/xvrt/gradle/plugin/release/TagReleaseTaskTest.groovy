@@ -1,5 +1,4 @@
 package be.xvrt.gradle.plugin.release
-
 import be.xvrt.gradle.plugin.release.scm.ScmException
 import be.xvrt.gradle.plugin.release.scm.ScmTestUtil
 import org.eclipse.jgit.api.Git
@@ -9,7 +8,6 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -92,8 +90,6 @@ class TagReleaseTaskTest {
         assertEquals( 'refs/tags/0.2.3', tagList.get( 0 ).getName() )
     }
 
-    // TODO #6 Rollback changes
-    @Ignore
     @Test
     void 'tag is rolled back when push fails'() {
         when:

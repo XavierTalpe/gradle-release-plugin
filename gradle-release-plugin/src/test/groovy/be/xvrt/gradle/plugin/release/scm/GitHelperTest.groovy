@@ -50,10 +50,10 @@ class GitHelperTest {
     }
 
     @Test
-    void 'commit can be rolled back'() {
+    void 'commit can be deleted'() {
         when:
-        gitHelper.commit 'commitMessage'
-        gitHelper.rollbackLastCommit()
+        def commitId = gitHelper.commit 'commitMessage'
+        gitHelper.deleteCommit commitId
 
         then:
         def commitLog = new Git( repository ).log().call()
@@ -77,6 +77,21 @@ class GitHelperTest {
 
         assertEquals( 1, allTags.size() )
         assertEquals( 'refs/tags/1.0.0', allTags.get( 0 ).getName() )
+    }
+
+    @Test
+    void 'tag can be deleted'() {
+        setup:
+        gitHelper.commit 'commitMessage'
+
+        when:
+        def tagId = gitHelper.tag '1.0.0', 'Tagging a release'
+        gitHelper.deleteTag tagId
+
+        then:
+        def allTags = new Git( repository ).tagList().call();
+
+        assertEquals( 0, allTags.size() )
     }
 
     @Test( expected = ScmException.class )

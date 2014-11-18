@@ -2,7 +2,6 @@ package be.xvrt.gradle.plugin.release.scm
 
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ResetCommand
-import org.eclipse.jgit.lib.ObjectId
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.revwalk.RevCommit
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
@@ -11,8 +10,6 @@ class GitHelper extends ScmHelper {
 
     private final Repository repository
     private final Git git
-
-    private ObjectId lastCommitId
 
     GitHelper( File gitRepository ) {
         repository = openRepository gitRepository
@@ -29,32 +26,34 @@ class GitHelper extends ScmHelper {
     }
 
     @Override
-    void commit( String message ) throws ScmException {
+    Commit commit( String message ) throws ScmException {
         try {
             def commit = git.commit()
                             .setAll( true )
                             .setMessage( message )
                             .call()
 
-            lastCommitId = commit.getId()
+            new Commit( commit.id.name )
         }
         catch ( Exception exception ) {
             throw new ScmException( 'Error when committing changes.', exception )
         }
     }
 
+    /**
+     * Currently only supports deletion of the last commit.
+     */
     @Override
-    void rollbackLastCommit() throws ScmException {
-        if ( lastCommitId == null ) {
-            return
-        }
-
+    void deleteCommit( Commit commitId ) throws ScmException {
         try {
             def canRollback = false
 
             def commitLog = git.log().call();
             for ( RevCommit commit : commitLog ) {
-                canRollback = commit.getId().equals( lastCommitId )
+                def name = commit.id.name
+                def targetName = commitId.id
+
+                canRollback = name.equals targetName
                 break
             }
 
@@ -68,14 +67,26 @@ class GitHelper extends ScmHelper {
     }
 
     @Override
-    void tag( String name, String message ) throws ScmException {
+    Tag tag( String name, String message ) throws ScmException {
         try {
             git.tag()
                .setName( name )
                .setMessage( message )
                .call()
+
+            new Tag( name )
         } catch ( Exception exception ) {
             throw new ScmException( 'Error when tagging changes.', exception )
+        }
+    }
+
+    @Override
+    void deleteTag( Tag tag ) throws ScmException {
+        try {
+            git.tagDelete().setTags( tag.id ).call()
+        }
+        catch ( Exception exception ) {
+            throw new ScmException( 'Error when rolling back commit.', exception )
         }
     }
 

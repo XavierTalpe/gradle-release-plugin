@@ -1,8 +1,12 @@
 package be.xvrt.gradle.plugin.release
 
+import be.xvrt.gradle.plugin.release.scm.ScmException
+import be.xvrt.gradle.plugin.release.scm.Tag
 import be.xvrt.gradle.plugin.task.AbstractScmTask
 
 class TagReleaseTask extends AbstractScmTask {
+
+    private Tag tagId
 
     @Override
     void configure() {
@@ -21,15 +25,24 @@ class TagReleaseTask extends AbstractScmTask {
             def tagMessage = extension.getAt ReleasePluginExtension.RELEASE_TAG_MSG
             def releaseVersion = project.version
 
-            tag tagName, tagMessage, releaseVersion
+            tagId = tag tagName, tagMessage, releaseVersion
             push scmRemote
         }
     }
 
     @Override
     void rollback( Exception exception ) {
-        // TODO #6 Rollback changes
+        rollbackTag()
+
         throw exception;
+    }
+
+    private void rollbackTag() throws ScmException {
+        if ( tagId ) {
+            logger.info "${name} rolling back tag due to error."
+
+            getScmHelper().deleteTag tagId
+        }
     }
 
 }

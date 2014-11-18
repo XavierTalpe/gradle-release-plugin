@@ -1,9 +1,12 @@
 package be.xvrt.gradle.plugin.release
 
+import be.xvrt.gradle.plugin.release.scm.Commit
 import be.xvrt.gradle.plugin.release.scm.ScmException
 import be.xvrt.gradle.plugin.task.AbstractScmTask
 
 class CommitReleaseTask extends AbstractScmTask {
+
+    private Commit commitId
 
     @Override
     void configure() {
@@ -26,7 +29,7 @@ class CommitReleaseTask extends AbstractScmTask {
         def commitMessage = extension.getAt ReleasePluginExtension.RELEASE_COMMIT_MSG
         def scmRemote = extension.getAt ReleasePluginExtension.SCM_REMOTE
 
-        commit commitMessage, releaseVersion
+        commitId = commit commitMessage, releaseVersion
         push scmRemote
     }
 
@@ -38,9 +41,11 @@ class CommitReleaseTask extends AbstractScmTask {
     }
 
     private void rollbackCommit() throws ScmException {
-        logger.info "${name} rolling back commit due to error."
+        if ( commitId ) {
+            logger.info "${name} rolling back commit due to error."
 
-        getScmHelper().rollbackLastCommit()
+            getScmHelper().deleteCommit commitId
+        }
     }
 
 }
