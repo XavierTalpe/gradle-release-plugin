@@ -68,9 +68,9 @@ class UpdateVersionTask extends AbstractScmTask {
             logger.info "${name} skipping updateVersion commit because SCM support is disabled."
         }
         else {
-            def extension = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )
+            def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
 
-            def updateVersionMessage = extension.getAt( ReleasePluginExtension.UPDATE_VERSION_COMMIT_MSG )
+            def updateVersionMessage = extension.getAt ReleasePluginExtension.UPDATE_VERSION_COMMIT_MSG
             def scmRemote = extension.getAt ReleasePluginExtension.SCM_REMOTE
 
             commitId = commit updateVersionMessage, nextVersion

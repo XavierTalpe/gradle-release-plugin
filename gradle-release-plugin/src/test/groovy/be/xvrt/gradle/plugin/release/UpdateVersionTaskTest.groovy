@@ -1,19 +1,22 @@
 package be.xvrt.gradle.plugin.release
 
+import be.xvrt.gradle.plugin.release.scm.ScmException
 import be.xvrt.gradle.plugin.release.scm.ScmTestUtil
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.revwalk.RevCommit
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
+import static junit.framework.Assert.fail
 import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertTrue
 
 class UpdateVersionTaskTest {
 
@@ -155,7 +158,7 @@ class UpdateVersionTaskTest {
     }
 
     @Test
-    public void 'override commit message'() throws Exception {
+    void 'override commit message'() {
         setup:
         ScmTestUtil.createOrigin gradleRepository, temporaryFolder.newFolder()
 
@@ -183,18 +186,20 @@ class UpdateVersionTaskTest {
         assertEquals( 1, nbCommits )
     }
 
-    // TODO #6 Rollback changes in gradle file
-    @Ignore
+    // TODO #6 Rollback changes in gradle.properties file
     @Test
     void 'commit is rolled back when push fails'() {
-        setup:
-        ScmTestUtil.createOrigin gradleRepository, temporaryFolder.newFolder()
-
         when:
-        prepareReleaseTask.configure()
-        updateVersionTask.configure()
-        prepareReleaseTask.execute()
-        updateVersionTask.execute()
+        try {
+            prepareReleaseTask.configure()
+            updateVersionTask.configure()
+            prepareReleaseTask.execute()
+            updateVersionTask.execute()
+            fail()
+        }
+        catch ( TaskExecutionException expected ) {
+            assertTrue( expected.cause instanceof ScmException )
+        }
 
         then:
         def commitLog = new Git( gradleRepository ).log().call()
