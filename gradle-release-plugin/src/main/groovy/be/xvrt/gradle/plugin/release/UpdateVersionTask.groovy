@@ -31,7 +31,6 @@ class UpdateVersionTask extends AbstractScmTask {
     @Override
     void rollback( Exception exception ) {
         rollbackCommit commitId
-        //        rollbackVersion releasedVersion
 
         throw exception;
     }
@@ -73,17 +72,6 @@ class UpdateVersionTask extends AbstractScmTask {
             logger.info ":${name} rolling back commit due to error."
 
             getScmHelper().deleteCommit commitId
-        }
-    }
-
-    private void rollbackVersion( String version ) {
-        if ( version ) {
-            // Since this task is executed after commitRelease, we can assume that task
-            // was successful. As such, we only need to roll back to the release version.
-            logger.info( ":${name} rolling back version to ${version}." )
-
-            def gradleProperties = new GradleProperties( project )
-            gradleProperties.saveVersion version
         }
     }
 
