@@ -13,7 +13,7 @@ import static org.junit.Assert.*
 class PrepareReleaseTaskTest {
 
     @Rule
-    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     private Project project
     private Task prepareReleaseTask

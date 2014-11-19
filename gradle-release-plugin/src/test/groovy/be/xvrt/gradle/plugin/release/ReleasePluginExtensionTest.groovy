@@ -12,7 +12,7 @@ import static org.junit.Assert.*
 class ReleasePluginExtensionTest {
 
     @Rule
-    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     private Project project
 

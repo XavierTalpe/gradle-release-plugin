@@ -32,7 +32,7 @@ class UpdateVersionTask extends AbstractScmTask {
     void rollback( Exception exception ) {
         rollbackCommit commitId
 
-        throw exception;
+        throw exception
     }
 
     private String buildNextVersion( String version ) {

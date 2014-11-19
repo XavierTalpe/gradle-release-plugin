@@ -23,7 +23,7 @@ class TagReleaseTask extends AbstractScmTask {
     void rollback( Exception exception ) {
         rollbackTag tagId
 
-        throw exception;
+        throw exception
     }
 
     private Tag tag() {

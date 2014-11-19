@@ -5,7 +5,7 @@ class Commit {
     final String id
 
     Commit( String id ) {
-        this.id = id;
+        this.id = id
     }
 
 }

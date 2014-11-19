@@ -15,10 +15,7 @@ class ScmTestUtil {
         def repo = FileRepositoryBuilder.create( new File( directory, ".git" ) )
 
         def git = new Git( repo )
-        git.add()
-           .addFilepattern( "." )
-           .setUpdate( false ).call();
-
+        git.add().addFilepattern( "." ).setUpdate( false ).call()
         git.commit().setAll( true ).setMessage( 'HEAD' ).call()
 
         repo

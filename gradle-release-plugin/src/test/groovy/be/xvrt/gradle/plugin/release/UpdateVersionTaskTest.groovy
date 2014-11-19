@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue
 class UpdateVersionTaskTest {
 
     @Rule
-    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     private Repository gradleRepository
 

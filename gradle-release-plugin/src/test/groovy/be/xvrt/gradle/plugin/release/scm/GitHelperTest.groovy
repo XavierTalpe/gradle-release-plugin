@@ -64,7 +64,7 @@ class GitHelperTest {
         gitHelper.tag '1.0.0', 'Tagging a release'
 
         then:
-        def allTags = new Git( repository ).tagList().call();
+        def allTags = new Git( repository ).tagList().call()
 
         assertEquals( 1, allTags.size() )
         assertEquals( 'refs/tags/1.0.0', allTags.get( 0 ).getName() )
@@ -80,7 +80,7 @@ class GitHelperTest {
         gitHelper.deleteTag tagId
 
         then:
-        def allTags = new Git( repository ).tagList().call();
+        def allTags = new Git( repository ).tagList().call()
 
         assertEquals( 0, allTags.size() )
     }

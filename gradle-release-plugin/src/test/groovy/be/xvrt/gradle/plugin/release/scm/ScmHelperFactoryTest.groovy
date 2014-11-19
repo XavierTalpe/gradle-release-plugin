@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue
 class ScmHelperFactoryTest {
 
     @Rule
-    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     @Test
     void testCreateGitScmHelper() {

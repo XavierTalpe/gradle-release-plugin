@@ -15,12 +15,12 @@ class GitHelper extends ScmHelper {
     }
 
     private Repository openRepository( File gitRepository ) {
-        FileRepositoryBuilder builder = new FileRepositoryBuilder();
+        FileRepositoryBuilder builder = new FileRepositoryBuilder()
 
         builder.setGitDir( gitRepository )
                .readEnvironment()
                .findGitDir()
-               .build();
+               .build()
     }
 
     @Override
@@ -110,7 +110,7 @@ class GitHelper extends ScmHelper {
             for ( def remoteName : allRemotes ) {
                 if ( remoteName.equals( targetRemoteName ) ) {
                     remoteUri = config.getString( 'remote', remoteName, 'url' )
-                    break;
+                    break
                 }
             }
         }

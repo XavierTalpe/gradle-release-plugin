@@ -1,6 +1,6 @@
 package be.xvrt.gradle.plugin.release
 
-import org.gradle.api.Project;
+import org.gradle.api.Project
 
 class ReleasePluginExtension {
 
@@ -19,18 +19,18 @@ class ReleasePluginExtension {
     public static final String RELEASE_VERSION = 'releaseVersion'
     public static final String NEXT_VERSION = 'nextVersion'
 
-    boolean scmDisabled;
+    boolean scmDisabled
 
-    String scmRootDir;
-    String scmRemote;
+    String scmRootDir
+    String scmRemote
 
-    String releaseCommitMessage;
-    String releaseTag;
-    String releaseTagMessage;
-    String updateVersionCommitMessage;
+    String releaseCommitMessage
+    String releaseTag
+    String releaseTagMessage
+    String updateVersionCommitMessage
 
-    Closure<String> releaseVersion;
-    Closure<String> nextVersion;
+    Closure<String> releaseVersion
+    Closure<String> nextVersion
 
     ReleasePluginExtension( Project project ) {
         scmDisabled = false

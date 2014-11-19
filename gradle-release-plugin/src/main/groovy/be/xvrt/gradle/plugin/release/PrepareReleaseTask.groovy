@@ -25,7 +25,7 @@ class PrepareReleaseTask extends AbstractDefaultTask {
     void rollback( Exception exception ) {
         rollbackVersion originalVersion
 
-        throw exception;
+        throw exception
     }
 
     private void prepareReleaseVersion() {

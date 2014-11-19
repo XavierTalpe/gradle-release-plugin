@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals
 class GradlePropertiesTest {
 
     @Rule
-    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     private GradleProperties gradleProperties
 

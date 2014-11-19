@@ -5,7 +5,7 @@ class Tag {
     final String id
 
     Tag( String id ) {
-        this.id = id;
+        this.id = id
     }
 
 }

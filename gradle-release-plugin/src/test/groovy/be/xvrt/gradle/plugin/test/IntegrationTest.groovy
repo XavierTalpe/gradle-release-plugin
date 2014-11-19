@@ -53,7 +53,7 @@ abstract class IntegrationTest {
 
         def libsDir = new File( workingDir, 'build/libs/' )
         def jarFiles = libsDir.listFiles()
-        Arrays.sort( jarFiles );
+        Arrays.sort( jarFiles )
 
         def highestBuild = jarFiles[ jarFiles.length - 1 ]
         highestBuild.absolutePath

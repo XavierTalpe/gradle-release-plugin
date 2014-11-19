@@ -31,7 +31,7 @@ class CommitReleaseTask extends AbstractScmTask {
     void rollback( Exception exception ) {
         rollbackCommit commitId
 
-        throw exception;
+        throw exception
     }
 
     private void rollbackCommit( Commit commitId ) throws ScmException {

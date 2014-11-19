@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue
 class TagReleaseTaskTest {
 
     @Rule
-    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     private Repository gradleRepository
 
@@ -47,7 +47,7 @@ class TagReleaseTaskTest {
         tagReleaseTask.execute()
 
         then:
-        def tagList = new Git( gradleRepository ).tagList().call();
+        def tagList = new Git( gradleRepository ).tagList().call()
 
         assertEquals( 1, tagList.size() )
         assertEquals( 'refs/tags/1.0.0', tagList.get( 0 ).getName() )
@@ -65,7 +65,7 @@ class TagReleaseTaskTest {
         tagReleaseTask.execute()
 
         then:
-        def tagList = new Git( gradleRepository ).tagList().call();
+        def tagList = new Git( gradleRepository ).tagList().call()
         assertEquals( 0, tagList.size() )
     }
 
@@ -84,7 +84,7 @@ class TagReleaseTaskTest {
         tagReleaseTask.execute()
 
         then:
-        def tagList = new Git( gradleRepository ).tagList().call();
+        def tagList = new Git( gradleRepository ).tagList().call()
 
         assertEquals( 1, tagList.size() )
         assertEquals( 'refs/tags/0.2.3', tagList.get( 0 ).getName() )
@@ -104,7 +104,7 @@ class TagReleaseTaskTest {
         }
 
         then:
-        def tagList = new Git( gradleRepository ).tagList().call();
+        def tagList = new Git( gradleRepository ).tagList().call()
         assertEquals( 0, tagList.size() )
     }
 
