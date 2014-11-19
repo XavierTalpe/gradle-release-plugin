@@ -25,7 +25,7 @@ abstract class AbstractScmTask extends AbstractDefaultTask {
 
         commitMessage = injectVersion commitMessage, version
 
-        getScmHelper().commit commitMessage
+        scmHelper.commit commitMessage
     }
 
     protected final Tag tag( String tagName, String tagMessage, String version ) throws ScmException {
@@ -34,7 +34,7 @@ abstract class AbstractScmTask extends AbstractDefaultTask {
         tagName = injectVersion tagName, version
         tagMessage = injectVersion tagMessage, version
 
-        getScmHelper().tag tagName, tagMessage
+        scmHelper.tag tagName, tagMessage
     }
 
     protected final void push() throws ScmException {
@@ -43,7 +43,7 @@ abstract class AbstractScmTask extends AbstractDefaultTask {
 
         logger.info ":${name} pushing local changes to ${scmRemote}."
 
-        getScmHelper().push scmRemote
+        scmHelper.push scmRemote
     }
 
     protected final ScmHelper getScmHelper() {

@@ -38,7 +38,7 @@ class CommitReleaseTask extends AbstractScmTask {
         if ( commitId ) {
             logger.info ":${name} rolling back commit due to error."
 
-            getScmHelper().deleteCommit commitId
+            scmHelper.deleteCommit commitId
         }
     }
 

@@ -39,7 +39,7 @@ class TagReleaseTask extends AbstractScmTask {
         if ( tagId ) {
             logger.info ":${name} rolling back tag due to error."
 
-            getScmHelper().deleteTag tagId
+            scmHelper.deleteTag tagId
         }
     }
 
