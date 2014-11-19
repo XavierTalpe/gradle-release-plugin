@@ -1,12 +1,11 @@
 package be.xvrt.gradle.plugin.test
-
 import be.xvrt.gradle.plugin.release.scm.ScmTestUtil
 import org.eclipse.jgit.lib.Repository
 import org.junit.Before
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 
-import static org.junit.Assert.assertEquals
+import static org.junit.Assert.fail
 
 abstract class IntegrationTest {
 
@@ -57,7 +56,7 @@ abstract class IntegrationTest {
         Arrays.sort( jarFiles );
 
         def highestBuild = jarFiles[ jarFiles.length - 1 ]
-        highestBuild.getAbsolutePath()
+        highestBuild.absolutePath
     }
 
     private static File writePropertiesFile( File projectDir ) {
@@ -96,17 +95,18 @@ abstract class IntegrationTest {
         def process = command.execute null, projectDir
         process.waitFor()
 
-        def exitValue = process.exitValue()
-        if ( exitValue == 1 ) {
+        def expectedExitValue = shouldFail ? 1 : 0
+        def actualExitValue = process.exitValue()
+
+        if ( expectedExitValue != actualExitValue ) {
             System.out.println process.in.text
             System.err.println process.err.text
+            fail()
         }
-
-        assertEquals( shouldFail ? 1 : 0, exitValue )
     }
 
     protected Repository enableGit( boolean createOrigin = true ) {
-        def repository = ScmTestUtil.createGitRepository( projectDir )
+        def repository = ScmTestUtil.createGitRepository projectDir
 
         if ( createOrigin ) {
             ScmTestUtil.createOrigin repository, temporaryFolder.newFolder()

@@ -16,7 +16,6 @@ class UpdateVersionTaskTest extends IntegrationTest {
         execute 'updateVersion'
 
         then:
-        def properties = getProperties()
         assertTrue properties.isEmpty()
     }
 
@@ -29,8 +28,6 @@ class UpdateVersionTaskTest extends IntegrationTest {
         execute 'updateVersion'
 
         then:
-        def properties = getProperties()
-
         assertEquals '1.0.1-SNAPSHOT', properties.version
     }
 
@@ -43,26 +40,22 @@ class UpdateVersionTaskTest extends IntegrationTest {
         execute 'release -PnextVersion=2.0.0-SNAPSHOT'
 
         then:
-        def properties = getProperties()
-
         assertEquals '2.0.0-SNAPSHOT', properties.version
     }
 
     @Test
     void 'properties file is rolled back when push fails'() {
         setup:
-        enableGit false
         addProperty 'version', '1.0.0-SNAPSHOT'
         appendLineToBuildFile 'tasks.commitRelease.enabled=false'
         appendLineToBuildFile 'tasks.tagRelease.enabled=false'
+        enableGit false
 
         when:
         execute 'updateVersion', true
 
         then:
-        def properties = getProperties()
-
-        assertEquals '1.0.0', properties.version
+        assertEquals '1.0.0-SNAPSHOT', properties.version
     }
 
 }

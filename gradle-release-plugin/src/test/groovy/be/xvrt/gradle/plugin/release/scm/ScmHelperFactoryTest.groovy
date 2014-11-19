@@ -26,7 +26,7 @@ class ScmHelperFactoryTest {
     @Test
     void testCreateDummyScmHelper() {
         when:
-        def scmHelper = ScmHelperFactory.create temporaryFolder.root.getAbsolutePath()
+        def scmHelper = ScmHelperFactory.create temporaryFolder.root.absolutePath
 
         then:
         assertTrue( scmHelper instanceof DummyHelper )

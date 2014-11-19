@@ -12,22 +12,16 @@ class ReleaseTaskTest extends IntegrationTest {
     @Test
     void 'release task is successful'() {
         setup:
-        def projectRepository = enableGit true
-
         addProperty 'version', '1.0.0-SNAPSHOT'
+        def projectRepository = enableGit true
 
         when:
         execute 'release'
 
         then:
-        assertProperties()
+        assertEquals '1.0.1-SNAPSHOT', properties.version
         assertCommits projectRepository
         assertTag projectRepository
-    }
-
-    private void assertProperties() {
-        def properties = getProperties()
-        assertEquals '1.0.1-SNAPSHOT', properties.version
     }
 
     private static void assertCommits( Repository repository ) {
