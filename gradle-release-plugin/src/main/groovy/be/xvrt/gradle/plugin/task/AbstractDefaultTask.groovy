@@ -14,6 +14,7 @@ abstract class AbstractDefaultTask extends DefaultTask {
         }
         catch ( Exception exception ) {
             rollback( exception )
+            throw exception
         }
     }
 

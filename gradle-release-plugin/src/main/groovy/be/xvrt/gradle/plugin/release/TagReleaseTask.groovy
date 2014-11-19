@@ -22,8 +22,6 @@ class TagReleaseTask extends AbstractScmTask {
     @Override
     void rollback( Exception exception ) {
         rollbackTag tagId
-
-        throw exception
     }
 
     private Tag tag() {

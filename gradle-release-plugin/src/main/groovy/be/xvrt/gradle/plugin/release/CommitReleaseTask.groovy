@@ -30,8 +30,6 @@ class CommitReleaseTask extends AbstractScmTask {
     @Override
     void rollback( Exception exception ) {
         rollbackCommit commitId
-
-        throw exception
     }
 
     private void rollbackCommit( Commit commitId ) throws ScmException {

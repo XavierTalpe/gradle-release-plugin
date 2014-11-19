@@ -1,5 +1,6 @@
 package be.xvrt.gradle.plugin.release
 
+import be.xvrt.gradle.plugin.release.scm.ScmException
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
@@ -27,7 +28,7 @@ class PrepareReleaseTaskTest {
     }
 
     @Test
-    void testConfigureSnapshotVersion() {
+    void 'snapshot version becomes release version'() {
         setup:
         project.version = '1.0.0-SNAPSHOT'
 
@@ -41,7 +42,7 @@ class PrepareReleaseTaskTest {
     }
 
     @Test
-    void testConfigureNonSnapshotVersion() {
+    void 'non-snapshot version becomes release version'() {
         setup:
         project.version = '1.0.0'
 
@@ -55,7 +56,7 @@ class PrepareReleaseTaskTest {
     }
 
     @Test
-    void testCustomReleaseVersionClosure() {
+    void 'custom closure for release version should be invoked'() {
         setup:
         project.version = '1.0.0'
         project.release {
@@ -71,6 +72,24 @@ class PrepareReleaseTaskTest {
         assertEquals( '1.0.0', prepareReleaseTask.originalVersion )
         assertEquals( '1.0.0-RC1', prepareReleaseTask.releaseVersion )
         assertFalse( prepareReleaseTask.wasSnapshotVersion() )
+    }
+
+    @Test
+    void 'rollback resets project version'() {
+        setup:
+        project.version = '1.0.0-SNAPSHOT'
+
+        when:
+        prepareReleaseTask.configure()
+
+        then:
+        assertEquals( '1.0.0', project.version )
+
+        when:
+        prepareReleaseTask.rollback( new ScmException( "Test" ) )
+
+        then:
+        assertEquals( '1.0.0-SNAPSHOT', project.version )
     }
 
 }
