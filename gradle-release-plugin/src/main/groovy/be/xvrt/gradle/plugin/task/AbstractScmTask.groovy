@@ -11,6 +11,10 @@ abstract class AbstractScmTask extends AbstractDefaultTask {
     protected AbstractScmTask() {
     }
 
+    @Override
+    final void configure() {
+    }
+
     protected final boolean isScmSupportDisabled() {
         def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
         extension.getAt ReleasePluginExtension.SCM_DISABLED
@@ -33,7 +37,10 @@ abstract class AbstractScmTask extends AbstractDefaultTask {
         getScmHelper().tag tagName, tagMessage
     }
 
-    protected final void push( String scmRemote ) throws ScmException {
+    protected final void push() throws ScmException {
+        def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
+        def scmRemote = extension.getAt ReleasePluginExtension.SCM_REMOTE
+
         logger.info ":${name} pushing local changes to ${scmRemote}."
 
         getScmHelper().push scmRemote

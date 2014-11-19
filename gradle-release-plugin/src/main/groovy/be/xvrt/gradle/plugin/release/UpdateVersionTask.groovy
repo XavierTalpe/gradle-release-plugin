@@ -13,10 +13,6 @@ class UpdateVersionTask extends AbstractScmTask {
     private Commit commitId
 
     @Override
-    void configure() {
-    }
-
-    @Override
     void run() {
         releasedVersion = project.version
         nextVersion = buildNextVersion releasedVersion
@@ -27,13 +23,15 @@ class UpdateVersionTask extends AbstractScmTask {
             logger.info ":${name} skipping updateVersion commit because SCM support is disabled."
         }
         else {
-            commitChanges nextVersion
+            commitId = commit nextVersion
+            push()
         }
     }
 
     @Override
     void rollback( Exception exception ) {
-        rollbackCommit()
+        rollbackCommit commitId
+        //        rollbackVersion releasedVersion
 
         throw exception;
     }
@@ -57,32 +55,35 @@ class UpdateVersionTask extends AbstractScmTask {
     }
 
     private void saveVersion( String nextVersion ) {
-        logger.info( "${name} setting next version to ${nextVersion}." )
+        logger.info( ":${name} setting next version to ${nextVersion}." )
 
         def gradleProperties = new GradleProperties( project )
         gradleProperties.saveVersion nextVersion
     }
 
-    private void commitChanges( String nextVersion ) {
-        if ( isScmSupportDisabled() ) {
-            logger.info "${name} skipping updateVersion commit because SCM support is disabled."
-        }
-        else {
-            def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
+    private Commit commit( String nextVersion ) {
+        def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
+        def updateVersionMessage = extension.getAt ReleasePluginExtension.UPDATE_VERSION_COMMIT_MSG
 
-            def updateVersionMessage = extension.getAt ReleasePluginExtension.UPDATE_VERSION_COMMIT_MSG
-            def scmRemote = extension.getAt ReleasePluginExtension.SCM_REMOTE
+        commit updateVersionMessage, nextVersion
+    }
 
-            commitId = commit updateVersionMessage, nextVersion
-            push scmRemote
+    private void rollbackCommit( Commit commitId ) throws ScmException {
+        if ( commitId ) {
+            logger.info ":${name} rolling back commit due to error."
+
+            getScmHelper().deleteCommit commitId
         }
     }
 
-    private void rollbackCommit() throws ScmException {
-        if ( commitId ) {
-            logger.info "${name} rolling back commit due to error."
+    private void rollbackVersion( String version ) {
+        if ( version ) {
+            // Since this task is executed after commitRelease, we can assume that task
+            // was successful. As such, we only need to roll back to the release version.
+            logger.info( ":${name} rolling back version to ${version}." )
 
-            getScmHelper().deleteCommit commitId
+            def gradleProperties = new GradleProperties( project )
+            gradleProperties.saveVersion version
         }
     }
 

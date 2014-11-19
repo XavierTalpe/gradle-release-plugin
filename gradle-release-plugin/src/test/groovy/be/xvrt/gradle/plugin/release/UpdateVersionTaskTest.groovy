@@ -186,7 +186,6 @@ class UpdateVersionTaskTest {
         assertEquals( 1, nbCommits )
     }
 
-    // TODO #6 Rollback changes in gradle.properties file
     @Test
     void 'commit is rolled back when push fails'() {
         when:

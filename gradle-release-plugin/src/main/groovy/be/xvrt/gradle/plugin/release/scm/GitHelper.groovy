@@ -1,9 +1,7 @@
 package be.xvrt.gradle.plugin.release.scm
-
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ResetCommand
 import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.revwalk.RevCommit
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 
 class GitHelper extends ScmHelper {
@@ -46,19 +44,15 @@ class GitHelper extends ScmHelper {
     @Override
     void deleteCommit( Commit commitId ) throws ScmException {
         try {
-            def canRollback = false
+            def commitLog = git.log().call().toList();
+            def lastCommit = commitLog.first()
+            // List is ordered from new to old.
 
-            def commitLog = git.log().call();
-            for ( RevCommit commit : commitLog ) {
-                def name = commit.id.name
-                def targetName = commitId.id
+            def lastCommitName = lastCommit.id.name
+            def targetName = commitId.id
 
-                canRollback = name.equals targetName
-                break
-            }
-
-            if ( canRollback ) {
-                git.reset().setMode( ResetCommand.ResetType.SOFT ).setRef( 'HEAD~1' ).call()
+            if ( lastCommitName.equals( targetName ) ) {
+                git.reset().setMode( ResetCommand.ResetType.HARD ).setRef( 'HEAD~1' ).call()
             }
         }
         catch ( Exception exception ) {

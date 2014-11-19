@@ -1,5 +1,4 @@
 package be.xvrt.gradle.plugin.release.integration
-
 import be.xvrt.gradle.plugin.test.IntegrationTest
 import org.junit.Test
 
@@ -11,7 +10,7 @@ class UpdateVersionTaskTest extends IntegrationTest {
     @Test
     void 'empty properties file remains empty after updateVersion'() {
         setup:
-        appendToBuildFile 'version="1.0.0-SNAPSHOT"'
+        appendLineToBuildFile 'version="1.0.0-SNAPSHOT"'
 
         when:
         execute 'updateVersion'
@@ -47,6 +46,23 @@ class UpdateVersionTaskTest extends IntegrationTest {
         def properties = getProperties()
 
         assertEquals '2.0.0-SNAPSHOT', properties.version
+    }
+
+    @Test
+    void 'properties file is rolled back when push fails'() {
+        setup:
+        enableGit false
+        addProperty 'version', '1.0.0-SNAPSHOT'
+        appendLineToBuildFile 'tasks.commitRelease.enabled=false'
+        appendLineToBuildFile 'tasks.tagRelease.enabled=false'
+
+        when:
+        execute 'updateVersion', true
+
+        then:
+        def properties = getProperties()
+
+        assertEquals '1.0.0', properties.version
     }
 
 }

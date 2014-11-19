@@ -1,5 +1,7 @@
 package be.xvrt.gradle.plugin.test
 
+import be.xvrt.gradle.plugin.release.scm.ScmTestUtil
+import org.eclipse.jgit.lib.Repository
 import org.junit.Before
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -11,30 +13,43 @@ abstract class IntegrationTest {
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
+    private File projectDir
     private File buildFile
     private File propertiesFile
 
     @Before
     void setUp() {
-        writeBuildFile()
-        writePropertiesFile()
+        projectDir = temporaryFolder.newFolder()
+
+        buildFile = writeBuildFile projectDir
+        propertiesFile = writePropertiesFile projectDir
     }
 
-    private void writeBuildFile() {
+    private static File writeBuildFile( File projectDir ) {
         def pluginPath = findPluginPath()
 
-        buildFile = temporaryFolder.newFile 'build.gradle'
+        // TODO: Find reliable way to automatically add plugin dependencies to build script.
+        def buildFile = new File( projectDir, 'build.gradle' )
         buildFile.withWriter { w ->
             w.writeLine 'buildscript {'
+            w.writeLine '  repositories {'
+            w.writeLine '    mavenCentral()'
+            w.writeLine '  }'
             w.writeLine '  dependencies {'
             w.writeLine "    classpath files( '${pluginPath}' )"
+            w.writeLine '    classpath "org.tmatesoft.svnkit:svnkit:1.8.5"'
+            w.writeLine '    classpath "org.eclipse.jgit:org.eclipse.jgit:3.5.1.201410131835-r"'
             w.writeLine '  }'
             w.writeLine '}'
             w.writeLine 'apply plugin: "be.xvrt.release"'
+            w.writeLine 'dependencies {'
+            w.writeLine '}'
         }
+
+        buildFile
     }
 
-    private String findPluginPath() {
+    private static String findPluginPath() {
         def workingDir = System.getProperty 'user.dir'
 
         def libsDir = new File( workingDir, 'build/libs/' )
@@ -45,12 +60,15 @@ abstract class IntegrationTest {
         highestBuild.getAbsolutePath()
     }
 
-    private void writePropertiesFile() {
-        propertiesFile = temporaryFolder.newFile 'gradle.properties'
+    private static File writePropertiesFile( File projectDir ) {
+        def propertiesFile = new File( projectDir, 'gradle.properties' )
+        propertiesFile.createNewFile()
+
+        propertiesFile
     }
 
-    protected void appendToBuildFile( String line ) {
-        buildFile << line
+    protected void appendLineToBuildFile( String line ) {
+        buildFile << line << "\n"
     }
 
     protected Properties getProperties() {
@@ -70,12 +88,12 @@ abstract class IntegrationTest {
         properties.store propertiesFile.newWriter(), null
     }
 
-    protected void execute( String task ) {
+    protected void execute( String task, boolean shouldFail = false ) {
         def workingDir = System.getProperty 'user.dir'
         def gradleWrapper = new File( workingDir, '../gradlew' )
 
-        def command = gradleWrapper.toString() + ' ' + task
-        def process = command.execute null, temporaryFolder.root
+        def command = gradleWrapper.toString() + ' --info --stacktrace ' + task
+        def process = command.execute null, projectDir
         process.waitFor()
 
         def exitValue = process.exitValue()
@@ -84,7 +102,17 @@ abstract class IntegrationTest {
             System.err.println process.err.text
         }
 
-        assertEquals 0, exitValue
+        assertEquals( shouldFail ? 1 : 0, exitValue )
+    }
+
+    protected Repository enableGit( boolean createOrigin = true ) {
+        def repository = ScmTestUtil.createGitRepository( projectDir )
+
+        if ( createOrigin ) {
+            ScmTestUtil.createOrigin repository, temporaryFolder.newFolder()
+        }
+
+        repository
     }
 
 }

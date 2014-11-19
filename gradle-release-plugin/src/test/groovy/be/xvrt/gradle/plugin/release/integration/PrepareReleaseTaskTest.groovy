@@ -11,7 +11,7 @@ class PrepareReleaseTaskTest extends IntegrationTest {
     @Test
     void 'empty properties file remains empty after prepareRelease'() {
         setup:
-        appendToBuildFile 'version="1.0.0-SNAPSHOT"'
+        appendLineToBuildFile 'version="1.0.0-SNAPSHOT"'
 
         when:
         execute 'prepareRelease'

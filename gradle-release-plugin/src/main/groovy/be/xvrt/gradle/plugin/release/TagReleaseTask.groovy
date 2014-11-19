@@ -9,37 +9,35 @@ class TagReleaseTask extends AbstractScmTask {
     private Tag tagId
 
     @Override
-    void configure() {
-    }
-
-    @Override
     void run() {
         if ( isScmSupportDisabled() ) {
-            logger.info "${name} skipping tagRelease because SCM support is disabled."
+            logger.info ":${name} skipping tagRelease because SCM support is disabled."
         }
         else {
-            def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
-
-            def scmRemote = extension.getAt ReleasePluginExtension.SCM_REMOTE
-            def tagName = extension.getAt ReleasePluginExtension.RELEASE_TAG
-            def tagMessage = extension.getAt ReleasePluginExtension.RELEASE_TAG_MSG
-            def releaseVersion = project.version
-
-            tagId = tag tagName, tagMessage, releaseVersion
-            push scmRemote
+            tagId = tag()
+            push()
         }
     }
 
     @Override
     void rollback( Exception exception ) {
-        rollbackTag()
+        rollbackTag tagId
 
         throw exception;
     }
 
-    private void rollbackTag() throws ScmException {
+    private Tag tag() {
+        def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
+        def tagName = extension.getAt ReleasePluginExtension.RELEASE_TAG
+        def tagMessage = extension.getAt ReleasePluginExtension.RELEASE_TAG_MSG
+        def releaseVersion = project.version
+
+        tag tagName, tagMessage, releaseVersion
+    }
+
+    private void rollbackTag( Tag tagId ) throws ScmException {
         if ( tagId ) {
-            logger.info "${name} rolling back tag due to error."
+            logger.info ":${name} rolling back tag due to error."
 
             getScmHelper().deleteTag tagId
         }
