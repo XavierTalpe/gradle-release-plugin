@@ -44,9 +44,8 @@ class GitHelper extends ScmHelper {
     @Override
     void deleteCommit( Commit commitId ) throws ScmException {
         try {
-            def commitLog = git.log().call().toList();
+            def commitLog = git.log().call().toList()
             def lastCommit = commitLog.first()
-            // List is ordered from new to old.
 
             def lastCommitName = lastCommit.id.name
             def targetName = commitId.id

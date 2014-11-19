@@ -1,8 +1,6 @@
 package be.xvrt.gradle.plugin.release.scm
-
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.revwalk.RevCommit
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -37,16 +35,11 @@ class GitHelperTest {
         gitHelper.commit 'commitMessage'
 
         then:
-        def commitLog = new Git( repository ).log().call()
-        def nbCommits = 0
-        for ( RevCommit commit : commitLog ) {
-            if ( !commit.getShortMessage().equals( 'HEAD' ) ) {
-                assertEquals( 'commitMessage', commit.getShortMessage() )
-                nbCommits++
-            }
-        }
+        def commitLog = new Git( repository ).log().call().toList()
 
-        assertEquals( 1, nbCommits )
+        assertEquals( 2, commitLog.size() )
+        assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
+        assertEquals( 'commitMessage', commitLog.get( 0 ).shortMessage )
     }
 
     @Test
@@ -56,12 +49,10 @@ class GitHelperTest {
         gitHelper.deleteCommit commitId
 
         then:
-        def commitLog = new Git( repository ).log().call()
-        def nbNewCommits = commitLog.count { commit ->
-            !commit.getShortMessage().equals( 'HEAD' )
-        }
+        def commitLog = new Git( repository ).log().call().toList()
 
-        assertEquals( 0, nbNewCommits )
+        assertEquals( 1, commitLog.size() )
+        assertEquals( 'HEAD', commitLog.get( 0 ).shortMessage )
     }
 
     @Test

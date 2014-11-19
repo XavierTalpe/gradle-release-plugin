@@ -28,13 +28,13 @@ class ReleaseTaskTest extends IntegrationTest {
         def commitLog = new Git( repository ).log().call().toList()
 
         assertEquals( 3, commitLog.size() )
-        assertEquals( 'HEAD', commitLog.get( 2 ).getShortMessage() )
-        assertEquals( '[Gradle Release] Commit for 1.0.0.', commitLog.get( 1 ).getShortMessage() )
-        assertEquals( '[Gradle Release] Preparing for 1.0.1-SNAPSHOT.', commitLog.get( 0 ).getShortMessage() )
+        assertEquals( 'HEAD', commitLog.get( 2 ).shortMessage )
+        assertEquals( '[Gradle Release] Commit for 1.0.0.', commitLog.get( 1 ).shortMessage )
+        assertEquals( '[Gradle Release] Preparing for 1.0.1-SNAPSHOT.', commitLog.get( 0 ).shortMessage )
     }
 
     private static void assertTag( Repository repository ) {
-        def tagList = new Git( repository ).tagList().call();
+        def tagList = new Git( repository ).tagList().call()
 
         assertEquals( 1, tagList.size() )
         assertEquals( 'refs/tags/1.0.0', tagList.get( 0 ).getName() )

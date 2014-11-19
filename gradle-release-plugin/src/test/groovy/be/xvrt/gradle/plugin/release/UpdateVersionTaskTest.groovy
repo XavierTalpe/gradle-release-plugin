@@ -1,10 +1,8 @@
 package be.xvrt.gradle.plugin.release
-
 import be.xvrt.gradle.plugin.release.scm.ScmException
 import be.xvrt.gradle.plugin.release.scm.ScmTestUtil
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.revwalk.RevCommit
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskExecutionException
@@ -122,17 +120,11 @@ class UpdateVersionTaskTest {
         updateVersionTask.execute()
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call()
+        def commitLog = new Git( gradleRepository ).log().call().toList()
 
-        def nbCommits = 0;
-        for ( RevCommit commit : commitLog ) {
-            if ( !commit.getShortMessage().equals( 'HEAD' ) ) {
-                assertEquals( '[Gradle Release] Preparing for 1.0.1.', commit.getShortMessage() )
-                nbCommits++;
-            }
-        }
-
-        assertEquals( 1, nbCommits )
+        assertEquals( 2, commitLog.size() )
+        assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
+        assertEquals( '[Gradle Release] Preparing for 1.0.1.', commitLog.get( 0 ).shortMessage )
     }
 
     @Test
@@ -149,12 +141,10 @@ class UpdateVersionTaskTest {
         updateVersionTask.execute()
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call()
-        def nbNewCommits = commitLog.count { commit ->
-            !commit.getShortMessage().equals( 'HEAD' )
-        }
+        def commitLog = new Git( gradleRepository ).log().call().toList()
 
-        assertEquals( 0, nbNewCommits )
+        assertEquals( 1, commitLog.size() )
+        assertEquals( 'HEAD', commitLog.get( 0 ).shortMessage )
     }
 
     @Test
@@ -173,17 +163,11 @@ class UpdateVersionTaskTest {
         updateVersionTask.execute()
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call()
+        def commitLog = new Git( gradleRepository ).log().call().toList()
 
-        def nbCommits = 0;
-        for ( RevCommit commit : commitLog ) {
-            if ( !commit.getShortMessage().equals( 'HEAD' ) ) {
-                assertEquals( 'Custom prepare for 1.0.1.', commit.getShortMessage() )
-                nbCommits++;
-            }
-        }
-
-        assertEquals( 1, nbCommits )
+        assertEquals( 2, commitLog.size() )
+        assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
+        assertEquals( 'Custom prepare for 1.0.1.', commitLog.get( 0 ).shortMessage )
     }
 
     @Test
@@ -201,12 +185,10 @@ class UpdateVersionTaskTest {
         }
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call()
-        def nbNewCommits = commitLog.count { commit ->
-            !commit.getShortMessage().equals( 'HEAD' )
-        }
+        def commitLog = new Git( gradleRepository ).log().call().toList()
 
-        assertEquals( 0, nbNewCommits )
+        assertEquals( 1, commitLog.size() )
+        assertEquals( 'HEAD', commitLog.get( 0 ).shortMessage )
     }
 
 }
