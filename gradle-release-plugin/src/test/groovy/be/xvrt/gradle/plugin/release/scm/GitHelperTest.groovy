@@ -1,7 +1,6 @@
 package be.xvrt.gradle.plugin.release.scm
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -22,11 +21,6 @@ class GitHelperTest {
         repository = ScmTestUtil.createGitRepository( temporaryFolder.root )
 
         gitHelper = ( GitHelper ) ScmHelperFactory.create( temporaryFolder.root )
-    }
-
-    @After
-    void tearDown() throws Exception {
-        repository.close()
     }
 
     @Test

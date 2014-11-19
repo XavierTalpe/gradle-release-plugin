@@ -75,7 +75,7 @@ class PrepareReleaseTaskTest {
     }
 
     @Test
-    void 'rollback resets project version'() {
+    void 'project version is rolled back'() {
         setup:
         project.version = '1.0.0-SNAPSHOT'
 

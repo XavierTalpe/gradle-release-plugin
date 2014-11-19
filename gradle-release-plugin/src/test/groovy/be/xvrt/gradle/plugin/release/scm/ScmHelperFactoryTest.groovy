@@ -12,7 +12,7 @@ class ScmHelperFactoryTest {
     public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     @Test
-    void testCreateGitScmHelper() {
+    void 'git folder requires git helper'() {
         setup:
         temporaryFolder.newFolder '.git'
 
@@ -24,7 +24,7 @@ class ScmHelperFactoryTest {
     }
 
     @Test
-    void testCreateDummyScmHelper() {
+    void 'no scm folder requires dummy helper'() {
         when:
         def scmHelper = ScmHelperFactory.create temporaryFolder.root.absolutePath
 
@@ -33,7 +33,7 @@ class ScmHelperFactoryTest {
     }
 
     @Test
-    void testCache() {
+    void 'identical directories should return the same helper'() {
         when:
         def scmHelper1 = ScmHelperFactory.create temporaryFolder.root
         def scmHelper2 = ScmHelperFactory.create temporaryFolder.root

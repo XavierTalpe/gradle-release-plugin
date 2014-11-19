@@ -23,7 +23,7 @@ class ReleasePluginExtensionTest {
     }
 
     @Test
-    void testDefaultValues() {
+    void 'check default plugin properties values'() {
         then:
         assertFalse( project.release.scmDisabled )
 
@@ -37,7 +37,7 @@ class ReleasePluginExtensionTest {
     }
 
     @Test
-    void testOverwriteValues() {
+    void 'plugin properties can be overwritten'() {
         when:
         project.release {
             scmDisabled = true
