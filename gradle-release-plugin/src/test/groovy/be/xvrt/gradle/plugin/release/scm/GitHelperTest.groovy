@@ -1,4 +1,5 @@
 package be.xvrt.gradle.plugin.release.scm
+
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
 import org.junit.Before
@@ -13,14 +14,16 @@ class GitHelperTest {
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
+    private File projectDir
     private Repository repository
     private GitHelper gitHelper
 
     @Before
     void setUp() {
-        repository = ScmTestUtil.createGitRepository( temporaryFolder.root )
+        projectDir = temporaryFolder.newFolder()
 
-        gitHelper = ( GitHelper ) ScmHelperFactory.create( temporaryFolder.root )
+        repository = ScmTestUtil.createGitRepository projectDir
+        gitHelper = ( GitHelper ) ScmHelperFactory.create( projectDir )
     }
 
     @Test
@@ -79,8 +82,30 @@ class GitHelperTest {
         assertEquals( 0, allTags.size() )
     }
 
+    @Test
+    void 'pushing to origin should succeed'() {
+        setup:
+        ScmTestUtil.createOrigin repository, temporaryFolder.newFolder()
+        gitHelper.commit 'commitMessage'
+
+        when:
+        gitHelper.push 'origin'
+    }
+
+    @Test
+    void 'pushing to origin should succeed with credentials'() {
+        setup:
+        ScmTestUtil.createOrigin repository, temporaryFolder.newFolder()
+
+        gitHelper = ( GitHelper ) ScmHelperFactory.create( projectDir, 'user', 'pass' )
+        gitHelper.commit 'commitMessage'
+
+        when:
+        gitHelper.push 'origin'
+    }
+
     @Test( expected = ScmException.class )
-    void 'pushing without an origin should fail'() {
+    void 'pushing to origin should fail because no remote added'() {
         setup:
         gitHelper.commit 'commitMessage'
 

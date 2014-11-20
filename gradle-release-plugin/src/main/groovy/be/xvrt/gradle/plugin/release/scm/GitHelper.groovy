@@ -3,15 +3,26 @@ import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ResetCommand
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+import org.eclipse.jgit.transport.CredentialsProvider
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 
-class GitHelper extends ScmHelper {
+class GitHelper implements ScmHelper {
 
-    private final Repository repository
     private final Git git
+    private final Repository repository
 
-    GitHelper( File gitRepository ) {
+    private final CredentialsProvider credentialsProvider
+
+    GitHelper( File gitRepository, String username = null, String password = null ) {
         repository = openRepository gitRepository
         git = new Git( repository )
+
+        if ( username && password ) {
+            credentialsProvider = new UsernamePasswordCredentialsProvider( username, password )
+        }
+        else {
+            credentialsProvider
+        }
     }
 
     private Repository openRepository( File gitRepository ) {
@@ -86,12 +97,18 @@ class GitHelper extends ScmHelper {
     @Override
     void push( String remoteName ) throws ScmException {
         def remoteUri = findRemoteUri remoteName
-        if ( remoteUri == null ) {
+        if ( !remoteUri ) {
             throw new ScmException( 'Error when pushing changes. No remote defined.' )
         }
 
         try {
-            git.push().setRemote( remoteUri ).call()
+            def pushCommand = git.push().setRemote( remoteUri )
+
+            if ( credentialsProvider ) {
+                pushCommand.setCredentialsProvider( credentialsProvider )
+            }
+
+            pushCommand.call()
         } catch ( Exception exception ) {
             throw new ScmException( 'Error when pushing changes.', exception )
         }

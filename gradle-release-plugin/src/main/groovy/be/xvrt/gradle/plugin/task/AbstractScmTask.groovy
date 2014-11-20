@@ -47,7 +47,7 @@ abstract class AbstractScmTask extends AbstractDefaultTask {
     }
 
     protected final ScmHelper getScmHelper() {
-        if ( scmHelper == null ) {
+        if ( !scmHelper ) {
             def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
             def scmRootDir = extension.getAt ReleasePluginExtension.SCM_ROOT_DIR
 

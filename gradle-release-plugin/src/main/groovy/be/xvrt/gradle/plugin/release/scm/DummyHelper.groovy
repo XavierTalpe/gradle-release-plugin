@@ -1,6 +1,6 @@
 package be.xvrt.gradle.plugin.release.scm
 
-class DummyHelper extends ScmHelper {
+class DummyHelper implements ScmHelper {
 
     @Override
     Commit commit( String message ) {
