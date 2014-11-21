@@ -10,7 +10,7 @@ class GradleProperties {
         this.project = project
     }
 
-    def saveVersion( String version ) {
+    def saveVersion( String version, String taskName = '' ) {
         project.version = version
 
         def propertiesFile = getDefaultPropertiesFile()
@@ -18,8 +18,7 @@ class GradleProperties {
             def properties = new Properties()
             propertiesFile.withInputStream { properties.load( it ) }
 
-            // TODO: Figure out how to get task logging tag as a prefix for this message.
-            project.logger.info( ": updating gradle.properties with new version." )
+            project.logger.info( ":${taskName} updating gradle.properties with new version." )
             if ( properties.version ) {
                 properties.put( 'version', version )
                 properties.store( propertiesFile.newWriter(), null )

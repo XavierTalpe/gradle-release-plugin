@@ -51,7 +51,7 @@ class PrepareReleaseTask extends AbstractDefaultTask {
         logger.info ":${name} setting release version to ${releaseVersion}."
 
         def gradleProperties = new GradleProperties( project )
-        gradleProperties.saveVersion( releaseVersion )
+        gradleProperties.saveVersion releaseVersion, name
     }
 
     private void rollbackVersion( String version ) {
@@ -59,7 +59,7 @@ class PrepareReleaseTask extends AbstractDefaultTask {
             logger.info ":${name} rolling back version to ${version}."
 
             def gradleProperties = new GradleProperties( project )
-            gradleProperties.saveVersion( version )
+            gradleProperties.saveVersion version, name
         }
     }
 

@@ -55,7 +55,7 @@ class UpdateVersionTask extends AbstractScmTask {
         logger.info( ":${name} setting next version to ${nextVersion}." )
 
         def gradleProperties = new GradleProperties( project )
-        gradleProperties.saveVersion nextVersion
+        gradleProperties.saveVersion nextVersion, name
     }
 
     private Commit commit( String nextVersion ) {
