@@ -25,6 +25,8 @@ class ReleasePluginExtensionTest {
     @Test
     void 'check default plugin properties values'() {
         then:
+        assertTrue( project.release.checkDependencies )
+
         assertFalse( project.release.scmDisabled )
 
         assertEquals( temporaryFolder.root.toString(), project.release.scmRootDir )
@@ -42,6 +44,8 @@ class ReleasePluginExtensionTest {
     void 'plugin properties can be overwritten'() {
         when:
         project.release {
+            checkDependencies = false
+
             scmDisabled = true
 
             scmRootDir = '~/home/xaviert'
@@ -56,7 +60,9 @@ class ReleasePluginExtensionTest {
         }
 
         then:
-        assertTrue project.release.scmDisabled
+        assertFalse( project.release.checkDependencies )
+
+        assertTrue( project.release.scmDisabled )
 
         assertEquals( '~/home/xaviert', project.release.scmRootDir )
         assertEquals( 'origin2', project.release.scmRemote )

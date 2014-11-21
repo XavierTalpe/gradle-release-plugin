@@ -20,7 +20,12 @@ class PrepareReleaseTask extends AbstractDefaultTask {
 
     @Override
     void run() {
-        checkSnapshotDependencies()
+        def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
+        def checkDependencies = extension.getAt( ReleasePluginExtension.CHECK_DEPENDENCIES )
+
+        if ( checkDependencies ) {
+            checkSnapshotDependencies()
+        }
     }
 
     @Override

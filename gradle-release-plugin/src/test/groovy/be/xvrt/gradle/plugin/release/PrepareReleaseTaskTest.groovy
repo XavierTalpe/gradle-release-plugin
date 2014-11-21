@@ -24,7 +24,9 @@ class PrepareReleaseTaskTest {
     @Before
     void setUp() {
         project = ProjectBuilder.builder().build()
+        project.apply plugin: 'groovy'
         project.apply plugin: ReleasePlugin
+        project.version = '1.0.0-SNAPSHOT'
 
         prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
     }
@@ -82,9 +84,6 @@ class PrepareReleaseTaskTest {
     @Test
     void 'non-snapshot dependencies don\'t trigger exception'() {
         setup:
-        project.apply plugin: 'groovy'
-
-        project.version = '1.0.0'
         project.configurations { myConfig }
         project.dependencies {
             compile 'group:name:1.0.0'
@@ -103,9 +102,6 @@ class PrepareReleaseTaskTest {
     @Test
     void 'snapshot dependencies should trigger exception'() {
         setup:
-        project.apply plugin: 'groovy'
-
-        project.version = '1.0.0'
         project.configurations { myConfig }
         project.dependencies {
             compile 'group:name:1.0.0-SNAPSHOT'
@@ -132,6 +128,30 @@ class PrepareReleaseTaskTest {
         assertEquals( 'Cannot release project with SNAPSHOT dependencies:\n' +
                       'test - group:name:1.0.0-SNAPSHOT\n' +
                       'test - group::5.1.2.3-SNAPSHOT\n', cause.message )
+    }
+
+    @Test
+    void 'snapshot dependencies are not checked'() {
+        setup:
+        project.dependencies {
+            compile 'group:name:1.0.0-SNAPSHOT'
+        }
+
+        project.release {
+            checkDependencies = false
+        }
+
+        when:
+        try {
+            prepareReleaseTask.configure()
+            prepareReleaseTask.execute()
+
+            then:
+            assertTrue( true )
+        }
+        catch ( Exception ignored ) {
+            fail()
+        }
     }
 
     @Test

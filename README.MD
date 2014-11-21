@@ -67,6 +67,7 @@ Property | Description
 --- | ---
 releaseVersion | Closure containing the logic to build the release version. By default removes a trailing `-SNAPSHOT` tag from the initial version (if present).
 nextVersion | Closure containing the logic to build the next (`SNAPSHOT`) version. By default adds `-SNAPSHOT` to the release version if the initial version also contained `SNAPSHOT`.
+checkDependencies | Toggles the `prepareRelease` task to checks the project for any `SNAPSHOT` dependencies. Enabled by default.
 scmDisabled | Disables all commit, tagging and pushing functionality. Effectively makes it look as if the project does not use an SCM. Useful for testing or demonstration purposes. Defaults to `false`.
 scmRootDir | The root directory where the SCM is initialized. For GIT this is the directory containing a `.git` directory. Defaults to the project's root directory.
 scmRemote | The name of the remote repository to push to when committing or tagging SCM changes. Only used for GIT. Defaults to `origin`.
@@ -115,7 +116,7 @@ $ gradle release -PnextVersion=2.0.0-SNAPSHOT
 ### Overview
 Task | Description
 --- | ---
-prepareRelease | Sets the release version before the release build is started.
+prepareRelease | Checks for SNAPSHOT dependencies and sets the release version before the build is started.
 commitRelease | Commits any file changes for this release to the SCM.
 tagRelease | Tags this release to the SCM.
 updateVersion | Sets the version for the next snapshot build and commits this change to the SCM.
@@ -141,6 +142,13 @@ release {
     releaseVersion = { version ->
         version + 'RC1'
     }
+}
+```
+
+The `prepareRelease` task also checks if there are any remaining `-SNAPSHOT` dependencies in the project. If this is the case, the release will be halted. This feature can be disabled by setting the `checkDependencies` property to false:
+```
+release {
+    checkDependencies = false
 }
 ```
 

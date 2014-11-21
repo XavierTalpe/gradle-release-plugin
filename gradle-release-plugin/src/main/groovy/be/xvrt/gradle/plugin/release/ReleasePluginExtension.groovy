@@ -6,6 +6,8 @@ class ReleasePluginExtension {
 
     public static final String NAME = ReleasePlugin.RELEASE_TASK
 
+    public static final String CHECK_DEPENDENCIES = 'checkDependencies'
+
     public static final String SCM_DISABLED = 'scmDisabled'
 
     public static final String SCM_ROOT_DIR = 'scmRootDir'
@@ -20,6 +22,8 @@ class ReleasePluginExtension {
 
     public static final String RELEASE_VERSION = 'releaseVersion'
     public static final String NEXT_VERSION = 'nextVersion'
+
+    boolean checkDependencies
 
     boolean scmDisabled
 
@@ -37,6 +41,8 @@ class ReleasePluginExtension {
     Closure<String> nextVersion
 
     ReleasePluginExtension( Project project ) {
+        checkDependencies = true
+
         scmDisabled = false
 
         scmRootDir = project.rootDir
