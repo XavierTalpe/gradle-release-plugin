@@ -40,4 +40,19 @@ class ReleaseTaskTest extends IntegrationTest {
         assertEquals( 'refs/tags/1.0.0', tagList.get( 0 ).getName() )
     }
 
+    @Test
+    void 'passing username and password from console does not throw error'() {
+        setup:
+        addProperty 'version', '1.0.0-SNAPSHOT'
+        def projectRepository = enableGit true
+
+        when:
+        execute 'release -PscmUsername=username -PscmPassword=password'
+
+        then:
+        assertEquals '1.0.1-SNAPSHOT', properties.version
+        assertCommits projectRepository
+        assertTag projectRepository
+    }
+
 }

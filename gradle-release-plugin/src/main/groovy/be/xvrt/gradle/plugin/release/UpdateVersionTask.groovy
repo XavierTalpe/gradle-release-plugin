@@ -35,8 +35,8 @@ class UpdateVersionTask extends AbstractScmTask {
 
     private String buildNextVersion( String version ) {
         // Allow user to directly specify the next version from the
-        // command line using -PnextVersion=XXX. This takes
-        // precedence over executing the closure.
+        // command line using -PnextVersion=XXX.
+        // This takes precedence over the properties extension.
         if ( project.hasProperty( ReleasePluginExtension.NEXT_VERSION ) ) {
             project.property ReleasePluginExtension.NEXT_VERSION
         }

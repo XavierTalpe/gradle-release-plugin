@@ -49,9 +49,23 @@ abstract class AbstractScmTask extends AbstractDefaultTask {
     protected final ScmHelper getScmHelper() {
         if ( !scmHelper ) {
             def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
+
             def scmRootDir = extension.getAt ReleasePluginExtension.SCM_ROOT_DIR
-            def scmUsername = extension.getAt ReleasePluginExtension.SCM_USERNAME
-            def scmPassword = extension.getAt ReleasePluginExtension.SCM_PASSWORD
+            def scmUsername
+            def scmPassword
+
+            // Allow user to directly specify username and password from the
+            // command line using -PscmUsername=XXX -PscmPassword=XXX.
+            // This takes precedence over the properties extension.
+            if ( project.hasProperty( ReleasePluginExtension.SCM_USERNAME ) &&
+                 project.hasProperty( ReleasePluginExtension.SCM_PASSWORD ) ) {
+                scmUsername = project.property ReleasePluginExtension.SCM_USERNAME
+                scmPassword = project.property ReleasePluginExtension.SCM_PASSWORD
+            }
+            else {
+                scmUsername = extension.getAt ReleasePluginExtension.SCM_USERNAME
+                scmPassword = extension.getAt ReleasePluginExtension.SCM_PASSWORD
+            }
 
             scmHelper = ScmHelperFactory.create scmRootDir, scmUsername, scmPassword
         }
