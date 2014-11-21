@@ -50,8 +50,10 @@ abstract class AbstractScmTask extends AbstractDefaultTask {
         if ( !scmHelper ) {
             def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
             def scmRootDir = extension.getAt ReleasePluginExtension.SCM_ROOT_DIR
+            def scmUsername = extension.getAt ReleasePluginExtension.SCM_USERNAME
+            def scmPassword = extension.getAt ReleasePluginExtension.SCM_PASSWORD
 
-            scmHelper = ScmHelperFactory.create scmRootDir
+            scmHelper = ScmHelperFactory.create scmRootDir, scmUsername, scmPassword
         }
 
         scmHelper

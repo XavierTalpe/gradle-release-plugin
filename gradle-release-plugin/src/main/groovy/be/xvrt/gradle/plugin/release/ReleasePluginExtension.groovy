@@ -10,6 +10,8 @@ class ReleasePluginExtension {
 
     public static final String SCM_ROOT_DIR = 'scmRootDir'
     public static final String SCM_REMOTE = 'scmRemote'
+    public static final String SCM_USERNAME = 'scmUsername'
+    public static final String SCM_PASSWORD = 'scmPassword'
 
     public static final String RELEASE_COMMIT_MSG = 'releaseCommitMessage'
     public static final String RELEASE_TAG = 'releaseTag'
@@ -23,6 +25,8 @@ class ReleasePluginExtension {
 
     String scmRootDir
     String scmRemote
+    String scmUsername
+    String scmPassword
 
     String releaseCommitMessage
     String releaseTag
@@ -37,6 +41,8 @@ class ReleasePluginExtension {
 
         scmRootDir = project.rootDir
         scmRemote = 'origin'
+        scmUsername = null
+        scmPassword = null
 
         releaseCommitMessage = '[Gradle Release] Commit for %version.'
         releaseTag = '%version'

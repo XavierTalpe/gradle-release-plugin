@@ -4,6 +4,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
+import static org.junit.Assert.assertFalse
 import static org.junit.Assert.assertTrue
 
 class ScmHelperFactoryTest {
@@ -40,6 +41,16 @@ class ScmHelperFactoryTest {
 
         then:
         assertTrue( scmHelper1 == scmHelper2 )
+    }
+
+    @Test
+    void 'identical directories but different credentials should return a different helper'() {
+        when:
+        def scmHelper1 = ScmHelperFactory.create temporaryFolder.root
+        def scmHelper2 = ScmHelperFactory.create temporaryFolder.root, 'username', 'password'
+
+        then:
+        assertFalse( scmHelper1 == scmHelper2 )
     }
 
 }

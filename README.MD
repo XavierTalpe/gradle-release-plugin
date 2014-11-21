@@ -65,6 +65,8 @@ nextVersion | Closure containing the logic to build the next (`SNAPSHOT`) versio
 scmDisabled | Disables all commit, tagging and pushing functionality. Effectively makes it look as if the project does not use an SCM. Useful for testing or demonstration purposes. Defaults to `false`.
 scmRootDir | The root directory where the SCM is initialized. For GIT this is the directory containing a `.git` directory. Defaults to the project's root directory.
 scmRemote | The name of the remote repository to push to when committing or tagging SCM changes. Only used for GIT. Defaults to `origin`.
+scmUsername | The username to use when interacting with the SCM. Defaults to system username.
+scmPassword | The password to use when interacting with the SCM. Defaults to system password.
 releaseCommitMessage | Commit message to save the project state after building the release. Defaults to `[Gradle Release] Commit for %version.`.
 releaseTag | Tag (name) to annotate the project state after building the release. Defaults to `%version`.
 releaseTagMessage | Tag message for the `releaseTag` property. Defaults to `[Gradle Release] Tag for %version.`.

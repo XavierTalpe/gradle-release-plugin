@@ -29,6 +29,8 @@ class ReleasePluginExtensionTest {
 
         assertEquals( temporaryFolder.root.toString(), project.release.scmRootDir )
         assertEquals( 'origin', project.release.scmRemote )
+        assertNull( project.release.scmUsername )
+        assertNull( project.release.scmPassword )
 
         assertEquals( '[Gradle Release] Commit for %version.', project.release.releaseCommitMessage )
         assertEquals( '%version', project.release.releaseTag )
@@ -44,6 +46,8 @@ class ReleasePluginExtensionTest {
 
             scmRootDir = '~/home/xaviert'
             scmRemote = 'origin2'
+            scmUsername = 'username'
+            scmPassword = 'password'
 
             releaseCommitMessage = 'releaseCommitMessage'
             releaseTag = 'releaseTag'
@@ -56,6 +60,8 @@ class ReleasePluginExtensionTest {
 
         assertEquals( '~/home/xaviert', project.release.scmRootDir )
         assertEquals( 'origin2', project.release.scmRemote )
+        assertEquals( 'username', project.release.scmUsername )
+        assertEquals( 'password', project.release.scmPassword )
 
         assertEquals( 'releaseCommitMessage', project.release.releaseCommitMessage )
         assertEquals( 'releaseTag', project.release.releaseTag )
