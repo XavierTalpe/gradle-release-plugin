@@ -1,5 +1,6 @@
 package be.xvrt.gradle.plugin.release.util
 
+import org.apache.commons.io.IOUtils
 import org.gradle.api.Project
 
 class GradleProperties {
@@ -10,19 +11,22 @@ class GradleProperties {
         this.project = project
     }
 
-    def saveVersion( String version, String taskName = '' ) {
-        project.version = version
+    def saveVersion( String newVersion, String taskName = '' ) {
+        project.version = newVersion
 
         def propertiesFile = getDefaultPropertiesFile()
         if ( propertiesFile.exists() ) {
-            def properties = new Properties()
-            propertiesFile.withInputStream { properties.load( it ) }
-
             project.logger.info( ":${taskName} updating gradle.properties with new version." )
-            if ( properties.version ) {
-                properties.put( 'version', version )
-                properties.store( propertiesFile.newWriter(), null )
-            }
+
+            def inputStream = new FileInputStream( propertiesFile )
+            def properties = IOUtils.toString inputStream, 'UTF-8'
+            inputStream.close()
+
+            properties = ( properties =~ /version=.+/ ).replaceFirst "version=${newVersion}"
+
+            def outputStream = new FileOutputStream( propertiesFile )
+            IOUtils.write properties, outputStream, 'UTF-8'
+            outputStream.close()
         }
     }
 

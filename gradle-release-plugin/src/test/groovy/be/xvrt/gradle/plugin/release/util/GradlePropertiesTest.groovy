@@ -39,6 +39,26 @@ class GradlePropertiesTest {
     }
 
     @Test
+    void 'properties file with many lines should only have updated version'() {
+        setup:
+        def propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
+        propertiesFile << 'name=aversion\n'
+        propertiesFile << 'version=1.0.0-SNAPSHOT\n\n'
+        propertiesFile << 'group=be.xvrt\n'
+
+        when:
+        gradleProperties.saveVersion( '1.0.0' )
+
+        then:
+        def properties = new Properties()
+        propertiesFile.withInputStream { properties.load( it ) }
+
+        assertEquals( 'aversion', properties.name )
+        assertEquals( '1.0.0', properties.version )
+        assertEquals( 'be.xvrt', properties.group )
+    }
+
+    @Test
     void 'saving version shouldn\'t result in error when properties file is missing'() {
         when:
         gradleProperties.saveVersion( '1.0.0' )
