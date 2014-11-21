@@ -6,7 +6,7 @@ class ReleasePluginExtension {
 
     public static final String NAME = ReleasePlugin.RELEASE_TASK
 
-    public static final String CHECK_DEPENDENCIES = 'checkDependencies'
+    public static final String ALLOW_SNAPSHOT_DEPENDENCIES = 'allowSnapshotDependencies'
 
     public static final String SCM_DISABLED = 'scmDisabled'
 
@@ -23,7 +23,7 @@ class ReleasePluginExtension {
     public static final String RELEASE_VERSION = 'releaseVersion'
     public static final String NEXT_VERSION = 'nextVersion'
 
-    boolean checkDependencies
+    boolean allowSnapshotDependencies
 
     boolean scmDisabled
 
@@ -41,7 +41,7 @@ class ReleasePluginExtension {
     Closure<String> nextVersion
 
     ReleasePluginExtension( Project project ) {
-        checkDependencies = true
+        allowSnapshotDependencies = false
 
         scmDisabled = false
 

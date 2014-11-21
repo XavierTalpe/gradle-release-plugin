@@ -138,7 +138,7 @@ class PrepareReleaseTaskTest {
         }
 
         project.release {
-            checkDependencies = false
+            allowSnapshotDependencies = true
         }
 
         when:

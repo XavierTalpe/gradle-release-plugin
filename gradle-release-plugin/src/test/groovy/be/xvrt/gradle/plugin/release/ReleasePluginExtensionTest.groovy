@@ -25,7 +25,7 @@ class ReleasePluginExtensionTest {
     @Test
     void 'check default plugin properties values'() {
         then:
-        assertTrue( project.release.checkDependencies )
+        assertFalse( project.release.allowSnapshotDependencies )
 
         assertFalse( project.release.scmDisabled )
 
@@ -44,7 +44,7 @@ class ReleasePluginExtensionTest {
     void 'plugin properties can be overwritten'() {
         when:
         project.release {
-            checkDependencies = false
+            allowSnapshotDependencies = true
 
             scmDisabled = true
 
@@ -60,7 +60,7 @@ class ReleasePluginExtensionTest {
         }
 
         then:
-        assertFalse( project.release.checkDependencies )
+        assertTrue( project.release.allowSnapshotDependencies )
 
         assertTrue( project.release.scmDisabled )
 
