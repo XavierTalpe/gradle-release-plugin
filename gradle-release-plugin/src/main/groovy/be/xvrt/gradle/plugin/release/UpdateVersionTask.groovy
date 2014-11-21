@@ -1,5 +1,6 @@
 package be.xvrt.gradle.plugin.release
 
+import be.xvrt.gradle.plugin.release.scm.Commit
 import be.xvrt.gradle.plugin.release.scm.ScmException
 import be.xvrt.gradle.plugin.release.util.GradleProperties
 import be.xvrt.gradle.plugin.task.AbstractScmTask
@@ -9,9 +10,7 @@ class UpdateVersionTask extends AbstractScmTask {
     String releasedVersion
     String nextVersion
 
-    @Override
-    void configure() {
-    }
+    private Commit commitId
 
     @Override
     void run() {
@@ -24,21 +23,20 @@ class UpdateVersionTask extends AbstractScmTask {
             logger.info ":${name} skipping updateVersion commit because SCM support is disabled."
         }
         else {
-            commitChanges nextVersion
+            commitId = commit nextVersion
+            push()
         }
     }
 
     @Override
     void rollback( Exception exception ) {
-        rollbackCommit()
-
-        throw exception;
+        rollbackCommit commitId
     }
 
     private String buildNextVersion( String version ) {
         // Allow user to directly specify the next version from the
-        // command line using -PnextVersion=XXX. This takes
-        // precedence over executing the closure.
+        // command line using -PnextVersion=XXX.
+        // This takes precedence over the properties extension.
         if ( project.hasProperty( ReleasePluginExtension.NEXT_VERSION ) ) {
             project.property ReleasePluginExtension.NEXT_VERSION
         }
@@ -54,31 +52,25 @@ class UpdateVersionTask extends AbstractScmTask {
     }
 
     private void saveVersion( String nextVersion ) {
-        logger.info( "${name} setting next version to ${nextVersion}." )
+        logger.info( ":${name} setting next version to ${nextVersion}." )
 
         def gradleProperties = new GradleProperties( project )
         gradleProperties.saveVersion nextVersion
     }
 
-    private void commitChanges( String nextVersion ) {
-        if ( isScmSupportDisabled() ) {
-            logger.info "${name} skipping updateVersion commit because SCM support is disabled."
-        }
-        else {
-            def extension = project.extensions.getByName( ReleasePlugin.RELEASE_TASK )
+    private Commit commit( String nextVersion ) {
+        def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
+        def updateVersionMessage = extension.getAt ReleasePluginExtension.UPDATE_VERSION_COMMIT_MSG
 
-            def updateVersionMessage = extension.getAt( ReleasePluginExtension.UPDATE_VERSION_COMMIT_MSG )
-            def scmRemote = extension.getAt ReleasePluginExtension.SCM_REMOTE
-
-            commit updateVersionMessage, nextVersion
-            push scmRemote
-        }
+        commit updateVersionMessage, nextVersion
     }
 
-    private void rollbackCommit() throws ScmException {
-        logger.info "${name} rolling back commit due to error."
+    private void rollbackCommit( Commit commitId ) throws ScmException {
+        if ( commitId ) {
+            logger.info ":${name} rolling back commit due to error."
 
-        getScmHelper().rollbackLastCommit()
+            scmHelper.deleteCommit commitId
+        }
     }
 
 }

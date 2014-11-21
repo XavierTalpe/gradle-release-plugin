@@ -16,7 +16,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'be.xvrt:release-plugin:0.3.0'
+        classpath 'be.xvrt:release-plugin:0.4.0'
     }
 }
 
@@ -26,7 +26,7 @@ apply plugin: 'be.xvrt.release'
 Alternatively you can also use the new, incubating, plugin mechanism introduced in Gradle 2.1:
 ```
 plugins {
-    id 'be.xvrt.release' version '0.3.0'
+    id 'be.xvrt.release' version '0.4.0'
 }
 ```
 
@@ -56,15 +56,23 @@ There are multiple options to provide the version for building the project. **In
 
 
 ## Configuring the plugin
-The **release** task is the main entry point for configuring this plugin. The below table shows all **configurable properties**, what they are for and what their default value is.
+
+The default settings of this plugin can be overridden using both task properties and command line parameters. The following sections explain this functionality.
+
+### Build file configuration
+
+The **release** task is the main entry point for configuring this plugin from your `build.gradle` file. The below table shows all **configurable properties**, what they are for and what their default value is.
 
 Property | Description
 --- | ---
 releaseVersion | Closure containing the logic to build the release version. By default removes a trailing `-SNAPSHOT` tag from the initial version (if present).
 nextVersion | Closure containing the logic to build the next (`SNAPSHOT`) version. By default adds `-SNAPSHOT` to the release version if the initial version also contained `SNAPSHOT`.
+allowSnapshotDependencies | Toggle to allow `SNAPSHOT` project dependencies when building the release. False by default.
 scmDisabled | Disables all commit, tagging and pushing functionality. Effectively makes it look as if the project does not use an SCM. Useful for testing or demonstration purposes. Defaults to `false`.
 scmRootDir | The root directory where the SCM is initialized. For GIT this is the directory containing a `.git` directory. Defaults to the project's root directory.
 scmRemote | The name of the remote repository to push to when committing or tagging SCM changes. Only used for GIT. Defaults to `origin`.
+scmUsername | The username to use when interacting with the SCM. Defaults to system username.
+scmPassword | The password to use when interacting with the SCM. Defaults to system password.
 releaseCommitMessage | Commit message to save the project state after building the release. Defaults to `[Gradle Release] Commit for %version.`.
 releaseTag | Tag (name) to annotate the project state after building the release. Defaults to `%version`.
 releaseTagMessage | Tag message for the `releaseTag` property. Defaults to `[Gradle Release] Tag for %version.`.
@@ -87,13 +95,28 @@ release {
 
 More **detailed examples** of how to configure this plugin can be found in the [examples](https://github.com/XavierTalpe/gradle-release-plugin/tree/master/examples) folder.
 
+### Command line parameters
+
+Limited configuration is also possible using command line parameters. These can be very useful when running parametrized builds from your CI. The below table shows all **configurable parameters**. Note that these command line parameters take precedence over the task properties mentioned in the previous section.
+
+Parameter | Description
+--- | ---
+nextVersion | Set the version for the next (`SNAPSHOT`) build.
+scmUsername | The username to use when interacting with the SCM.
+scmPassword | The password to use when interacting with the SCM.
+
+As an example, imagine that our current project has version `1.5.0-SNAPSHOT`. Running the `release` task will thus result in a `1.5.0` build being made. The version for the next build will be set to `1.5.1-SNAPSHOT`. However, we would like to modify this behaviour such that the version for the next build is set to `2.0.0-SNAPSHOT` instead. To do this, simply pass the `nextVersion` parameter when running gradle from the command line:
+```
+$ gradle release -PnextVersion=2.0.0-SNAPSHOT
+```
+
 
 ## Tasks API
 
 ### Overview
 Task | Description
 --- | ---
-prepareRelease | Sets the release version before the release build is started.
+prepareRelease | Checks for SNAPSHOT dependencies and sets the release version before the build is started.
 commitRelease | Commits any file changes for this release to the SCM.
 tagRelease | Tags this release to the SCM.
 updateVersion | Sets the version for the next snapshot build and commits this change to the SCM.
@@ -119,6 +142,13 @@ release {
     releaseVersion = { version ->
         version + 'RC1'
     }
+}
+```
+
+The `prepareRelease` task also checks if there are any remaining `-SNAPSHOT` dependencies in the project. If this is the case, the release will be halted. This feature can be disabled by setting the `allowSnapshotDependencies` property to false:
+```
+release {
+    allowSnapshotDependencies = true
 }
 ```
 

@@ -1,10 +1,8 @@
 package be.xvrt.gradle.plugin.release
-
 import be.xvrt.gradle.plugin.release.scm.ScmException
 import be.xvrt.gradle.plugin.release.scm.ScmTestUtil
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.revwalk.RevCommit
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskExecutionException
@@ -21,7 +19,7 @@ import static org.junit.Assert.assertTrue
 class CommitReleaseTaskTest {
 
     @Rule
-    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     private Repository gradleRepository
 
@@ -50,19 +48,12 @@ class CommitReleaseTaskTest {
         commitReleaseTask.execute()
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call()
+        def commitLog = new Git( gradleRepository ).log().call().toList()
 
-        def nbCommits = 0;
-        for ( RevCommit commit : commitLog ) {
-            if ( !commit.getShortMessage().equals( 'HEAD' ) ) {
-                assertEquals( '[Gradle Release] Commit for 1.0.0.', commit.getShortMessage() )
-                nbCommits++;
-            }
-        }
-
-        assertEquals( 1, nbCommits )
+        assertEquals( 2, commitLog.size() )
+        assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
+        assertEquals( '[Gradle Release] Commit for 1.0.0.', commitLog.get( 0 ).shortMessage )
     }
-
 
     @Test
     void 'executing the task won\'t create a commit when SCM support is disabled'() {
@@ -76,12 +67,10 @@ class CommitReleaseTaskTest {
         commitReleaseTask.execute()
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call()
-        def nbNewCommits = commitLog.count { commit ->
-            !commit.getShortMessage().equals( 'HEAD' )
-        }
+        def commitLog = new Git( gradleRepository ).log().call().toList()
 
-        assertEquals( 0, nbNewCommits )
+        assertEquals( 1, commitLog.size() )
+        assertEquals( 'HEAD', commitLog.get( 0 ).shortMessage )
     }
 
     @Test
@@ -98,17 +87,11 @@ class CommitReleaseTaskTest {
         commitReleaseTask.execute()
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call()
+        def commitLog = new Git( gradleRepository ).log().call().toList()
 
-        def nbCommits = 0;
-        for ( RevCommit commit : commitLog ) {
-            if ( !commit.getShortMessage().equals( 'HEAD' ) ) {
-                assertEquals( 'Custom commit for 1.0.0.', commit.getShortMessage() )
-                nbCommits++;
-            }
-        }
-
-        assertEquals( 1, nbCommits )
+        assertEquals( 2, commitLog.size() )
+        assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
+        assertEquals( 'Custom commit for 1.0.0.', commitLog.get( 0 ).shortMessage )
     }
 
     @Test
@@ -125,12 +108,10 @@ class CommitReleaseTaskTest {
         }
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call()
-        def nbNewCommits = commitLog.count { commit ->
-            !commit.getShortMessage().equals( 'HEAD' )
-        }
+        def commitLog = new Git( gradleRepository ).log().call().toList()
 
-        assertEquals( 0, nbNewCommits )
+        assertEquals( 1, commitLog.size() )
+        assertEquals( 'HEAD', commitLog.get( 0 ).shortMessage )
     }
 
 }

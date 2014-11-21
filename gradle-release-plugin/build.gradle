@@ -105,4 +105,4 @@ bintray {
     }
 }
 
-tasks.bintray.dependsOn test
+tasks.bintrayUpload.dependsOn test

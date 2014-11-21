@@ -1,46 +1,43 @@
 package be.xvrt.gradle.plugin.release
 
+import be.xvrt.gradle.plugin.release.scm.Commit
 import be.xvrt.gradle.plugin.release.scm.ScmException
 import be.xvrt.gradle.plugin.task.AbstractScmTask
 
 class CommitReleaseTask extends AbstractScmTask {
 
-    @Override
-    void configure() {
-    }
+    private Commit commitId
 
     @Override
     void run() {
         if ( isScmSupportDisabled() ) {
-            logger.info "${name} skipping commitRelease because SCM support is disabled."
+            logger.info ":${name} skipping commitRelease because SCM support is disabled."
         }
         else {
-            commitChanges()
+            commitId = commit()
+            push()
         }
     }
 
-    private void commitChanges() {
-        def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
-
+    private Commit commit() {
         def releaseVersion = project.version
+        def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
         def commitMessage = extension.getAt ReleasePluginExtension.RELEASE_COMMIT_MSG
-        def scmRemote = extension.getAt ReleasePluginExtension.SCM_REMOTE
 
         commit commitMessage, releaseVersion
-        push scmRemote
     }
 
     @Override
     void rollback( Exception exception ) {
-        rollbackCommit()
-
-        throw exception;
+        rollbackCommit commitId
     }
 
-    private void rollbackCommit() throws ScmException {
-        logger.info "${name} rolling back commit due to error."
+    private void rollbackCommit( Commit commitId ) throws ScmException {
+        if ( commitId ) {
+            logger.info ":${name} rolling back commit due to error."
 
-        getScmHelper().rollbackLastCommit()
+            scmHelper.deleteCommit commitId
+        }
     }
 
 }

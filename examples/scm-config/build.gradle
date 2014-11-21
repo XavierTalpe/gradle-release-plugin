@@ -1,14 +1,18 @@
 plugins {
-    id 'be.xvrt.release' version '0.3.0'
+    id 'be.xvrt.release' version '0.4.0'
 }
 
-
 /**
+ * Set a custom username and password when interacting with the SCM.
+ *
  * Override the commit and tag messages when interacting
  * with the SCM. The %version token is automatically replaced
  * with the proper version number.
  */
 release {
+    scmUsername = 'username'
+    scmPassword = 'password'
+
     releaseCommitMessage = "${project.name} v%version."
     releaseTag = '%version.'
     releaseTagMessage = 'Tag for %version.'

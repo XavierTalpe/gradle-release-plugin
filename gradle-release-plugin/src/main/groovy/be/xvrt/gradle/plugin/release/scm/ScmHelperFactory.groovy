@@ -2,37 +2,52 @@ package be.xvrt.gradle.plugin.release.scm
 
 class ScmHelperFactory {
 
-    private final static Map<File, ScmHelper> CACHE = new HashMap<>( 1 )
+    private static long lastScmHelperId
+    private static ScmHelper lastScmHelper
 
     private ScmHelperFactory() {
     }
 
-    static ScmHelper create( String scmRootDir ) {
-        return create( new File( scmRootDir ) )
+    static ScmHelper create( String scmRootDir, String username = null, String password = null ) {
+        return create( new File( scmRootDir ), username, password )
     }
 
-    static ScmHelper create( File scmRootDir ) {
-        def scmHelper = CACHE.get scmRootDir
+    static ScmHelper create( File scmRootDir, String username = null, String password = null ) {
+        def scmHelperId = generateUniqueId( scmRootDir, username, password )
 
-        if ( scmHelper == null ) {
-            scmHelper = createNew( scmRootDir, scmHelper )
-            CACHE.put scmRootDir, scmHelper
+        if ( scmHelperId != lastScmHelperId ) {
+            lastScmHelper = createNew scmRootDir, username, password
+            lastScmHelperId = scmHelperId
         }
 
-        scmHelper
+        lastScmHelper
     }
 
-    private static ScmHelper createNew( File scmRootDir, ScmHelper scmHelper ) {
+    private static ScmHelper createNew( File scmRootDir, String username = null, String password = null ) {
         def gitRepo = new File( scmRootDir, '.git' )
 
+        def scmHelper
         if ( gitRepo.exists() ) {
-            scmHelper = new GitHelper( gitRepo )
+            scmHelper = new GitHelper( gitRepo, username, password )
         }
         else {
             scmHelper = new DummyHelper()
         }
 
         scmHelper
+    }
+
+    private static long generateUniqueId( File scmRootDir, String username, String password ) {
+        long id = scmRootDir.hashCode()
+
+        if ( username ) {
+            id += username.hashCode()
+        }
+        if ( password ) {
+            id += password.hashCode()
+        }
+
+        id
     }
 
 }

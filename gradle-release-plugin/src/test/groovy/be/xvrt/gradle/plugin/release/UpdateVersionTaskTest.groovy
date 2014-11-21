@@ -1,24 +1,25 @@
 package be.xvrt.gradle.plugin.release
-
+import be.xvrt.gradle.plugin.release.scm.ScmException
 import be.xvrt.gradle.plugin.release.scm.ScmTestUtil
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.revwalk.RevCommit
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
+import static junit.framework.Assert.fail
 import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertTrue
 
 class UpdateVersionTaskTest {
 
     @Rule
-    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     private Repository gradleRepository
 
@@ -119,23 +120,11 @@ class UpdateVersionTaskTest {
         updateVersionTask.execute()
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call()
+        def commitLog = new Git( gradleRepository ).log().call().toList()
 
-        def nbCommits = 0;
-        for ( RevCommit commit : commitLog ) {
-            if ( !commit.getShortMessage().equals( 'HEAD' ) ) {
-                assertEquals( '[Gradle Release] Preparing for 1.0.1.', commit.getShortMessage() )
-                nbCommits++;
-            }
-        }
-
-        assertEquals( 1, nbCommits )
-    }
-
-    @Ignore
-    @Test
-    void 'gradle.properties file is updated when no errors occur'() {
-        // TODO
+        assertEquals( 2, commitLog.size() )
+        assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
+        assertEquals( '[Gradle Release] Preparing for 1.0.1.', commitLog.get( 0 ).shortMessage )
     }
 
     @Test
@@ -152,16 +141,14 @@ class UpdateVersionTaskTest {
         updateVersionTask.execute()
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call()
-        def nbNewCommits = commitLog.count { commit ->
-            !commit.getShortMessage().equals( 'HEAD' )
-        }
+        def commitLog = new Git( gradleRepository ).log().call().toList()
 
-        assertEquals( 0, nbNewCommits )
+        assertEquals( 1, commitLog.size() )
+        assertEquals( 'HEAD', commitLog.get( 0 ).shortMessage )
     }
 
     @Test
-    public void 'override commit message'() throws Exception {
+    void 'override commit message'() {
         setup:
         ScmTestUtil.createOrigin gradleRepository, temporaryFolder.newFolder()
 
@@ -176,39 +163,32 @@ class UpdateVersionTaskTest {
         updateVersionTask.execute()
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call()
+        def commitLog = new Git( gradleRepository ).log().call().toList()
 
-        def nbCommits = 0;
-        for ( RevCommit commit : commitLog ) {
-            if ( !commit.getShortMessage().equals( 'HEAD' ) ) {
-                assertEquals( 'Custom prepare for 1.0.1.', commit.getShortMessage() )
-                nbCommits++;
-            }
-        }
-
-        assertEquals( 1, nbCommits )
+        assertEquals( 2, commitLog.size() )
+        assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
+        assertEquals( 'Custom prepare for 1.0.1.', commitLog.get( 0 ).shortMessage )
     }
 
-    // TODO #6 Rollback changes in gradle file
-    @Ignore
     @Test
     void 'commit is rolled back when push fails'() {
-        setup:
-        ScmTestUtil.createOrigin gradleRepository, temporaryFolder.newFolder()
-
         when:
-        prepareReleaseTask.configure()
-        updateVersionTask.configure()
-        prepareReleaseTask.execute()
-        updateVersionTask.execute()
-
-        then:
-        def commitLog = new Git( gradleRepository ).log().call()
-        def nbNewCommits = commitLog.count { commit ->
-            !commit.getShortMessage().equals( 'HEAD' )
+        try {
+            prepareReleaseTask.configure()
+            updateVersionTask.configure()
+            prepareReleaseTask.execute()
+            updateVersionTask.execute()
+            fail()
+        }
+        catch ( TaskExecutionException expected ) {
+            assertTrue( expected.cause instanceof ScmException )
         }
 
-        assertEquals( 0, nbNewCommits )
+        then:
+        def commitLog = new Git( gradleRepository ).log().call().toList()
+
+        assertEquals( 1, commitLog.size() )
+        assertEquals( 'HEAD', commitLog.get( 0 ).shortMessage )
     }
 
 }

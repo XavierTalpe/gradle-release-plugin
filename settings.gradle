@@ -1,8 +1,8 @@
 include 'gradle-release-plugin'
 
 include 'examples:custom-build-task'
-include 'examples:custom-messages'
 include 'examples:custom-versions'
 include 'examples:java'
+//include 'examples:scm-config' TODO: Enable for next release.
 
 

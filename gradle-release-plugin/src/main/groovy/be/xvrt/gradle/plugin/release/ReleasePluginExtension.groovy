@@ -1,15 +1,19 @@
 package be.xvrt.gradle.plugin.release
 
-import org.gradle.api.Project;
+import org.gradle.api.Project
 
 class ReleasePluginExtension {
 
     public static final String NAME = ReleasePlugin.RELEASE_TASK
 
+    public static final String ALLOW_SNAPSHOT_DEPENDENCIES = 'allowSnapshotDependencies'
+
     public static final String SCM_DISABLED = 'scmDisabled'
 
     public static final String SCM_ROOT_DIR = 'scmRootDir'
     public static final String SCM_REMOTE = 'scmRemote'
+    public static final String SCM_USERNAME = 'scmUsername'
+    public static final String SCM_PASSWORD = 'scmPassword'
 
     public static final String RELEASE_COMMIT_MSG = 'releaseCommitMessage'
     public static final String RELEASE_TAG = 'releaseTag'
@@ -19,24 +23,32 @@ class ReleasePluginExtension {
     public static final String RELEASE_VERSION = 'releaseVersion'
     public static final String NEXT_VERSION = 'nextVersion'
 
-    boolean scmDisabled;
+    boolean allowSnapshotDependencies
 
-    String scmRootDir;
-    String scmRemote;
+    boolean scmDisabled
 
-    String releaseCommitMessage;
-    String releaseTag;
-    String releaseTagMessage;
-    String updateVersionCommitMessage;
+    String scmRootDir
+    String scmRemote
+    String scmUsername
+    String scmPassword
 
-    Closure<String> releaseVersion;
-    Closure<String> nextVersion;
+    String releaseCommitMessage
+    String releaseTag
+    String releaseTagMessage
+    String updateVersionCommitMessage
+
+    Closure<String> releaseVersion
+    Closure<String> nextVersion
 
     ReleasePluginExtension( Project project ) {
+        allowSnapshotDependencies = false
+
         scmDisabled = false
 
         scmRootDir = project.rootDir
         scmRemote = 'origin'
+        scmUsername = null
+        scmPassword = null
 
         releaseCommitMessage = '[Gradle Release] Commit for %version.'
         releaseTag = '%version'

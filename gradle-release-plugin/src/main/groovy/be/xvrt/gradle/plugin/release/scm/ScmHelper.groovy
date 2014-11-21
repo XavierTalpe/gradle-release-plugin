@@ -1,13 +1,15 @@
 package be.xvrt.gradle.plugin.release.scm
 
-abstract class ScmHelper {
+interface ScmHelper {
 
-    abstract void commit( String message ) throws ScmException
+    Commit commit( String message ) throws ScmException
 
-    abstract void rollbackLastCommit() throws ScmException
+    void deleteCommit( Commit commit ) throws ScmException
 
-    abstract void tag( String name, String message ) throws ScmException
+    Tag tag( String name, String message ) throws ScmException
 
-    abstract void push( String remoteName ) throws ScmException
+    void deleteTag( Tag tag ) throws ScmException
+
+    void push( String remoteName ) throws ScmException
 
 }

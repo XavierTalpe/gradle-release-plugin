@@ -18,7 +18,7 @@ class ReleasePluginTest {
     }
 
     @Test
-    void testAllTasksAddedToProject() {
+    void 'all tasks and dependencies should be added to project'() {
         def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
         def commitReleaseTask = project.tasks.getByName ReleasePlugin.COMMIT_RELEASE_TASK
         def tagReleaseTask = project.tasks.getByName ReleasePlugin.TAG_RELEASE_TASK
@@ -41,7 +41,7 @@ class ReleasePluginTest {
     }
 
     @Test
-    void testEnsurePrepareReleaseIsRunBeforeBuild() {
+    void 'ensure prepareRelease task is run before build'() {
         setup:
         def buildTask = project.tasks.create 'build'
         def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
@@ -56,7 +56,7 @@ class ReleasePluginTest {
     }
 
     @Test
-    void testEnsureReleaseDependsOnBuild() {
+    void 'ensure release task depends on build'() {
         setup:
         def buildTask = project.tasks.create 'build'
         def commitReleaseTask = project.tasks.getByName ReleasePlugin.COMMIT_RELEASE_TASK

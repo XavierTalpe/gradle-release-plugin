@@ -1,5 +1,4 @@
 package be.xvrt.gradle.plugin.release.integration
-
 import be.xvrt.gradle.plugin.test.IntegrationTest
 import org.junit.Test
 
@@ -11,13 +10,12 @@ class PrepareReleaseTaskTest extends IntegrationTest {
     @Test
     void 'empty properties file remains empty after prepareRelease'() {
         setup:
-        appendToBuildFile 'version="1.0.0-SNAPSHOT"'
+        appendLineToBuildFile 'version="1.0.0-SNAPSHOT"'
 
         when:
         execute 'prepareRelease'
 
         then:
-        def properties = getProperties()
         assertTrue properties.isEmpty()
     }
 
@@ -30,8 +28,22 @@ class PrepareReleaseTaskTest extends IntegrationTest {
         execute 'prepareRelease'
 
         then:
-        def properties = getProperties()
         assertEquals '1.0.0', properties.version
+    }
+
+    @Test
+    void 'properties file is rolled back when task fails'() {
+        setup:
+        addProperty 'version', '1.0.0-SNAPSHOT'
+        appendLineToBuildFile 'release {'
+        appendLineToBuildFile '  releaseVersion = "INVALID"'
+        appendLineToBuildFile '}'
+
+        when:
+        execute 'prepareRelease', true
+
+        then:
+        assertEquals '1.0.0-SNAPSHOT', properties.version
     }
 
 }

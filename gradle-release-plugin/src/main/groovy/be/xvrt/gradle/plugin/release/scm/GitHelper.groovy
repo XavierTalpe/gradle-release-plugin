@@ -1,65 +1,68 @@
 package be.xvrt.gradle.plugin.release.scm
-
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ResetCommand
-import org.eclipse.jgit.lib.ObjectId
 import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.revwalk.RevCommit
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+import org.eclipse.jgit.transport.CredentialsProvider
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 
-class GitHelper extends ScmHelper {
+class GitHelper implements ScmHelper {
 
-    private final Repository repository
     private final Git git
+    private final Repository repository
 
-    private ObjectId lastCommitId
+    private final CredentialsProvider credentialsProvider
 
-    GitHelper( File gitRepository ) {
+    GitHelper( File gitRepository, String username = null, String password = null ) {
         repository = openRepository gitRepository
         git = new Git( repository )
+
+        if ( username && password ) {
+            credentialsProvider = new UsernamePasswordCredentialsProvider( username, password )
+        }
+        else {
+            credentialsProvider
+        }
     }
 
     private Repository openRepository( File gitRepository ) {
-        FileRepositoryBuilder builder = new FileRepositoryBuilder();
+        FileRepositoryBuilder builder = new FileRepositoryBuilder()
 
         builder.setGitDir( gitRepository )
                .readEnvironment()
                .findGitDir()
-               .build();
+               .build()
     }
 
     @Override
-    void commit( String message ) throws ScmException {
+    Commit commit( String message ) throws ScmException {
         try {
             def commit = git.commit()
                             .setAll( true )
                             .setMessage( message )
                             .call()
 
-            lastCommitId = commit.getId()
+            new Commit( commit.id.name )
         }
         catch ( Exception exception ) {
             throw new ScmException( 'Error when committing changes.', exception )
         }
     }
 
+    /**
+     * Currently only supports deletion of the last commit.
+     */
     @Override
-    void rollbackLastCommit() throws ScmException {
-        if ( lastCommitId == null ) {
-            return
-        }
-
+    void deleteCommit( Commit commitId ) throws ScmException {
         try {
-            def canRollback = false
+            def commitLog = git.log().call().toList()
+            def lastCommit = commitLog.first()
 
-            def commitLog = git.log().call();
-            for ( RevCommit commit : commitLog ) {
-                canRollback = commit.getId().equals( lastCommitId )
-                break
-            }
+            def lastCommitName = lastCommit.id.name
+            def targetName = commitId.id
 
-            if ( canRollback ) {
-                git.reset().setMode( ResetCommand.ResetType.SOFT ).setRef( 'HEAD~1' ).call()
+            if ( lastCommitName.equals( targetName ) ) {
+                git.reset().setMode( ResetCommand.ResetType.HARD ).setRef( 'HEAD~1' ).call()
             }
         }
         catch ( Exception exception ) {
@@ -68,26 +71,44 @@ class GitHelper extends ScmHelper {
     }
 
     @Override
-    void tag( String name, String message ) throws ScmException {
+    Tag tag( String name, String message ) throws ScmException {
         try {
             git.tag()
                .setName( name )
                .setMessage( message )
                .call()
+
+            new Tag( name )
         } catch ( Exception exception ) {
             throw new ScmException( 'Error when tagging changes.', exception )
         }
     }
 
     @Override
+    void deleteTag( Tag tag ) throws ScmException {
+        try {
+            git.tagDelete().setTags( tag.id ).call()
+        }
+        catch ( Exception exception ) {
+            throw new ScmException( 'Error when rolling back commit.', exception )
+        }
+    }
+
+    @Override
     void push( String remoteName ) throws ScmException {
         def remoteUri = findRemoteUri remoteName
-        if ( remoteUri == null ) {
+        if ( !remoteUri ) {
             throw new ScmException( 'Error when pushing changes. No remote defined.' )
         }
 
         try {
-            git.push().setRemote( remoteUri ).call()
+            def pushCommand = git.push().setRemote( remoteUri )
+
+            if ( credentialsProvider ) {
+                pushCommand.setCredentialsProvider( credentialsProvider )
+            }
+
+            pushCommand.call()
         } catch ( Exception exception ) {
             throw new ScmException( 'Error when pushing changes.', exception )
         }
@@ -106,7 +127,7 @@ class GitHelper extends ScmHelper {
             for ( def remoteName : allRemotes ) {
                 if ( remoteName.equals( targetRemoteName ) ) {
                     remoteUri = config.getString( 'remote', remoteName, 'url' )
-                    break;
+                    break
                 }
             }
         }

@@ -1,5 +1,4 @@
 package be.xvrt.gradle.plugin.release
-
 import be.xvrt.gradle.plugin.release.scm.ScmException
 import be.xvrt.gradle.plugin.release.scm.ScmTestUtil
 import org.eclipse.jgit.api.Git
@@ -9,7 +8,6 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -21,7 +19,7 @@ import static org.junit.Assert.assertTrue
 class TagReleaseTaskTest {
 
     @Rule
-    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     private Repository gradleRepository
 
@@ -49,7 +47,7 @@ class TagReleaseTaskTest {
         tagReleaseTask.execute()
 
         then:
-        def tagList = new Git( gradleRepository ).tagList().call();
+        def tagList = new Git( gradleRepository ).tagList().call()
 
         assertEquals( 1, tagList.size() )
         assertEquals( 'refs/tags/1.0.0', tagList.get( 0 ).getName() )
@@ -67,7 +65,7 @@ class TagReleaseTaskTest {
         tagReleaseTask.execute()
 
         then:
-        def tagList = new Git( gradleRepository ).tagList().call();
+        def tagList = new Git( gradleRepository ).tagList().call()
         assertEquals( 0, tagList.size() )
     }
 
@@ -86,14 +84,12 @@ class TagReleaseTaskTest {
         tagReleaseTask.execute()
 
         then:
-        def tagList = new Git( gradleRepository ).tagList().call();
+        def tagList = new Git( gradleRepository ).tagList().call()
 
         assertEquals( 1, tagList.size() )
         assertEquals( 'refs/tags/0.2.3', tagList.get( 0 ).getName() )
     }
 
-    // TODO #6 Rollback changes
-    @Ignore
     @Test
     void 'tag is rolled back when push fails'() {
         when:
@@ -108,7 +104,7 @@ class TagReleaseTaskTest {
         }
 
         then:
-        def tagList = new Git( gradleRepository ).tagList().call();
+        def tagList = new Git( gradleRepository ).tagList().call()
         assertEquals( 0, tagList.size() )
     }
 

@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals
 class GradlePropertiesTest {
 
     @Rule
-    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     private GradleProperties gradleProperties
 
@@ -23,7 +23,7 @@ class GradlePropertiesTest {
     }
 
     @Test
-    void testSaveVersion() {
+    void 'properties file should be overwritten with new version'() {
         setup:
         def propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
         propertiesFile << 'version=1.0.0-SNAPSHOT'
@@ -39,7 +39,7 @@ class GradlePropertiesTest {
     }
 
     @Test
-    void testSaveVersionWithoutGradlePropertiesFile() {
+    void 'saving version shouldn\'t result in error when properties file is missing'() {
         when:
         gradleProperties.saveVersion( '1.0.0' )
     }
