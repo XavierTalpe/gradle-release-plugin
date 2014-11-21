@@ -1,5 +1,6 @@
 package be.xvrt.gradle.plugin.release
 
+import be.xvrt.gradle.plugin.release.exception.InvalidDependencyException
 import be.xvrt.gradle.plugin.release.util.GradleProperties
 import be.xvrt.gradle.plugin.task.AbstractDefaultTask
 
@@ -19,6 +20,7 @@ class PrepareReleaseTask extends AbstractDefaultTask {
 
     @Override
     void run() {
+        checkSnapshotDependencies()
     }
 
     @Override
@@ -53,6 +55,25 @@ class PrepareReleaseTask extends AbstractDefaultTask {
 
             def gradleProperties = new GradleProperties( project )
             gradleProperties.saveVersion( version )
+        }
+    }
+
+    private void checkSnapshotDependencies() {
+        def snapshotDependencies = new HashSet<String>()
+
+        project.configurations.each { config ->
+            config.dependencies?.each { dep ->
+                if ( dep.version?.contains( 'SNAPSHOT' ) ) {
+                    snapshotDependencies.add "${project.name} - ${dep.group}:${dep.name}:${dep.version}"
+                }
+            }
+        }
+
+        if ( snapshotDependencies.size() > 0 ) {
+            def snapshotsList = snapshotDependencies.join( '\n' )
+            def errorMessage = "Cannot release project with SNAPSHOT dependencies:\n${snapshotsList}\n"
+
+            throw new InvalidDependencyException( errorMessage )
         }
     }
 
