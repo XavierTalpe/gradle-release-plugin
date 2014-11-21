@@ -1,4 +1,4 @@
-# Gradle Release Plugin [![Travis](https://travis-ci.org/XavierTalpe/gradle-release-plugin.svg?branch=master)](https://travis-ci.org/XavierTalpe/gradle-release-plugin)
+# Gradle Release Plugin [![Travis](https://travis-ci.org/XavierTalpe/gradle-release-plugin.svg)](https://travis-ci.org/XavierTalpe/gradle-release-plugin)
 
 Automatically prepares and increments the version number before and after making a release. Commits and tags releases as well.
 
