@@ -1,4 +1,5 @@
 package be.xvrt.gradle.plugin.test
+
 import be.xvrt.gradle.plugin.release.scm.ScmTestUtil
 import org.eclipse.jgit.lib.Repository
 import org.junit.Before
@@ -36,7 +37,6 @@ abstract class IntegrationTest {
             w.writeLine '  }'
             w.writeLine '  dependencies {'
             w.writeLine "    classpath files( '${pluginPath}' )"
-            w.writeLine '    classpath "org.tmatesoft.svnkit:svnkit:1.8.5"'
             w.writeLine '    classpath "org.eclipse.jgit:org.eclipse.jgit:3.5.1.201410131835-r"'
             w.writeLine '  }'
             w.writeLine '}'
