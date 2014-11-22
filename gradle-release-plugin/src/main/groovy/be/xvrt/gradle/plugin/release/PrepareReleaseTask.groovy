@@ -1,6 +1,7 @@
 package be.xvrt.gradle.plugin.release
 
 import be.xvrt.gradle.plugin.release.exception.InvalidDependencyException
+import be.xvrt.gradle.plugin.release.exception.UnspecifiedVersionException
 import be.xvrt.gradle.plugin.release.util.GradleProperties
 import be.xvrt.gradle.plugin.task.AbstractDefaultTask
 
@@ -15,7 +16,14 @@ class PrepareReleaseTask extends AbstractDefaultTask {
 
     @Override
     void configure() {
-        prepareReleaseVersion()
+        originalVersion = project.version
+
+        if ( !originalVersion || originalVersion.equals( 'unspecified' ) ) {
+            throw new UnspecifiedVersionException( "Project version ${originalVersion} is not a valid release version." )
+        }
+        else {
+            releaseVersion = prepareReleaseVersion originalVersion
+        }
     }
 
     @Override
@@ -33,11 +41,11 @@ class PrepareReleaseTask extends AbstractDefaultTask {
         rollbackVersion originalVersion
     }
 
-    private void prepareReleaseVersion() {
-        originalVersion = project.version
-        releaseVersion = buildReleaseVersion originalVersion
-
+    private String prepareReleaseVersion( String originalVersion ) {
+        def releaseVersion = buildReleaseVersion originalVersion
         saveVersion releaseVersion
+
+        releaseVersion
     }
 
     private String buildReleaseVersion( String version ) {

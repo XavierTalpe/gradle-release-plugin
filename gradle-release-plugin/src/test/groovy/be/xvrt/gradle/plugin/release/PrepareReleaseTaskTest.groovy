@@ -1,6 +1,7 @@
 package be.xvrt.gradle.plugin.release
 
 import be.xvrt.gradle.plugin.release.exception.InvalidDependencyException
+import be.xvrt.gradle.plugin.release.exception.UnspecifiedVersionException
 import be.xvrt.gradle.plugin.release.scm.ScmException
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -24,9 +25,7 @@ class PrepareReleaseTaskTest {
     @Before
     void setUp() {
         project = ProjectBuilder.builder().build()
-        project.apply plugin: 'groovy'
         project.apply plugin: ReleasePlugin
-        project.version = '1.0.0-SNAPSHOT'
 
         prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
     }
@@ -62,6 +61,22 @@ class PrepareReleaseTaskTest {
     }
 
     @Test
+    void 'unspecified version should trigger exception'() {
+        setup:
+        assertEquals( 'unspecified', project.version )
+
+        when:
+        try {
+            prepareReleaseTask.configure()
+            prepareReleaseTask.execute()
+            fail()
+        }
+        catch ( Exception exception ) {
+            assertTrue( exception instanceof UnspecifiedVersionException )
+        }
+    }
+
+    @Test
     void 'custom closure for release version should be invoked'() {
         setup:
         project.version = '1.0.0'
@@ -84,6 +99,9 @@ class PrepareReleaseTaskTest {
     @Test
     void 'non-snapshot dependencies don\'t trigger exception'() {
         setup:
+        project.apply plugin: 'groovy'
+        project.version = '1.0.0-SNAPSHOT'
+
         project.configurations { myConfig }
         project.dependencies {
             compile 'group:name:1.0.0'
@@ -102,6 +120,9 @@ class PrepareReleaseTaskTest {
     @Test
     void 'snapshot dependencies should trigger exception'() {
         setup:
+        project.apply plugin: 'groovy'
+        project.version = '1.0.0-SNAPSHOT'
+
         project.configurations { myConfig }
         project.dependencies {
             compile 'group:name:1.0.0-SNAPSHOT'
@@ -133,6 +154,9 @@ class PrepareReleaseTaskTest {
     @Test
     void 'snapshot dependencies are not checked'() {
         setup:
+        project.apply plugin: 'groovy'
+        project.version = '1.0.0-SNAPSHOT'
+
         project.dependencies {
             compile 'group:name:1.0.0-SNAPSHOT'
         }
