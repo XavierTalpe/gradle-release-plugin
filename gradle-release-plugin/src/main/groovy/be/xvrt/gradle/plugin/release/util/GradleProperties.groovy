@@ -12,6 +12,7 @@ class GradleProperties {
     }
 
     def saveVersion( String newVersion, String taskName = '' ) {
+        def oldVersion = project.version
         project.version = newVersion
 
         def propertiesFile = getDefaultPropertiesFile()
@@ -22,7 +23,7 @@ class GradleProperties {
             def properties = IOUtils.toString inputStream, 'UTF-8'
             inputStream.close()
 
-            properties = ( properties =~ /version=.+/ ).replaceFirst "version=${newVersion}"
+            properties = ( properties =~ /${oldVersion}/ ).replaceAll newVersion
 
             def outputStream = new FileOutputStream( propertiesFile )
             IOUtils.write properties, outputStream, 'UTF-8'

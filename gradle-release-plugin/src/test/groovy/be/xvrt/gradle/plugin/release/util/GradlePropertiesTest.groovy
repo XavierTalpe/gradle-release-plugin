@@ -13,11 +13,13 @@ class GradlePropertiesTest {
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
+    private project
+
     private GradleProperties gradleProperties
 
     @Before
     void setUp() {
-        def project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
+        project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
 
         gradleProperties = new GradleProperties( project )
     }
@@ -28,8 +30,10 @@ class GradlePropertiesTest {
         def propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
         propertiesFile << 'version=1.0.0-SNAPSHOT'
 
+        project.version = '1.0.0-SNAPSHOT'
+
         when:
-        gradleProperties.saveVersion( '1.0.0' )
+        gradleProperties.saveVersion '1.0.0'
 
         then:
         def properties = new Properties()
@@ -39,15 +43,17 @@ class GradlePropertiesTest {
     }
 
     @Test
-    void 'properties file with many lines should only have updated version'() {
+    void 'properties file with many lines should only have version line updated'() {
         setup:
         def propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
         propertiesFile << 'name=aversion\n'
         propertiesFile << 'version=1.0.0-SNAPSHOT\n\n'
         propertiesFile << 'group=be.xvrt\n'
 
+        project.version = '1.0.0-SNAPSHOT'
+
         when:
-        gradleProperties.saveVersion( '1.0.0' )
+        gradleProperties.saveVersion '1.0.0'
 
         then:
         def properties = new Properties()
@@ -59,9 +65,53 @@ class GradlePropertiesTest {
     }
 
     @Test
+    void 'properties file with indirect version should also be updated'() {
+        setup:
+        def propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
+        propertiesFile << 'name=1.0.0-SNAPSHOT\n'
+        propertiesFile << 'version=name\n\n'
+        propertiesFile << 'group=be.xvrt\n'
+
+        project.version = '1.0.0-SNAPSHOT'
+
+        when:
+        gradleProperties.saveVersion '1.0.0'
+
+        then:
+        def properties = new Properties()
+        propertiesFile.withInputStream { properties.load( it ) }
+
+        assertEquals( '1.0.0', properties.name )
+        assertEquals( 'name', properties.version )
+        assertEquals( 'be.xvrt', properties.group )
+    }
+
+    @Test
+    void 'all version occurrences should be replaced'() {
+        setup:
+        def propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
+        propertiesFile << 'name=1.0.0-SNAPSHOT\n'
+        propertiesFile << 'version=1.0.0-SNAPSHOT\n\n'
+        propertiesFile << 'group=be.xvrt\n'
+
+        project.version = '1.0.0-SNAPSHOT'
+
+        when:
+        gradleProperties.saveVersion '1.0.0'
+
+        then:
+        def properties = new Properties()
+        propertiesFile.withInputStream { properties.load( it ) }
+
+        assertEquals( '1.0.0', properties.name )
+        assertEquals( '1.0.0', properties.version )
+        assertEquals( 'be.xvrt', properties.group )
+    }
+
+    @Test
     void 'saving version shouldn\'t result in error when properties file is missing'() {
         when:
-        gradleProperties.saveVersion( '1.0.0' )
+        gradleProperties.saveVersion '1.0.0'
     }
 
 }
