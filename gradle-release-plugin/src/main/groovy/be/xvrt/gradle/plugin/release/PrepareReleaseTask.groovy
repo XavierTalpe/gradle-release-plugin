@@ -15,7 +15,7 @@ class PrepareReleaseTask extends DefaultPluginTask {
     }
 
     void configure() {
-        originalVersion = project.version
+        originalVersion = projectVersion
 
         if ( !originalVersion || originalVersion.equals( 'unspecified' ) ) {
             throw new UnspecifiedVersionException( "Project version ${originalVersion} is not a valid release version." )

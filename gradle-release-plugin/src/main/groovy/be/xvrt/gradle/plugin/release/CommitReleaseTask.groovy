@@ -20,7 +20,7 @@ class CommitReleaseTask extends AbstractScmTask {
     }
 
     private Commit commit() {
-        def releaseVersion = project.version
+        def releaseVersion = projectVersion
         def commitMessage = extension.getAt ReleasePluginExtension.RELEASE_COMMIT_MSG
 
         commit commitMessage, releaseVersion

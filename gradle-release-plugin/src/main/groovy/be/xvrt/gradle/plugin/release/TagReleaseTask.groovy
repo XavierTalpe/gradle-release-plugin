@@ -27,7 +27,7 @@ class TagReleaseTask extends AbstractScmTask {
     private Tag tag() {
         def tagName = extension.getAt ReleasePluginExtension.RELEASE_TAG
         def tagMessage = extension.getAt ReleasePluginExtension.RELEASE_TAG_MSG
-        def releaseVersion = project.version
+        def releaseVersion = projectVersion
 
         tag tagName, tagMessage, releaseVersion
     }

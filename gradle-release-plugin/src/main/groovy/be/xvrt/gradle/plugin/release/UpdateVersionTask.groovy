@@ -14,7 +14,7 @@ class UpdateVersionTask extends AbstractScmTask {
 
     @Override
     void run() {
-        releasedVersion = project.version
+        releasedVersion = projectVersion
         nextVersion = buildNextVersion releasedVersion
 
         saveVersion nextVersion
