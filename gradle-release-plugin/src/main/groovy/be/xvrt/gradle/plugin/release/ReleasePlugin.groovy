@@ -15,6 +15,8 @@ class ReleasePlugin implements Plugin<Project> {
 
     public static final String RELEASE_GROUP = 'release'
 
+    public static final String EXTENSION = RELEASE_TASK
+
     private Task prepareReleaseTask
     private Task commitReleaseTask
     private Task tagReleaseTask
@@ -35,7 +37,7 @@ class ReleasePlugin implements Plugin<Project> {
     }
 
     private void createExtension( Project project ) {
-        project.extensions.create( RELEASE_TASK, ReleasePluginExtension, project )
+        project.extensions.create EXTENSION, ReleasePluginExtension, project
     }
 
     private void createTasks( Project project ) {

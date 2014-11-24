@@ -41,7 +41,6 @@ class UpdateVersionTask extends AbstractScmTask {
             project.property ReleasePluginExtension.NEXT_VERSION
         }
         else {
-            def extension = project.extensions.getByName ReleasePluginExtension.NAME
             def nextVersionClosure = extension.getAt ReleasePluginExtension.NEXT_VERSION
 
             def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
@@ -59,7 +58,6 @@ class UpdateVersionTask extends AbstractScmTask {
     }
 
     private Commit commit( String nextVersion ) {
-        def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
         def updateVersionMessage = extension.getAt ReleasePluginExtension.UPDATE_VERSION_COMMIT_MSG
 
         commit updateVersionMessage, nextVersion

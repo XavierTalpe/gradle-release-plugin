@@ -1,22 +1,16 @@
 package be.xvrt.gradle.plugin.task
 
-import be.xvrt.gradle.plugin.release.ReleasePlugin
 import be.xvrt.gradle.plugin.release.ReleasePluginExtension
 import be.xvrt.gradle.plugin.release.scm.*
 
-abstract class AbstractScmTask extends AbstractDefaultTask {
+abstract class AbstractScmTask extends DefaultPluginTask {
 
     private scmHelper
 
     protected AbstractScmTask() {
     }
 
-    @Override
-    final void configure() {
-    }
-
     protected final boolean isScmSupportDisabled() {
-        def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
         extension.getAt ReleasePluginExtension.SCM_DISABLED
     }
 
@@ -38,7 +32,6 @@ abstract class AbstractScmTask extends AbstractDefaultTask {
     }
 
     protected final void push() throws ScmException {
-        def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
         def scmRemote = extension.getAt ReleasePluginExtension.SCM_REMOTE
 
         logger.info ":${name} pushing local changes to ${scmRemote}."
@@ -48,8 +41,6 @@ abstract class AbstractScmTask extends AbstractDefaultTask {
 
     protected final ScmHelper getScmHelper() {
         if ( !scmHelper ) {
-            def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
-
             def scmRootDir = extension.getAt ReleasePluginExtension.SCM_ROOT_DIR
             def scmUsername
             def scmPassword

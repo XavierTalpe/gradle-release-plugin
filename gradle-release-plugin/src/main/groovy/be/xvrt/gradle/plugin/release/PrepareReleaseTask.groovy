@@ -3,9 +3,9 @@ package be.xvrt.gradle.plugin.release
 import be.xvrt.gradle.plugin.release.exception.InvalidDependencyException
 import be.xvrt.gradle.plugin.release.exception.UnspecifiedVersionException
 import be.xvrt.gradle.plugin.release.util.GradleProperties
-import be.xvrt.gradle.plugin.task.AbstractDefaultTask
+import be.xvrt.gradle.plugin.task.DefaultPluginTask
 
-class PrepareReleaseTask extends AbstractDefaultTask {
+class PrepareReleaseTask extends DefaultPluginTask {
 
     String originalVersion
     String releaseVersion
@@ -14,7 +14,6 @@ class PrepareReleaseTask extends AbstractDefaultTask {
         return originalVersion.contains( 'SNAPSHOT' )
     }
 
-    @Override
     void configure() {
         originalVersion = project.version
 
@@ -28,7 +27,7 @@ class PrepareReleaseTask extends AbstractDefaultTask {
 
     @Override
     void run() {
-        def extension = project.extensions.getByName ReleasePlugin.RELEASE_TASK
+        def extension = project.extensions.getByName ReleasePlugin.EXTENSION
         def allowSnapshotDependencies = extension.getAt( ReleasePluginExtension.ALLOW_SNAPSHOT_DEPENDENCIES )
 
         if ( !allowSnapshotDependencies ) {
@@ -49,7 +48,6 @@ class PrepareReleaseTask extends AbstractDefaultTask {
     }
 
     private String buildReleaseVersion( String version ) {
-        def extension = project.extensions.getByName ReleasePluginExtension.NAME
         def releaseVersionClosure = extension.getAt ReleasePluginExtension.RELEASE_VERSION
 
         releaseVersionClosure version

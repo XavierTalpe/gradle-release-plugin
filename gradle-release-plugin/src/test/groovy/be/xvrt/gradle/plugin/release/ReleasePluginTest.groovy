@@ -74,4 +74,11 @@ class ReleasePluginTest {
         assertTrue( updateVersionTask.dependsOn.contains( buildTask ) )
     }
 
+    @Test
+    public void 'release plugin extension is present'() throws Exception {
+        def extensionObject = project.extensions.getByName ReleasePlugin.EXTENSION
+
+        assertTrue( extensionObject instanceof ReleasePluginExtension )
+    }
+
 }
