@@ -48,6 +48,10 @@ artifacts {
 }
 
 
+test {
+    maxParallelForks = 4
+}
+
 /**
  * For the integration tests we require the jar to
  * be available before the tests are started.
