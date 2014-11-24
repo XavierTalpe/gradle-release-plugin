@@ -28,7 +28,7 @@ abstract class DefaultPluginTask extends DefaultTask {
         projectVersion
     }
 
-    final void setProjectVersion( String newVersion ) {
+    protected final void setProjectVersion( String newVersion ) {
         def oldVersion = projectVersion
 
         project.version = newVersion

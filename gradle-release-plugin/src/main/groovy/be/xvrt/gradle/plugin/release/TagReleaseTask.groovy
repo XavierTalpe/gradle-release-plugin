@@ -2,9 +2,9 @@ package be.xvrt.gradle.plugin.release
 
 import be.xvrt.gradle.plugin.release.scm.ScmException
 import be.xvrt.gradle.plugin.release.scm.Tag
-import be.xvrt.gradle.plugin.task.AbstractScmTask
+import be.xvrt.gradle.plugin.task.PluginScmTask
 
-class TagReleaseTask extends AbstractScmTask {
+class TagReleaseTask extends PluginScmTask {
 
     private Tag tagId
 

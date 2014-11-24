@@ -3,12 +3,9 @@ package be.xvrt.gradle.plugin.task
 import be.xvrt.gradle.plugin.release.ReleasePluginExtension
 import be.xvrt.gradle.plugin.release.scm.*
 
-abstract class AbstractScmTask extends DefaultPluginTask {
+abstract class PluginScmTask extends DefaultPluginTask {
 
     private scmHelper
-
-    protected AbstractScmTask() {
-    }
 
     protected final boolean isScmSupportDisabled() {
         extension.getAt ReleasePluginExtension.SCM_DISABLED

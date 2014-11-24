@@ -1,9 +1,9 @@
 package be.xvrt.gradle.plugin.release
 import be.xvrt.gradle.plugin.release.scm.Commit
 import be.xvrt.gradle.plugin.release.scm.ScmException
-import be.xvrt.gradle.plugin.task.AbstractScmTask
+import be.xvrt.gradle.plugin.task.PluginScmTask
 
-class UpdateVersionTask extends AbstractScmTask {
+class UpdateVersionTask extends PluginScmTask {
 
     String releasedVersion
     String nextVersion

@@ -2,9 +2,9 @@ package be.xvrt.gradle.plugin.release
 
 import be.xvrt.gradle.plugin.release.scm.Commit
 import be.xvrt.gradle.plugin.release.scm.ScmException
-import be.xvrt.gradle.plugin.task.AbstractScmTask
+import be.xvrt.gradle.plugin.task.PluginScmTask
 
-class CommitReleaseTask extends AbstractScmTask {
+class CommitReleaseTask extends PluginScmTask {
 
     private Commit commitId
 
