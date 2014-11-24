@@ -1,8 +1,6 @@
 package be.xvrt.gradle.plugin.release
-
 import be.xvrt.gradle.plugin.release.scm.Commit
 import be.xvrt.gradle.plugin.release.scm.ScmException
-import be.xvrt.gradle.plugin.release.util.GradleProperties
 import be.xvrt.gradle.plugin.task.AbstractScmTask
 
 class UpdateVersionTask extends AbstractScmTask {
@@ -53,8 +51,7 @@ class UpdateVersionTask extends AbstractScmTask {
     private void saveVersion( String nextVersion ) {
         logger.info( ":${name} setting next version to ${nextVersion}." )
 
-        def gradleProperties = new GradleProperties( project )
-        gradleProperties.saveVersion nextVersion, name
+        projectVersion = nextVersion
     }
 
     private Commit commit( String nextVersion ) {

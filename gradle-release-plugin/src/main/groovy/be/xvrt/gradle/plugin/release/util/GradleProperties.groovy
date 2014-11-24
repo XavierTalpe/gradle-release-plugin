@@ -1,5 +1,4 @@
 package be.xvrt.gradle.plugin.release.util
-
 import org.apache.commons.io.IOUtils
 import org.gradle.api.Project
 
@@ -11,12 +10,13 @@ class GradleProperties {
         this.project = project
     }
 
-    def saveVersion( String newVersion, String taskName = '' ) {
-        def oldVersion = project.version
-        project.version = newVersion
-
+    def updateVersion( String oldVersion, String newVersion, String taskName = '' ) {
         def propertiesFile = getDefaultPropertiesFile()
-        if ( propertiesFile.exists() ) {
+
+        if ( !propertiesFile.exists() ) {
+            project.logger.info( ":${taskName} gradle.properties does not exist, skipping update." )
+        }
+        else {
             project.logger.info( ":${taskName} updating gradle.properties with new version." )
 
             def inputStream = new FileInputStream( propertiesFile )

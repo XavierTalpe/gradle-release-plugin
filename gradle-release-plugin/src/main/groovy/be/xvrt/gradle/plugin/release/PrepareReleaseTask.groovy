@@ -1,6 +1,5 @@
 package be.xvrt.gradle.plugin.release
 import be.xvrt.gradle.plugin.release.exception.InvalidDependencyException
-import be.xvrt.gradle.plugin.release.util.GradleProperties
 import be.xvrt.gradle.plugin.task.DefaultPluginTask
 
 class PrepareReleaseTask extends DefaultPluginTask {
@@ -48,16 +47,14 @@ class PrepareReleaseTask extends DefaultPluginTask {
     private void saveVersion( String releaseVersion ) {
         logger.info ":${name} setting release version to ${releaseVersion}."
 
-        def gradleProperties = new GradleProperties( project )
-        gradleProperties.saveVersion releaseVersion, name
+        projectVersion = releaseVersion
     }
 
     private void rollbackVersion( String version ) {
         if ( version ) {
             logger.info ":${name} rolling back version to ${version}."
 
-            def gradleProperties = new GradleProperties( project )
-            gradleProperties.saveVersion version, name
+            projectVersion = version
         }
     }
 

@@ -2,6 +2,7 @@ package be.xvrt.gradle.plugin.task
 import be.xvrt.gradle.plugin.release.ReleasePlugin
 import be.xvrt.gradle.plugin.release.ReleasePluginExtension
 import be.xvrt.gradle.plugin.release.exception.UnspecifiedVersionException
+import be.xvrt.gradle.plugin.release.util.GradleProperties
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
@@ -25,6 +26,15 @@ abstract class DefaultPluginTask extends DefaultTask {
         }
 
         projectVersion
+    }
+
+    final void setProjectVersion( String newVersion ) {
+        def oldVersion = projectVersion
+
+        project.version = newVersion
+
+        def gradleProperties = new GradleProperties( project )
+        gradleProperties.updateVersion oldVersion, newVersion, name
     }
 
     @SuppressWarnings( "GroovyUnusedDeclaration" )
