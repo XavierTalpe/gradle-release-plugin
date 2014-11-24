@@ -8,17 +8,17 @@ import org.gradle.api.tasks.TaskAction
 
 abstract class DefaultPluginTask extends DefaultTask {
 
-    private ReleasePluginExtension extension
+    protected final ReleasePluginExtension extension
 
-    final ReleasePluginExtension getExtension() {
-        if ( !extension ) {
-            extension = ( ReleasePluginExtension ) project.extensions.getByName( ReleasePlugin.EXTENSION )
-        }
+    protected final GradleProperties gradleProperties
 
-        extension
+    DefaultPluginTask() {
+        extension = ( ReleasePluginExtension ) project.extensions.getByName( ReleasePlugin.EXTENSION )
+
+        gradleProperties = new GradleProperties( project )
     }
 
-    final String getProjectVersion() {
+    protected final String getProjectVersion() {
         def projectVersion = project.version
 
         if ( !projectVersion || projectVersion.equals( 'unspecified' ) ) {
@@ -33,7 +33,6 @@ abstract class DefaultPluginTask extends DefaultTask {
 
         project.version = newVersion
 
-        def gradleProperties = new GradleProperties( project )
         gradleProperties.updateVersion oldVersion, newVersion, name
     }
 
@@ -49,8 +48,8 @@ abstract class DefaultPluginTask extends DefaultTask {
         }
     }
 
-    abstract void run() throws Exception
+    protected abstract void run() throws Exception
 
-    abstract void rollback( Exception exception )
+    protected abstract void rollback( Exception exception )
 
 }
