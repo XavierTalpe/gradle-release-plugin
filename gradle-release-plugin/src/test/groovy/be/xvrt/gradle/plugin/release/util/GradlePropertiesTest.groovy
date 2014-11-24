@@ -25,7 +25,7 @@ class GradlePropertiesTest {
     }
 
     @Test
-    void 'properties file should be overwritten with new version'() {
+    void 'properties file should be updated with new version'() {
         setup:
         def propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
         propertiesFile << 'version=1.0.0-SNAPSHOT'
@@ -101,9 +101,25 @@ class GradlePropertiesTest {
     }
 
     @Test
-    void 'saving version shouldn\'t result in error when properties file is missing'() {
+    void 'saving version shouldn\'t result in error when properties and build file are missing'() {
         when:
         gradleProperties.updateVersion '1.0.0-SNAPSHOT', '1.0.0'
+    }
+
+    @Test
+    void 'build file should be updated with new version'() {
+        setup:
+        def buildFile = temporaryFolder.newFile( 'build.gradle' )
+        buildFile << 'version=1.0.0-SNAPSHOT'
+
+        when:
+        gradleProperties.updateVersion '1.0.0-SNAPSHOT', '1.0.0'
+
+        then:
+        def buildFileAsProperties = new Properties()
+        buildFile.withInputStream { buildFileAsProperties.load( it ) }
+
+        assertEquals( '1.0.0', buildFileAsProperties.version )
     }
 
 }

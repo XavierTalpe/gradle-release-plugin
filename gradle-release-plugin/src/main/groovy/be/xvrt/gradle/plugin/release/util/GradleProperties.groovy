@@ -1,4 +1,5 @@
 package be.xvrt.gradle.plugin.release.util
+
 import org.apache.commons.io.IOUtils
 import org.gradle.api.Project
 
@@ -11,28 +12,32 @@ class GradleProperties {
     }
 
     def updateVersion( String oldVersion, String newVersion, String taskName = '' ) {
-        def propertiesFile = getDefaultPropertiesFile()
+        updateFile( 'build.gradle', oldVersion, newVersion, taskName )
+        updateFile( 'gradle.properties', oldVersion, newVersion, taskName )
+    }
 
-        if ( !propertiesFile.exists() ) {
-            project.logger.info( ":${taskName} gradle.properties does not exist, skipping update." )
+    private updateFile( String filename, String oldVersion, String newVersion, String taskName ) {
+        def file = new File( project.projectDir, filename )
+
+        if ( !file.exists() ) {
+            project.logger.info( ":${taskName} ${filename} does not exist, skipping update." )
         }
         else {
-            project.logger.info( ":${taskName} updating gradle.properties with new version." )
-
-            def inputStream = new FileInputStream( propertiesFile )
-            def properties = IOUtils.toString inputStream, 'UTF-8'
-            inputStream.close()
-
-            properties = ( properties =~ /${oldVersion}/ ).replaceAll newVersion
-
-            def outputStream = new FileOutputStream( propertiesFile )
-            IOUtils.write properties, outputStream, 'UTF-8'
-            outputStream.close()
+            project.logger.info( ":${taskName} updating ${filename} with new version." )
+            writeVersion( file, oldVersion, newVersion )
         }
     }
 
-    private File getDefaultPropertiesFile() {
-        new File( project.projectDir, 'gradle.properties' )
+    private static writeVersion( File file, String oldVersion, String newVersion ) {
+        def inputStream = new FileInputStream( file )
+        def properties = IOUtils.toString inputStream, 'UTF-8'
+        inputStream.close()
+
+        properties = ( properties =~ /${oldVersion}/ ).replaceAll newVersion
+
+        def outputStream = new FileOutputStream( file )
+        IOUtils.write properties, outputStream, 'UTF-8'
+        outputStream.close()
     }
 
 }
