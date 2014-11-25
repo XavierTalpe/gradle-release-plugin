@@ -1,5 +1,6 @@
 package be.xvrt.gradle.plugin.release.util
 
+import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Rule
@@ -13,8 +14,7 @@ class GradlePropertiesTest {
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
-    private project
-
+    private Project project
     private GradleProperties gradleProperties
 
     @Before
@@ -101,7 +101,7 @@ class GradlePropertiesTest {
     }
 
     @Test
-    void 'saving version shouldn\'t result in error when properties and build file are missing'() {
+    void 'saving version should not result in error when properties and build file are missing'() {
         when:
         gradleProperties.updateVersion '1.0.0-SNAPSHOT', '1.0.0'
     }

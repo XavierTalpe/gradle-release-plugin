@@ -3,6 +3,7 @@ package be.xvrt.gradle.plugin.release.integration
 import be.xvrt.gradle.plugin.test.IntegrationTest
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
+import org.junit.Ignore
 import org.junit.Test
 
 import static org.junit.Assert.assertEquals
@@ -10,9 +11,10 @@ import static org.junit.Assert.assertEquals
 class ReleaseTaskTest extends IntegrationTest {
 
     @Test
-    void 'release task is successful'() {
+    void 'default project is successfully released'() {
         setup:
         addProperty 'version', '1.0.0-SNAPSHOT'
+
         def projectRepository = enableGit true
 
         when:
@@ -22,6 +24,29 @@ class ReleaseTaskTest extends IntegrationTest {
         assertEquals '1.0.1-SNAPSHOT', properties.version
         assertCommits projectRepository
         assertTag projectRepository
+    }
+
+    @Test
+    void 'java project is successfully released'() {
+        setup:
+        addProperty 'version', '1.0.0-SNAPSHOT'
+        appendLineToBuildFile 'apply plugin: "java"'
+
+        def projectRepository = enableGit true
+
+        when:
+        execute 'release'
+
+        then:
+        assertEquals '1.0.1-SNAPSHOT', properties.version
+        assertCommits projectRepository
+        assertTag projectRepository
+    }
+
+    @Ignore
+    @Test
+    void 'android project is successfully released'() {
+        // TODO
     }
 
     private static void assertCommits( Repository repository ) {

@@ -1,6 +1,7 @@
 package be.xvrt.gradle.plugin.test
 
 import be.xvrt.gradle.plugin.release.scm.ScmTestUtil
+import com.google.common.collect.Lists
 import org.eclipse.jgit.lib.Repository
 import org.junit.Before
 import org.junit.Rule
@@ -93,7 +94,7 @@ abstract class IntegrationTest {
         def gradleWrapper = new File( workingDir, '../gradlew' )
 
         def command = gradleWrapper.toString() + ' --info --stacktrace ' + task
-        def process = command.execute null, projectDir
+        def process = command.execute Lists.newArrayList(), projectDir
         process.waitFor()
 
         def expectedExitValue = shouldFail ? 1 : 0

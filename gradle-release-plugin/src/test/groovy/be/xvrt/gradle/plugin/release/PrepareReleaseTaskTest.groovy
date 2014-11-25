@@ -1,10 +1,8 @@
 package be.xvrt.gradle.plugin.release
-
 import be.xvrt.gradle.plugin.release.exception.InvalidDependencyException
 import be.xvrt.gradle.plugin.release.exception.UnspecifiedVersionException
 import be.xvrt.gradle.plugin.release.scm.ScmException
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
@@ -20,14 +18,14 @@ class PrepareReleaseTaskTest {
     public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     private Project project
-    private Task prepareReleaseTask
+    private PrepareReleaseTask prepareReleaseTask
 
     @Before
     void setUp() {
         project = ProjectBuilder.builder().build()
         project.apply plugin: ReleasePlugin
 
-        prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
+        prepareReleaseTask = project.tasks.getByName( ReleasePlugin.PREPARE_RELEASE_TASK ) as PrepareReleaseTask
     }
 
     @Test
@@ -97,7 +95,7 @@ class PrepareReleaseTaskTest {
     }
 
     @Test
-    void 'non-snapshot dependencies don\'t trigger exception'() {
+    void 'non-snapshot dependencies do not trigger exception'() {
         setup:
         project.apply plugin: 'groovy'
         project.version = '1.0.0-SNAPSHOT'

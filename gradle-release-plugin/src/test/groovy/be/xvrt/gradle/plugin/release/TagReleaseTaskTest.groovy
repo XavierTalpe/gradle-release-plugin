@@ -1,4 +1,5 @@
 package be.xvrt.gradle.plugin.release
+
 import be.xvrt.gradle.plugin.release.scm.ScmException
 import be.xvrt.gradle.plugin.release.scm.ScmTestUtil
 import org.eclipse.jgit.api.Git
@@ -12,9 +13,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-import static junit.framework.Assert.fail
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertTrue
+import static org.junit.Assert.*
 
 class TagReleaseTaskTest {
 
@@ -43,7 +42,6 @@ class TagReleaseTaskTest {
         ScmTestUtil.createOrigin gradleRepository, temporaryFolder.newFolder()
 
         when:
-        tagReleaseTask.configure()
         tagReleaseTask.execute()
 
         then:
@@ -54,14 +52,13 @@ class TagReleaseTaskTest {
     }
 
     @Test
-    void 'executing the task won\'t create a tag when SCM support is disabled'() {
+    void 'executing the task will not create a tag when SCM support is disabled'() {
         setup:
         project.release {
             scmDisabled = true
         }
 
         when:
-        tagReleaseTask.configure()
         tagReleaseTask.execute()
 
         then:
@@ -80,7 +77,6 @@ class TagReleaseTaskTest {
         }
 
         when:
-        tagReleaseTask.configure()
         tagReleaseTask.execute()
 
         then:
@@ -93,8 +89,6 @@ class TagReleaseTaskTest {
     @Test
     void 'tag is rolled back when push fails'() {
         when:
-        tagReleaseTask.configure()
-
         try {
             tagReleaseTask.execute()
             fail()

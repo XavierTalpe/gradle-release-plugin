@@ -11,7 +11,7 @@ class DummyHelperTest {
 
     @Test
     void 'dummy helper does nothing'() {
-        def dummyHelper = ScmHelperFactory.create( temporaryFolder.root )
+        def dummyHelper = ScmHelperFactory.create temporaryFolder.root
 
         def commitId = dummyHelper.commit 'commitMessage'
         dummyHelper.deleteCommit commitId

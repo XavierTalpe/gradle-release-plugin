@@ -1,4 +1,5 @@
 package be.xvrt.gradle.plugin.release
+
 import be.xvrt.gradle.plugin.release.scm.ScmException
 import be.xvrt.gradle.plugin.release.scm.ScmTestUtil
 import org.eclipse.jgit.api.Git
@@ -12,9 +13,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-import static junit.framework.Assert.fail
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertTrue
+import static org.junit.Assert.*
 
 class CommitReleaseTaskTest {
 
@@ -44,7 +43,6 @@ class CommitReleaseTaskTest {
         ScmTestUtil.createOrigin gradleRepository, temporaryFolder.newFolder()
 
         when:
-        commitReleaseTask.configure()
         commitReleaseTask.execute()
 
         then:
@@ -56,14 +54,13 @@ class CommitReleaseTaskTest {
     }
 
     @Test
-    void 'executing the task won\'t create a commit when SCM support is disabled'() {
+    void 'executing the task will not create a commit when SCM support is disabled'() {
         setup:
         project.release {
             scmDisabled = true
         }
 
         when:
-        commitReleaseTask.configure()
         commitReleaseTask.execute()
 
         then:
@@ -83,7 +80,6 @@ class CommitReleaseTaskTest {
         }
 
         when:
-        commitReleaseTask.configure()
         commitReleaseTask.execute()
 
         then:
@@ -97,8 +93,6 @@ class CommitReleaseTaskTest {
     @Test
     void 'commit is rolled back when push fails'() {
         when:
-        commitReleaseTask.configure()
-
         try {
             commitReleaseTask.execute()
             fail()

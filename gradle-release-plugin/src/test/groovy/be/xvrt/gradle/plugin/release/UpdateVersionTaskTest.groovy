@@ -1,10 +1,10 @@
 package be.xvrt.gradle.plugin.release
+
 import be.xvrt.gradle.plugin.release.scm.ScmException
 import be.xvrt.gradle.plugin.release.scm.ScmTestUtil
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
@@ -12,9 +12,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-import static junit.framework.Assert.fail
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertTrue
+import static org.junit.Assert.*
 
 class UpdateVersionTaskTest {
 
@@ -24,8 +22,8 @@ class UpdateVersionTaskTest {
     private Repository gradleRepository
 
     private Project project
-    private Task prepareReleaseTask
-    private Task updateVersionTask
+    private PrepareReleaseTask prepareReleaseTask
+    private UpdateVersionTask updateVersionTask
 
     @Before
     void setUp() {
@@ -36,8 +34,8 @@ class UpdateVersionTaskTest {
         project.apply plugin: ReleasePlugin
         project.version = '1.0.0'
 
-        prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
-        updateVersionTask = project.tasks.getByName ReleasePlugin.UPDATE_VERSION_TASK
+        prepareReleaseTask = project.tasks.getByName( ReleasePlugin.PREPARE_RELEASE_TASK ) as PrepareReleaseTask
+        updateVersionTask = project.tasks.getByName( ReleasePlugin.UPDATE_VERSION_TASK ) as UpdateVersionTask
     }
 
     @Test
@@ -50,7 +48,6 @@ class UpdateVersionTaskTest {
 
         when:
         prepareReleaseTask.configure()
-        updateVersionTask.configure()
         prepareReleaseTask.execute()
         updateVersionTask.execute()
 
@@ -70,7 +67,6 @@ class UpdateVersionTaskTest {
 
         when:
         prepareReleaseTask.configure()
-        updateVersionTask.configure()
         prepareReleaseTask.execute()
         updateVersionTask.execute()
 
@@ -98,7 +94,6 @@ class UpdateVersionTaskTest {
 
         when:
         prepareReleaseTask.configure()
-        updateVersionTask.configure()
         prepareReleaseTask.execute()
         updateVersionTask.execute()
 
@@ -115,7 +110,6 @@ class UpdateVersionTaskTest {
 
         when:
         prepareReleaseTask.configure()
-        updateVersionTask.configure()
         prepareReleaseTask.execute()
         updateVersionTask.execute()
 
@@ -128,7 +122,7 @@ class UpdateVersionTaskTest {
     }
 
     @Test
-    void 'executing the task won\'t create a commit when SCM support is disabled'() {
+    void 'executing the task will not create a commit when SCM support is disabled'() {
         setup:
         project.release {
             scmDisabled = true
@@ -136,7 +130,6 @@ class UpdateVersionTaskTest {
 
         when:
         prepareReleaseTask.configure()
-        updateVersionTask.configure()
         prepareReleaseTask.execute()
         updateVersionTask.execute()
 
@@ -158,7 +151,6 @@ class UpdateVersionTaskTest {
 
         when:
         prepareReleaseTask.configure()
-        updateVersionTask.configure()
         prepareReleaseTask.execute()
         updateVersionTask.execute()
 
@@ -175,7 +167,6 @@ class UpdateVersionTaskTest {
         when:
         try {
             prepareReleaseTask.configure()
-            updateVersionTask.configure()
             prepareReleaseTask.execute()
             updateVersionTask.execute()
             fail()
