@@ -29,7 +29,7 @@ abstract class PluginScmTask extends DefaultPluginTask {
     }
 
     protected final void push() throws ScmException {
-        def scmRemote = extension.getAt ReleasePluginExtension.SCM_REMOTE
+        def scmRemote = extension.getAt( ReleasePluginExtension.SCM_REMOTE ) as String
 
         logger.info ":${name} pushing local changes to ${scmRemote}."
 
@@ -38,7 +38,7 @@ abstract class PluginScmTask extends DefaultPluginTask {
 
     protected final ScmHelper getScmHelper() {
         if ( !scmHelper ) {
-            def scmRootDir = extension.getAt ReleasePluginExtension.SCM_ROOT_DIR
+            def scmRootDir = extension.getAt( ReleasePluginExtension.SCM_ROOT_DIR ) as String
             def scmUsername
             def scmPassword
 
@@ -47,12 +47,12 @@ abstract class PluginScmTask extends DefaultPluginTask {
             // This takes precedence over the properties extension.
             if ( project.hasProperty( ReleasePluginExtension.SCM_USERNAME ) &&
                  project.hasProperty( ReleasePluginExtension.SCM_PASSWORD ) ) {
-                scmUsername = project.property ReleasePluginExtension.SCM_USERNAME
-                scmPassword = project.property ReleasePluginExtension.SCM_PASSWORD
+                scmUsername = project.property( ReleasePluginExtension.SCM_USERNAME ) as String
+                scmPassword = project.property( ReleasePluginExtension.SCM_PASSWORD ) as String
             }
             else {
-                scmUsername = extension.getAt ReleasePluginExtension.SCM_USERNAME
-                scmPassword = extension.getAt ReleasePluginExtension.SCM_PASSWORD
+                scmUsername = extension.getAt( ReleasePluginExtension.SCM_USERNAME ) as String
+                scmPassword = extension.getAt( ReleasePluginExtension.SCM_PASSWORD ) as String
             }
 
             scmHelper = ScmHelperFactory.create scmRootDir, scmUsername, scmPassword

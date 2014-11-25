@@ -18,7 +18,7 @@ class PrepareReleaseTask extends DefaultPluginTask {
 
     @Override
     void run() {
-        def extension = project.extensions.getByName ReleasePlugin.EXTENSION
+        def extension = project.extensions.getByName ReleasePluginExtension.NAME
         def allowSnapshotDependencies = extension.getAt( ReleasePluginExtension.ALLOW_SNAPSHOT_DEPENDENCIES )
 
         if ( !allowSnapshotDependencies ) {
@@ -39,7 +39,7 @@ class PrepareReleaseTask extends DefaultPluginTask {
     }
 
     private String buildReleaseVersion( String version ) {
-        def releaseVersionClosure = extension.getAt ReleasePluginExtension.RELEASE_VERSION
+        def releaseVersionClosure = extension.getAt( ReleasePluginExtension.RELEASE_VERSION ) as Closure<String>
 
         releaseVersionClosure version
     }
@@ -61,7 +61,7 @@ class PrepareReleaseTask extends DefaultPluginTask {
     private void checkSnapshotDependencies() {
         def snapshotDependencies = new HashSet<String>()
 
-        project.configurations.each { config ->
+        project.configurations.each() { config ->
             config.dependencies?.each { dep ->
                 if ( dep.version?.contains( 'SNAPSHOT' ) ) {
                     snapshotDependencies.add "${project.name} - ${dep.group}:${dep.name}:${dep.version}"

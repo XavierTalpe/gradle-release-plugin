@@ -1,6 +1,5 @@
 package be.xvrt.gradle.plugin.task
 
-import be.xvrt.gradle.plugin.release.ReleasePlugin
 import be.xvrt.gradle.plugin.release.ReleasePluginExtension
 import be.xvrt.gradle.plugin.release.exception.UnspecifiedVersionException
 import be.xvrt.gradle.plugin.release.util.GradleProperties
@@ -14,7 +13,7 @@ abstract class DefaultPluginTask extends DefaultTask {
     protected final GradleProperties gradleProperties
 
     DefaultPluginTask() {
-        extension = ( ReleasePluginExtension ) project.extensions.getByName( ReleasePlugin.EXTENSION )
+        extension = ( ReleasePluginExtension ) project.extensions.getByName( ReleasePluginExtension.NAME )
 
         gradleProperties = new GradleProperties( project )
     }

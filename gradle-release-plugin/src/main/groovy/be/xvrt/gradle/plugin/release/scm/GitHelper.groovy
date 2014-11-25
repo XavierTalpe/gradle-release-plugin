@@ -25,7 +25,7 @@ class GitHelper implements ScmHelper {
         }
     }
 
-    private Repository openRepository( File gitRepository ) {
+    private static Repository openRepository( File gitRepository ) {
         FileRepositoryBuilder builder = new FileRepositoryBuilder()
 
         builder.setGitDir( gitRepository )

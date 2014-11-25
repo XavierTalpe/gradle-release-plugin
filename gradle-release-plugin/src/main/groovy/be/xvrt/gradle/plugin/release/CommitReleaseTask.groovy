@@ -21,7 +21,7 @@ class CommitReleaseTask extends PluginScmTask {
 
     private Commit commit() {
         def releaseVersion = projectVersion
-        def commitMessage = extension.getAt ReleasePluginExtension.RELEASE_COMMIT_MSG
+        def commitMessage = extension.getAt( ReleasePluginExtension.RELEASE_COMMIT_MSG ) as String
 
         commit commitMessage, releaseVersion
     }

@@ -1,8 +1,6 @@
 package be.xvrt.gradle.plugin.release
-
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.execution.TaskExecutionGraph
 
 class ReleasePlugin implements Plugin<Project> {
@@ -15,16 +13,15 @@ class ReleasePlugin implements Plugin<Project> {
 
     public static final String RELEASE_GROUP = 'release'
 
-    public static final String EXTENSION = RELEASE_TASK
-
-    private Task prepareReleaseTask
-    private Task commitReleaseTask
-    private Task tagReleaseTask
-    private Task updateVersionTask
-    private Task releaseTask
+    private PrepareReleaseTask prepareReleaseTask
+    private CommitReleaseTask commitReleaseTask
+    private TagReleaseTask tagReleaseTask
+    private UpdateVersionTask updateVersionTask
+    private ReleaseTask releaseTask
 
     void apply( Project project ) {
-        createExtension project
+        project.extensions.create( ReleasePluginExtension.NAME, ReleasePluginExtension, project )
+
         createTasks project
 
         project.afterEvaluate {
@@ -34,10 +31,6 @@ class ReleasePlugin implements Plugin<Project> {
         project.gradle.taskGraph.whenReady {
             ensureTaskConfigurationIsRun project.gradle.taskGraph
         }
-    }
-
-    private void createExtension( Project project ) {
-        project.extensions.create EXTENSION, ReleasePluginExtension, project
     }
 
     private void createTasks( Project project ) {
@@ -85,15 +78,6 @@ class ReleasePlugin implements Plugin<Project> {
     private void ensureTaskConfigurationIsRun( TaskExecutionGraph taskGraph ) {
         if ( taskGraph.hasTask( prepareReleaseTask ) ) {
             prepareReleaseTask.configure()
-        }
-        if ( taskGraph.hasTask( commitReleaseTask ) ) {
-            commitReleaseTask.configure()
-        }
-        if ( taskGraph.hasTask( tagReleaseTask ) ) {
-            tagReleaseTask.configure()
-        }
-        if ( taskGraph.hasTask( updateVersionTask ) ) {
-            updateVersionTask.configure()
         }
     }
 

@@ -1,4 +1,5 @@
 package be.xvrt.gradle.plugin.release
+
 import be.xvrt.gradle.plugin.release.scm.Commit
 import be.xvrt.gradle.plugin.release.scm.ScmException
 import be.xvrt.gradle.plugin.task.PluginScmTask
@@ -39,9 +40,9 @@ class UpdateVersionTask extends PluginScmTask {
             project.property ReleasePluginExtension.NEXT_VERSION
         }
         else {
-            def nextVersionClosure = extension.getAt ReleasePluginExtension.NEXT_VERSION
+            def nextVersionClosure = extension.getAt( ReleasePluginExtension.NEXT_VERSION ) as Closure<String>
 
-            def prepareReleaseTask = project.tasks.getByName ReleasePlugin.PREPARE_RELEASE_TASK
+            def prepareReleaseTask = project.tasks.getByName( ReleasePlugin.PREPARE_RELEASE_TASK ) as PrepareReleaseTask
             def wasSnapshotVersion = prepareReleaseTask.wasSnapshotVersion()
 
             nextVersionClosure version, wasSnapshotVersion
@@ -55,7 +56,7 @@ class UpdateVersionTask extends PluginScmTask {
     }
 
     private Commit commit( String nextVersion ) {
-        def updateVersionMessage = extension.getAt ReleasePluginExtension.UPDATE_VERSION_COMMIT_MSG
+        def updateVersionMessage = extension.getAt( ReleasePluginExtension.UPDATE_VERSION_COMMIT_MSG ) as String
 
         commit updateVersionMessage, nextVersion
     }

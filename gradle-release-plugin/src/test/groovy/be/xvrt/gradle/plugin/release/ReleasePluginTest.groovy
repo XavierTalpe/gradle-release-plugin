@@ -76,7 +76,7 @@ class ReleasePluginTest {
 
     @Test
     public void 'release plugin extension is present'() throws Exception {
-        def extensionObject = project.extensions.getByName ReleasePlugin.EXTENSION
+        def extensionObject = project.extensions.getByName ReleasePluginExtension.NAME
 
         assertTrue( extensionObject instanceof ReleasePluginExtension )
     }
