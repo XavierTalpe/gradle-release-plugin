@@ -23,7 +23,7 @@ class GitHelperTest {
         projectDir = temporaryFolder.newFolder()
 
         repository = ScmTestUtil.createGitRepository projectDir
-        gitHelper = new GitHelper(projectDir)
+        gitHelper = new GitHelper( repository.directory )
     }
 
     @Test
@@ -97,7 +97,7 @@ class GitHelperTest {
         setup:
         ScmTestUtil.createOrigin repository, temporaryFolder.newFolder()
 
-        gitHelper = new GitHelper( projectDir , 'user', 'pass' )
+        gitHelper = new GitHelper( repository.directory, 'user', 'pass' )
         gitHelper.commit 'commitMessage'
 
         when:
