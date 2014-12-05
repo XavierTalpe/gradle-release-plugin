@@ -21,12 +21,12 @@ class NativeGitHelper implements ScmHelper {
         }
 
         if ( process && process.exitValue() != 0 ) {
-            if ( process.text.endsWith( '' ))
-            throw new ScmException( "Error when committing changes: ${process.text}." )
+            if ( !process.text.endsWith( 'nothing to commit, working directory clean' ) ) {
+                throw new ScmException( "Error when committing changes: ${process.text}." )
+            }
         }
-        else {
-            new Commit( 'LAST' )
-        }
+
+        new Commit( 'LAST' )
     }
 
     /**
