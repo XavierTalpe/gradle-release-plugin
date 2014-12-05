@@ -21,6 +21,7 @@ class NativeGitHelper implements ScmHelper {
         }
 
         if ( process && process.exitValue() != 0 ) {
+            if ( process.text.endsWith( '' ))
             throw new ScmException( "Error when committing changes: ${process.text}." )
         }
         else {
