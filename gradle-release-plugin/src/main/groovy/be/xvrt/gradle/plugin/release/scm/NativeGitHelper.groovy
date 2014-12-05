@@ -22,7 +22,7 @@ class NativeGitHelper implements ScmHelper {
 
         if ( process && process.exitValue() != 0 ) {
             def processOutput = process.text
-            if ( !processOutput.endsWith( 'nothing to commit, working directory clean' ) ) {
+            if ( !processOutput.contains( 'nothing to commit, working directory clean' ) ) {
                 throw new ScmException( "Error when committing changes: ${processOutput}." )
             }
         }
