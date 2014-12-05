@@ -9,21 +9,21 @@ import org.junit.rules.TemporaryFolder
 
 import static org.junit.Assert.assertEquals
 
-class GitHelperTest {
+class NativeGitHelperTest {
 
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     private File projectDir
     private Repository repository
-    private GitHelper gitHelper
+    private NativeGitHelper gitHelper
 
     @Before
     void setUp() {
         projectDir = temporaryFolder.newFolder()
 
         repository = ScmTestUtil.createGitRepository projectDir
-        gitHelper = new GitHelper(projectDir)
+        gitHelper = new NativeGitHelper( projectDir )
     }
 
     @Test
@@ -97,7 +97,7 @@ class GitHelperTest {
         setup:
         ScmTestUtil.createOrigin repository, temporaryFolder.newFolder()
 
-        gitHelper = new GitHelper( projectDir , 'user', 'pass' )
+        gitHelper = new NativeGitHelper( projectDir, 'user', 'pass' )
         gitHelper.commit 'commitMessage'
 
         when:

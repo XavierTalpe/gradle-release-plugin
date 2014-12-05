@@ -28,7 +28,12 @@ class ScmHelperFactory {
 
         def scmHelper
         if ( gitRepo.exists() ) {
-            scmHelper = new GitHelper( gitRepo, username, password )
+            if ( hasNativeGitClient() ) {
+                scmHelper = new NativeGitHelper( gitRepo, username, password )
+            }
+            else {
+                scmHelper = new GitHelper( gitRepo, username, password )
+            }
         }
         else {
             scmHelper = new DummyHelper()
@@ -48,6 +53,18 @@ class ScmHelperFactory {
         }
 
         id
+    }
+
+    private static boolean hasNativeGitClient() {
+        try {
+            def process = 'git'.execute()
+            process.waitFor()
+
+            !process.exitValue()
+        }
+        catch ( IOException ignored ) {
+            false
+        }
     }
 
 }

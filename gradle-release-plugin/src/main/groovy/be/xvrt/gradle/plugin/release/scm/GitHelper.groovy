@@ -90,7 +90,7 @@ class GitHelper implements ScmHelper {
             git.tagDelete().setTags( tag.id ).call()
         }
         catch ( Exception exception ) {
-            throw new ScmException( 'Error when rolling back commit.', exception )
+            throw new ScmException( 'Error when deleting tag.', exception )
         }
     }
 
