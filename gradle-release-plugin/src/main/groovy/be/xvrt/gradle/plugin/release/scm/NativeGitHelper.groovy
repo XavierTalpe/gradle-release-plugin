@@ -1,27 +1,33 @@
 package be.xvrt.gradle.plugin.release.scm
 
+import com.google.common.collect.Lists
+
 class NativeGitHelper implements ScmHelper {
 
     private final File gitRepository
 
     NativeGitHelper( File gitRepository ) {
-        this.gitRepository = gitRepository
+        if ( gitRepository.name.equals( '.git' ) ) {
+            this.gitRepository = gitRepository.parentFile
+        }
+        else {
+            this.gitRepository = gitRepository
+        }
     }
 
     @Override
     Commit commit( String message ) throws ScmException {
-        def process
+        def result
 
         try {
-            process = "git commit -am '${message}'".execute()
-            process.waitFor()
+            result = gitExecute( ['git', 'commit', '-am', message] )
         }
         catch ( Exception exception ) {
             throw new ScmException( 'Error when committing changes.', exception )
         }
 
-        if ( process && process.exitValue() != 0 ) {
-            def processOutput = process.text
+        if ( result && result.exitValue() != 0 ) {
+            def processOutput = result.text
             if ( !processOutput.contains( 'nothing to commit, working directory clean' ) ) {
                 throw new ScmException( "Error when committing changes: ${processOutput}." )
             }
@@ -35,37 +41,35 @@ class NativeGitHelper implements ScmHelper {
      */
     @Override
     void deleteCommit( Commit commitId ) throws ScmException {
-        def process
+        def result
 
         try {
             if ( commitId.id.equals( 'LAST' ) ) {
-                process = 'git reset --hard HEAD~1'.execute()
-                process.waitFor()
+                result = gitExecute( ['git', 'reset', '--hard', 'HEAD~1'] )
             }
         }
         catch ( Exception exception ) {
             throw new ScmException( 'Error when rolling back commit.', exception )
         }
 
-        if ( process && process.exitValue() != 0 ) {
-            throw new ScmException( "Error when rolling back commit: ${process.text}." )
+        if ( result && result.exitValue() != 0 ) {
+            throw new ScmException( "Error when rolling back commit: ${result.text}." )
         }
     }
 
     @Override
     Tag tag( String name, String message ) throws ScmException {
-        def process
+        def result
 
         try {
-            process = "git tag -a ${name} -m '${message}'".execute()
-            process.waitFor()
+            result = gitExecute( ['git', 'tag', '-a', name, '-m', message] )
         }
         catch ( Exception exception ) {
             throw new ScmException( 'Error when tagging changes.', exception )
         }
 
-        if ( process && process.exitValue() != 0 ) {
-            throw new ScmException( "Error when tagging changes: ${process.text}." )
+        if ( result && result.exitValue() != 0 ) {
+            throw new ScmException( "Error when tagging changes: ${result.text}." )
         }
         else {
             new Tag( name )
@@ -74,36 +78,42 @@ class NativeGitHelper implements ScmHelper {
 
     @Override
     void deleteTag( Tag tag ) throws ScmException {
-        def process
+        def result
 
         try {
-            process = "git tag -d ${tag.id}".execute()
-            process.waitFor()
+            result = gitExecute( ['git', 'tag', '-d', tag.id] )
         }
         catch ( Exception exception ) {
             throw new ScmException( 'Error when deleting tag.', exception )
         }
 
-        if ( process && process.exitValue() != 0 ) {
-            throw new ScmException( "Error when deleting tag: ${process.text}." )
+        if ( result && result.exitValue() != 0 ) {
+            throw new ScmException( "Error when deleting tag: ${result.text}." )
         }
     }
 
     @Override
     void push( String remoteName ) throws ScmException {
-        def process
+        def result
 
         try {
-            process = "git push ${remoteName}".execute()
-            process.waitFor()
+            result = gitExecute( ['git', 'push', '--follow-tags', remoteName] )
         }
         catch ( Exception exception ) {
             throw new ScmException( 'Error when pushing changes.', exception )
         }
 
-        if ( process && process.exitValue() != 0 ) {
-            throw new ScmException( "Error when pushing changes: ${process.text}." )
+        if ( result && result.exitValue() != 0 ) {
+            throw new ScmException( "Error when pushing changes: ${result.text}." )
         }
+    }
+
+    private Process gitExecute( List<String> command ) {
+        def process = command.execute( Lists.newArrayList(), gitRepository )
+
+        process.waitFor()
+
+        process
     }
 
 }

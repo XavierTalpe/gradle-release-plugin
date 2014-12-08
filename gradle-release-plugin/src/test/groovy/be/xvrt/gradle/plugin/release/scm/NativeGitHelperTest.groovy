@@ -14,25 +14,35 @@ class NativeGitHelperTest {
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
-    private File projectDir
-    private Repository repository
+    private Repository remoteRepository
+    private Repository localRepository
+
     private NativeGitHelper gitHelper
 
     @Before
     void setUp() {
-        projectDir = temporaryFolder.newFolder()
+        def remoteFolder = temporaryFolder.newFolder()
 
-        repository = ScmTestUtil.createGitRepository projectDir
-        gitHelper = new NativeGitHelper( projectDir )
+        def initialFile = new File( remoteFolder, 'writable.file' )
+        initialFile << 'initial data'
+
+        remoteRepository = ScmTestUtil.createGitRepository remoteFolder
+        localRepository = ScmTestUtil.cloneGitRepository( temporaryFolder.newFolder(), remoteRepository.directory )
+
+        gitHelper = new NativeGitHelper( localRepository.directory )
     }
 
     @Test
     void 'can commit'() {
+        setup:
+        def fileToCommit = new File( localRepository.directory.parentFile, 'writable.file' )
+        fileToCommit << 'update!'
+
         when:
         gitHelper.commit 'commitMessage'
 
         then:
-        def commitLog = new Git( repository ).log().call().toList()
+        def commitLog = new Git( localRepository ).log().call().toList()
 
         assertEquals( 2, commitLog.size() )
         assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
@@ -41,12 +51,16 @@ class NativeGitHelperTest {
 
     @Test
     void 'commit can be deleted'() {
+        setup:
+        def fileToCommit = new File( localRepository.directory.parentFile, 'writable.file' )
+        fileToCommit << 'update!'
+
         when:
         def commitId = gitHelper.commit 'commitMessage'
         gitHelper.deleteCommit commitId
 
         then:
-        def commitLog = new Git( repository ).log().call().toList()
+        def commitLog = new Git( localRepository ).log().call().toList()
 
         assertEquals( 1, commitLog.size() )
         assertEquals( 'HEAD', commitLog.get( 0 ).shortMessage )
@@ -61,7 +75,7 @@ class NativeGitHelperTest {
         gitHelper.tag '1.0.0', 'Tagging a release'
 
         then:
-        def allTags = new Git( repository ).tagList().call()
+        def allTags = new Git( localRepository ).tagList().call()
 
         assertEquals( 1, allTags.size() )
         assertEquals( 'refs/tags/1.0.0', allTags.get( 0 ).getName() )
@@ -77,7 +91,7 @@ class NativeGitHelperTest {
         gitHelper.deleteTag tagId
 
         then:
-        def allTags = new Git( repository ).tagList().call()
+        def allTags = new Git( localRepository ).tagList().call()
 
         assertEquals( 0, allTags.size() )
     }
@@ -85,31 +99,44 @@ class NativeGitHelperTest {
     @Test
     void 'pushing to origin should succeed'() {
         setup:
-        ScmTestUtil.createOrigin repository, temporaryFolder.newFolder()
-        gitHelper.commit 'commitMessage'
+        def fileToCommit = new File( localRepository.directory.parentFile, 'writable.file' )
+        fileToCommit << 'update!'
 
         when:
-        gitHelper.push 'origin'
-    }
-
-    @Test
-    void 'pushing to origin should succeed with credentials'() {
-        setup:
-        ScmTestUtil.createOrigin repository, temporaryFolder.newFolder()
-
-        gitHelper = new NativeGitHelper( projectDir, 'user', 'pass' )
         gitHelper.commit 'commitMessage'
-
-        when:
+        gitHelper.tag '1.0.0', 'Tagging a release'
         gitHelper.push 'origin'
+
+        then:
+        def commitLog = new Git( remoteRepository ).log().call().toList()
+
+        assertEquals( 2, commitLog.size() )
+        assertEquals( 'commitMessage', commitLog.get( 0 ).shortMessage )
+        assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
+
+        def allTags = new Git( remoteRepository ).tagList().call()
+
+        assertEquals( 1, allTags.size() )
+        assertEquals( 'refs/tags/1.0.0', allTags.get( 0 ).getName() )
     }
 
     @Test( expected = ScmException.class )
     void 'pushing to origin should fail because no remote added'() {
         setup:
-        gitHelper.commit 'commitMessage'
+        def localFolder = temporaryFolder.newFolder()
+
+        def initialFile = new File( localFolder, 'writable.file' )
+        initialFile << 'initial data'
+
+        def localOnlyRepository = ScmTestUtil.createGitRepository localFolder
+
+        gitHelper = new NativeGitHelper( localOnlyRepository.directory )
+
+        initialFile << 'update!'
 
         when:
+        gitHelper.commit 'commitMessage'
+        gitHelper.tag '1.0.0', 'Tagging a release'
         gitHelper.push 'origin'
     }
 
