@@ -1,4 +1,5 @@
 package be.xvrt.gradle.plugin.release.scm
+
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ResetCommand
 import org.eclipse.jgit.lib.Repository
@@ -108,6 +109,11 @@ class GitHelper implements ScmHelper {
                 pushCommand.setCredentialsProvider( credentialsProvider )
             }
 
+            // Push commits.
+            pushCommand.call()
+
+            // Push tags.
+            pushCommand.setPushTags()
             pushCommand.call()
         } catch ( Exception exception ) {
             throw new ScmException( 'Error when pushing changes.', exception )

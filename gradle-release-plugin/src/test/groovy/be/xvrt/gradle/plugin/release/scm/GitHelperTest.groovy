@@ -14,16 +14,17 @@ class GitHelperTest {
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
-    private File projectDir
-    private Repository repository
+    private Repository remoteRepository
+    private Repository localRepository
+
     private GitHelper gitHelper
 
     @Before
     void setUp() {
-        projectDir = temporaryFolder.newFolder()
+        remoteRepository = ScmTestUtil.createGitRepository temporaryFolder.newFolder()
+        localRepository = ScmTestUtil.cloneGitRepository( temporaryFolder.newFolder(), remoteRepository.directory )
 
-        repository = ScmTestUtil.createGitRepository projectDir
-        gitHelper = new GitHelper( repository.directory )
+        gitHelper = new GitHelper( localRepository.directory )
     }
 
     @Test
@@ -32,7 +33,7 @@ class GitHelperTest {
         gitHelper.commit 'commitMessage'
 
         then:
-        def commitLog = new Git( repository ).log().call().toList()
+        def commitLog = new Git( localRepository ).log().call().toList()
 
         assertEquals( 2, commitLog.size() )
         assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
@@ -46,7 +47,7 @@ class GitHelperTest {
         gitHelper.deleteCommit commitId
 
         then:
-        def commitLog = new Git( repository ).log().call().toList()
+        def commitLog = new Git( localRepository ).log().call().toList()
 
         assertEquals( 1, commitLog.size() )
         assertEquals( 'HEAD', commitLog.get( 0 ).shortMessage )
@@ -61,7 +62,7 @@ class GitHelperTest {
         gitHelper.tag '1.0.0', 'Tagging a release'
 
         then:
-        def allTags = new Git( repository ).tagList().call()
+        def allTags = new Git( localRepository ).tagList().call()
 
         assertEquals( 1, allTags.size() )
         assertEquals( 'refs/tags/1.0.0', allTags.get( 0 ).getName() )
@@ -77,39 +78,64 @@ class GitHelperTest {
         gitHelper.deleteTag tagId
 
         then:
-        def allTags = new Git( repository ).tagList().call()
+        def allTags = new Git( localRepository ).tagList().call()
 
         assertEquals( 0, allTags.size() )
     }
 
     @Test
     void 'pushing to origin should succeed'() {
-        setup:
-        ScmTestUtil.createOrigin repository, temporaryFolder.newFolder()
-        gitHelper.commit 'commitMessage'
-
         when:
+        gitHelper.commit 'commitMessage'
+        gitHelper.tag '1.0.0', 'Tagging a release'
         gitHelper.push 'origin'
+
+        then:
+        def commitLog = new Git( remoteRepository ).log().call().toList()
+
+        assertEquals( 2, commitLog.size() )
+        assertEquals( 'commitMessage', commitLog.get( 0 ).shortMessage )
+        assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
+
+        def allTags = new Git( remoteRepository ).tagList().call()
+
+        assertEquals( 1, allTags.size() )
+        assertEquals( 'refs/tags/1.0.0', allTags.get( 0 ).getName() )
     }
 
     @Test
     void 'pushing to origin should succeed with credentials'() {
         setup:
-        ScmTestUtil.createOrigin repository, temporaryFolder.newFolder()
-
-        gitHelper = new GitHelper( repository.directory, 'user', 'pass' )
-        gitHelper.commit 'commitMessage'
+        gitHelper = new GitHelper( localRepository.directory, 'user', 'pass' )
 
         when:
+        gitHelper.commit 'commitMessage'
+        gitHelper.tag '1.0.0', 'Tagging a release'
         gitHelper.push 'origin'
+
+        then:
+        def commitLog = new Git( remoteRepository ).log().call().toList()
+
+        assertEquals( 2, commitLog.size() )
+        assertEquals( 'commitMessage', commitLog.get( 0 ).shortMessage )
+        assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
+
+        def allTags = new Git( remoteRepository ).tagList().call()
+
+        assertEquals( 1, allTags.size() )
+        assertEquals( 'refs/tags/1.0.0', allTags.get( 0 ).getName() )
     }
 
     @Test( expected = ScmException.class )
     void 'pushing to origin should fail because no remote added'() {
         setup:
-        gitHelper.commit 'commitMessage'
+        def localOnlyRepository = ScmTestUtil.createGitRepository temporaryFolder.newFolder()
+
+        gitHelper = new GitHelper( localOnlyRepository.directory )
 
         when:
+        gitHelper.commit 'commitMessage'
+        gitHelper.tag '1.0.0', 'Tagging a release'
         gitHelper.push 'origin'
     }
 
