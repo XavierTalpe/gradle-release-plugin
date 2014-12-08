@@ -28,8 +28,8 @@ class ScmHelperFactory {
 
         def scmHelper
         if ( gitRepo.exists() ) {
-            if ( hasNativeGitClient() ) {
-                scmHelper = new NativeGitHelper( gitRepo, username, password )
+            if ( hasNativeGitClient() && !username && !password ) {
+                scmHelper = new NativeGitHelper( gitRepo )
             }
             else {
                 scmHelper = new GitHelper( gitRepo, username, password )

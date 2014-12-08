@@ -4,7 +4,7 @@ class NativeGitHelper implements ScmHelper {
 
     private final File gitRepository
 
-    NativeGitHelper( File gitRepository, String username = null, String password = null ) {
+    NativeGitHelper( File gitRepository ) {
         this.gitRepository = gitRepository
     }
 
