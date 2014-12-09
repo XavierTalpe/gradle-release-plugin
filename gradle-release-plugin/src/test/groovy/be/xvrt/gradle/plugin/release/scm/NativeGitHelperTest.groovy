@@ -1,5 +1,4 @@
 package be.xvrt.gradle.plugin.release.scm
-
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
 import org.junit.Before
@@ -8,6 +7,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 import static org.junit.Assert.assertEquals
+import static org.junit.Assume.assumeTrue
 
 class NativeGitHelperTest {
 
@@ -21,6 +21,8 @@ class NativeGitHelperTest {
 
     @Before
     void setUp() {
+        assumeTrue( System.getenv( 'CI' ) == null )
+
         def remoteFolder = temporaryFolder.newFolder()
 
         def initialFile = new File( remoteFolder, 'writable.file' )
