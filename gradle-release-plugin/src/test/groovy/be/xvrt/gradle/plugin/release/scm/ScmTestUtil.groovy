@@ -4,7 +4,6 @@ import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 
-// TODO: Investigate if not closing of repositories introduces leaks.
 class ScmTestUtil {
 
     private ScmTestUtil() {
@@ -57,18 +56,6 @@ class ScmTestUtil {
         configFile << '  repositoryformatversion = 0'
         configFile << '  filemode = true'
         configFile << '  logallrefupdates = true'
-    }
-
-    @Deprecated
-    static Repository createOrigin( Repository repository, File originDir ) {
-        def originRepository = createGitRepository originDir
-
-        def configFile = new File( repository.directory, 'config' )
-        configFile << '[remote "origin"]'
-        configFile << "\n\turl = file://${originRepository.directory}"
-        configFile << "\n\tfetch = +refs/heads/*:refs/remotes/origin/*"
-
-        originRepository
     }
 
 }
