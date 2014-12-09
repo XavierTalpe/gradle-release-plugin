@@ -27,9 +27,9 @@ class NativeGitHelper implements ScmHelper {
         }
 
         if ( result && result.exitValue() != 0 ) {
-            def processOutput = result.text
-            if ( !processOutput.contains( 'nothing to commit, working directory clean' ) ) {
-                throw new ScmException( "Error when committing changes: ${processOutput}." )
+            def error = result.err.text
+            if ( !error.contains( 'nothing to commit, working directory clean' ) ) {
+                throw new ScmException( "Error when committing changes: ${error}." )
             }
         }
 
@@ -53,7 +53,7 @@ class NativeGitHelper implements ScmHelper {
         }
 
         if ( result && result.exitValue() != 0 ) {
-            throw new ScmException( "Error when rolling back commit: ${result.text}." )
+            throw new ScmException( "Error when rolling back commit: ${result.err.text}." )
         }
     }
 
@@ -69,7 +69,7 @@ class NativeGitHelper implements ScmHelper {
         }
 
         if ( result && result.exitValue() != 0 ) {
-            throw new ScmException( "Error when tagging changes: ${result.text}." )
+            throw new ScmException( "Error when tagging changes: ${result.err.text}." )
         }
         else {
             new Tag( name )
@@ -88,7 +88,7 @@ class NativeGitHelper implements ScmHelper {
         }
 
         if ( result && result.exitValue() != 0 ) {
-            throw new ScmException( "Error when deleting tag: ${result.text}." )
+            throw new ScmException( "Error when deleting tag: ${result.err.text}." )
         }
     }
 
@@ -104,7 +104,7 @@ class NativeGitHelper implements ScmHelper {
         }
 
         if ( result && result.exitValue() != 0 ) {
-            throw new ScmException( "Error when pushing changes: ${result.text}." )
+            throw new ScmException( "Error when pushing changes: ${result.err.text}." )
         }
     }
 
