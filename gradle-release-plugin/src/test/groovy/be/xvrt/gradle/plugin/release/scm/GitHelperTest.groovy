@@ -129,9 +129,7 @@ class GitHelperTest {
     @Test( expected = ScmException.class )
     void 'pushing to origin should fail because no remote added'() {
         setup:
-        def localOnlyRepository = ScmTestUtil.createGitRepository temporaryFolder.newFolder()
-
-        gitHelper = new GitHelper( localOnlyRepository.directory )
+        ScmTestUtil.removeOrigin localRepository
 
         when:
         gitHelper.commit 'commitMessage'

@@ -1,4 +1,5 @@
 package be.xvrt.gradle.plugin.release.scm
+
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
 import org.junit.Before
@@ -37,8 +38,7 @@ class NativeGitHelperTest {
     @Test
     void 'can commit'() {
         setup:
-        def fileToCommit = new File( localRepository.directory.parentFile, 'writable.file' )
-        fileToCommit << 'update!'
+        createLocalChange()
 
         when:
         gitHelper.commit 'commitMessage'
@@ -54,8 +54,7 @@ class NativeGitHelperTest {
     @Test
     void 'commit can be deleted'() {
         setup:
-        def fileToCommit = new File( localRepository.directory.parentFile, 'writable.file' )
-        fileToCommit << 'update!'
+        createLocalChange()
 
         when:
         def commitId = gitHelper.commit 'commitMessage'
@@ -71,6 +70,7 @@ class NativeGitHelperTest {
     @Test
     void 'can tag'() {
         setup:
+        createLocalChange()
         gitHelper.commit 'commitMessage'
 
         when:
@@ -86,6 +86,7 @@ class NativeGitHelperTest {
     @Test
     void 'tag can be deleted'() {
         setup:
+        createLocalChange()
         gitHelper.commit 'commitMessage'
 
         when:
@@ -101,8 +102,7 @@ class NativeGitHelperTest {
     @Test
     void 'pushing to origin should succeed'() {
         setup:
-        def fileToCommit = new File( localRepository.directory.parentFile, 'writable.file' )
-        fileToCommit << 'update!'
+        createLocalChange()
 
         when:
         gitHelper.commit 'commitMessage'
@@ -125,21 +125,18 @@ class NativeGitHelperTest {
     @Test( expected = ScmException.class )
     void 'pushing to origin should fail because no remote added'() {
         setup:
-        def localFolder = temporaryFolder.newFolder()
-
-        def initialFile = new File( localFolder, 'writable.file' )
-        initialFile << 'initial data'
-
-        def localOnlyRepository = ScmTestUtil.createGitRepository localFolder
-
-        gitHelper = new NativeGitHelper( localOnlyRepository.directory )
-
-        initialFile << 'update!'
+        createLocalChange()
+        ScmTestUtil.removeOrigin localRepository
 
         when:
         gitHelper.commit 'commitMessage'
         gitHelper.tag '1.0.0', 'Tagging a release'
         gitHelper.push 'origin'
+    }
+
+    private void createLocalChange() {
+        def fileToCommit = new File( localRepository.directory.parentFile, 'writable.file' )
+        fileToCommit << 'update!'
     }
 
 }
