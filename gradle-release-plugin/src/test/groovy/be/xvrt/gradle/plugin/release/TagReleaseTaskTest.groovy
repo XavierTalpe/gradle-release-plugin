@@ -20,16 +20,20 @@ class TagReleaseTaskTest {
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
-    private Repository gradleRepository
+    private Repository remoteRepository
+    private Repository localRepository
 
     private Project project
     private Task tagReleaseTask
 
     @Before
     void setUp() {
-        gradleRepository = ScmTestUtil.createGitRepository temporaryFolder.root
+        def projectDir = temporaryFolder.newFolder()
 
-        project = ProjectBuilder.builder().withProjectDir( temporaryFolder.root ).build()
+        remoteRepository = ScmTestUtil.createGitRepository temporaryFolder.newFolder()
+        localRepository = ScmTestUtil.cloneGitRepository( projectDir, remoteRepository.directory )
+
+        project = ProjectBuilder.builder().withProjectDir( projectDir ).build()
         project.apply plugin: ReleasePlugin
         project.version = '1.0.0'
 
@@ -38,14 +42,11 @@ class TagReleaseTaskTest {
 
     @Test
     void 'tag is pushed when no errors occur'() {
-        setup:
-        ScmTestUtil.createOrigin gradleRepository, temporaryFolder.newFolder()
-
         when:
         tagReleaseTask.execute()
 
         then:
-        def tagList = new Git( gradleRepository ).tagList().call()
+        def tagList = new Git( remoteRepository ).tagList().call()
 
         assertEquals( 1, tagList.size() )
         assertEquals( 'refs/tags/1.0.0', tagList.get( 0 ).getName() )
@@ -62,15 +63,12 @@ class TagReleaseTaskTest {
         tagReleaseTask.execute()
 
         then:
-        def tagList = new Git( gradleRepository ).tagList().call()
+        def tagList = new Git( localRepository ).tagList().call()
         assertEquals( 0, tagList.size() )
     }
 
     @Test
     public void 'override tag name and message'() throws Exception {
-        setup:
-        ScmTestUtil.createOrigin gradleRepository, temporaryFolder.newFolder()
-
         project.release {
             releaseTag = '0.2.3'
             releaseTagMessage = 'Custom tag for %version.'
@@ -80,7 +78,7 @@ class TagReleaseTaskTest {
         tagReleaseTask.execute()
 
         then:
-        def tagList = new Git( gradleRepository ).tagList().call()
+        def tagList = new Git( remoteRepository ).tagList().call()
 
         assertEquals( 1, tagList.size() )
         assertEquals( 'refs/tags/0.2.3', tagList.get( 0 ).getName() )
@@ -88,6 +86,9 @@ class TagReleaseTaskTest {
 
     @Test
     void 'tag is rolled back when push fails'() {
+        setup:
+        ScmTestUtil.removeOrigin localRepository
+
         when:
         try {
             tagReleaseTask.execute()
@@ -98,7 +99,7 @@ class TagReleaseTaskTest {
         }
 
         then:
-        def tagList = new Git( gradleRepository ).tagList().call()
+        def tagList = new Git( localRepository ).tagList().call()
         assertEquals( 0, tagList.size() )
     }
 
