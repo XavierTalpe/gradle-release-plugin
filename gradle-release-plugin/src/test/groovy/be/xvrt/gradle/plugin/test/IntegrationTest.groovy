@@ -14,16 +14,22 @@ abstract class IntegrationTest {
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
-    private File projectDir
+    private File remoteDir
+    private File localDir
+
     private File buildFile
     private File propertiesFile
 
+    protected Repository remoteRepository
+    protected Repository localRepository
+
     @Before
     void setUp() {
-        projectDir = temporaryFolder.newFolder()
+        remoteDir = temporaryFolder.newFolder()
+        localDir = temporaryFolder.newFolder()
 
-        buildFile = writeBuildFile projectDir
-        propertiesFile = writePropertiesFile projectDir
+        buildFile = writeBuildFile remoteDir
+        propertiesFile = writePropertiesFile remoteDir
     }
 
     private static File writeBuildFile( File projectDir ) {
@@ -72,14 +78,6 @@ abstract class IntegrationTest {
         buildFile << line << "\n"
     }
 
-    protected Properties getProperties() {
-        def properties = new Properties()
-
-        propertiesFile.withInputStream { properties.load( it ) }
-
-        properties
-    }
-
     protected void addProperty( String key, Object value ) {
         def properties = new Properties()
 
@@ -89,12 +87,26 @@ abstract class IntegrationTest {
         properties.store propertiesFile.newWriter(), null
     }
 
+    protected void cloneGitRepository() {
+        remoteRepository = ScmTestUtil.createGitRepository remoteDir
+        localRepository = ScmTestUtil.cloneGitRepository( localDir, remoteRepository.directory )
+    }
+
+    protected Properties getGradleProperties() {
+        def properties = new Properties()
+
+        def propertiesFile = new File( localDir, 'gradle.properties' )
+        propertiesFile.withInputStream { properties.load( it ) }
+
+        properties
+    }
+
     protected void execute( String task, boolean shouldFail = false ) {
         def workingDir = System.getProperty 'user.dir'
         def gradleWrapper = new File( workingDir, '../gradlew' )
 
         def command = gradleWrapper.toString() + ' --info --stacktrace ' + task
-        def process = command.execute Lists.newArrayList(), projectDir
+        def process = command.execute Lists.newArrayList(), localDir
         process.waitFor()
 
         def expectedExitValue = shouldFail ? 1 : 0
@@ -105,16 +117,6 @@ abstract class IntegrationTest {
             System.err.println process.err.text
             fail()
         }
-    }
-
-    protected Repository enableGit( boolean createOrigin = true ) {
-        def repository = ScmTestUtil.createGitRepository projectDir
-
-        if ( createOrigin ) {
-            ScmTestUtil.createOrigin repository, temporaryFolder.newFolder()
-        }
-
-        repository
     }
 
 }

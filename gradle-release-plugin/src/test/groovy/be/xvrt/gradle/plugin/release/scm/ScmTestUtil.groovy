@@ -48,6 +48,17 @@ class ScmTestUtil {
         git.repository
     }
 
+    static void removeOrigin( Repository repository ) {
+        def configFile = new File( repository.directory, 'config' )
+        configFile.delete()
+
+        configFile << '[core]'
+        configFile << '  symlinks = false'
+        configFile << '  repositoryformatversion = 0'
+        configFile << '  filemode = true'
+        configFile << '  logallrefupdates = true'
+    }
+
     @Deprecated
     static Repository createOrigin( Repository repository, File originDir ) {
         def originRepository = createGitRepository originDir

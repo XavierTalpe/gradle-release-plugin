@@ -1,4 +1,6 @@
 package be.xvrt.gradle.plugin.release.integration
+
+import be.xvrt.gradle.plugin.release.scm.ScmTestUtil
 import be.xvrt.gradle.plugin.test.IntegrationTest
 import org.junit.Test
 
@@ -11,36 +13,39 @@ class UpdateVersionTaskTest extends IntegrationTest {
     void 'empty properties file remains empty after updateVersion'() {
         setup:
         appendLineToBuildFile 'version="1.0.0-SNAPSHOT"'
+        cloneGitRepository()
 
         when:
         execute 'updateVersion'
 
         then:
-        assertTrue properties.isEmpty()
+        assertTrue gradleProperties.isEmpty()
     }
 
     @Test
     void 'properties file is updated after updateVersion'() {
         setup:
         addProperty 'version', '1.0.0-SNAPSHOT'
+        cloneGitRepository()
 
         when:
         execute 'updateVersion'
 
         then:
-        assertEquals '1.0.1-SNAPSHOT', properties.version
+        assertEquals '1.0.1-SNAPSHOT', gradleProperties.version
     }
 
     @Test
     void 'properties file is updated from command line'() {
         setup:
         addProperty 'version', '1.0.0-SNAPSHOT'
+        cloneGitRepository()
 
         when:
         execute 'release -PnextVersion=2.0.0-SNAPSHOT'
 
         then:
-        assertEquals '2.0.0-SNAPSHOT', properties.version
+        assertEquals '2.0.0-SNAPSHOT', gradleProperties.version
     }
 
     @Test
@@ -49,13 +54,15 @@ class UpdateVersionTaskTest extends IntegrationTest {
         addProperty 'version', '1.0.0-SNAPSHOT'
         appendLineToBuildFile 'tasks.commitRelease.enabled=false'
         appendLineToBuildFile 'tasks.tagRelease.enabled=false'
-        enableGit false
+
+        cloneGitRepository()
+        ScmTestUtil.removeOrigin localRepository
 
         when:
         execute 'updateVersion', true
 
         then:
-        assertEquals '1.0.0-SNAPSHOT', properties.version
+        assertEquals '1.0.0-SNAPSHOT', gradleProperties.version
     }
 
 }
