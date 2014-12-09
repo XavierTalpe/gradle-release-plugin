@@ -4,14 +4,14 @@ import com.google.common.collect.Lists
 
 class NativeGitHelper implements ScmHelper {
 
-    private final File gitRepository
+    private final File projectRoot
 
     NativeGitHelper( File gitRepository ) {
         if ( gitRepository.name.equals( '.git' ) ) {
-            this.gitRepository = gitRepository.parentFile
+            projectRoot = gitRepository.parentFile
         }
         else {
-            this.gitRepository = gitRepository
+            projectRoot = gitRepository
         }
     }
 
@@ -109,7 +109,7 @@ class NativeGitHelper implements ScmHelper {
     }
 
     private Process gitExecute( List<String> command ) {
-        def process = command.execute( Lists.newArrayList(), gitRepository )
+        def process = command.execute( Lists.newArrayList(), projectRoot )
 
         process.waitFor()
 

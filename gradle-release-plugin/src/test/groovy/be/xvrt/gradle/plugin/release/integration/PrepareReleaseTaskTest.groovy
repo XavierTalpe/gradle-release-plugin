@@ -1,4 +1,5 @@
 package be.xvrt.gradle.plugin.release.integration
+
 import be.xvrt.gradle.plugin.test.IntegrationTest
 import org.junit.Test
 
@@ -11,24 +12,26 @@ class PrepareReleaseTaskTest extends IntegrationTest {
     void 'empty properties file remains empty after prepareRelease'() {
         setup:
         appendLineToBuildFile 'version="1.0.0-SNAPSHOT"'
+        cloneGitRepository()
 
         when:
         execute 'prepareRelease'
 
         then:
-        assertTrue properties.isEmpty()
+        assertTrue gradleProperties.isEmpty()
     }
 
     @Test
     void 'properties file is updated after prepareRelease'() {
         setup:
         addProperty 'version', '1.0.0-SNAPSHOT'
+        cloneGitRepository()
 
         when:
         execute 'prepareRelease'
 
         then:
-        assertEquals '1.0.0', properties.version
+        assertEquals '1.0.0', gradleProperties.version
     }
 
     @Test
@@ -39,11 +42,13 @@ class PrepareReleaseTaskTest extends IntegrationTest {
         appendLineToBuildFile '  releaseVersion = "INVALID"'
         appendLineToBuildFile '}'
 
+        cloneGitRepository()
+
         when:
         execute 'prepareRelease', true
 
         then:
-        assertEquals '1.0.0-SNAPSHOT', properties.version
+        assertEquals '1.0.0-SNAPSHOT', gradleProperties.version
     }
 
 }

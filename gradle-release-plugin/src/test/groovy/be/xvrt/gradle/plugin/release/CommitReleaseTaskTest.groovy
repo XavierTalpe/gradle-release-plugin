@@ -20,17 +20,20 @@ class CommitReleaseTaskTest {
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
-    private Repository gradleRepository
+    private Repository remoteRepository
+    private Repository localRepository
 
     private Project project
     private Task commitReleaseTask
 
     @Before
     void setUp() {
-        def repoFolder = temporaryFolder.newFolder()
-        gradleRepository = ScmTestUtil.createGitRepository repoFolder
+        def projectDir = temporaryFolder.newFolder()
 
-        project = ProjectBuilder.builder().withProjectDir( repoFolder ).build()
+        remoteRepository = ScmTestUtil.createGitRepository temporaryFolder.newFolder()
+        localRepository = ScmTestUtil.cloneGitRepository( projectDir, remoteRepository.directory )
+
+        project = ProjectBuilder.builder().withProjectDir( projectDir ).build()
         project.apply plugin: ReleasePlugin
         project.version = '1.0.0'
 
@@ -39,14 +42,11 @@ class CommitReleaseTaskTest {
 
     @Test
     void 'commit is pushed when no errors occur'() {
-        setup:
-        ScmTestUtil.createOrigin gradleRepository, temporaryFolder.newFolder()
-
         when:
         commitReleaseTask.execute()
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call().toList()
+        def commitLog = new Git( remoteRepository ).log().call().toList()
 
         assertEquals( 2, commitLog.size() )
         assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
@@ -64,7 +64,7 @@ class CommitReleaseTaskTest {
         commitReleaseTask.execute()
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call().toList()
+        def commitLog = new Git( localRepository ).log().call().toList()
 
         assertEquals( 1, commitLog.size() )
         assertEquals( 'HEAD', commitLog.get( 0 ).shortMessage )
@@ -73,8 +73,6 @@ class CommitReleaseTaskTest {
     @Test
     public void 'override commit message'() throws Exception {
         setup:
-        ScmTestUtil.createOrigin gradleRepository, temporaryFolder.newFolder()
-
         project.release {
             releaseCommitMessage = 'Custom commit for %version.'
         }
@@ -83,7 +81,7 @@ class CommitReleaseTaskTest {
         commitReleaseTask.execute()
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call().toList()
+        def commitLog = new Git( remoteRepository ).log().call().toList()
 
         assertEquals( 2, commitLog.size() )
         assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
@@ -92,6 +90,9 @@ class CommitReleaseTaskTest {
 
     @Test
     void 'commit is rolled back when push fails'() {
+        setup:
+        ScmTestUtil.removeOrigin localRepository
+
         when:
         try {
             commitReleaseTask.execute()
@@ -102,7 +103,7 @@ class CommitReleaseTaskTest {
         }
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call().toList()
+        def commitLog = new Git( remoteRepository ).log().call().toList()
 
         assertEquals( 1, commitLog.size() )
         assertEquals( 'HEAD', commitLog.get( 0 ).shortMessage )

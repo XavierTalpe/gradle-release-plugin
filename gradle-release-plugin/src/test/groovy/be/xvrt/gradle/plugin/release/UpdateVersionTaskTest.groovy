@@ -19,7 +19,8 @@ class UpdateVersionTaskTest {
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder()
 
-    private Repository gradleRepository
+    private Repository remoteRepository
+    private Repository localRepository
 
     private Project project
     private PrepareReleaseTask prepareReleaseTask
@@ -27,10 +28,12 @@ class UpdateVersionTaskTest {
 
     @Before
     void setUp() {
-        def repoFolder = temporaryFolder.newFolder()
-        gradleRepository = ScmTestUtil.createGitRepository repoFolder
+        def projectDir = temporaryFolder.newFolder()
 
-        project = ProjectBuilder.builder().withProjectDir( repoFolder ).build()
+        remoteRepository = ScmTestUtil.createGitRepository temporaryFolder.newFolder()
+        localRepository = ScmTestUtil.cloneGitRepository( projectDir, remoteRepository.directory )
+
+        project = ProjectBuilder.builder().withProjectDir( projectDir ).build()
         project.apply plugin: ReleasePlugin
         project.version = '1.0.0'
 
@@ -105,16 +108,13 @@ class UpdateVersionTaskTest {
 
     @Test
     void 'commit is pushed when no errors occur'() {
-        setup:
-        ScmTestUtil.createOrigin gradleRepository, temporaryFolder.newFolder()
-
         when:
         prepareReleaseTask.configure()
         prepareReleaseTask.execute()
         updateVersionTask.execute()
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call().toList()
+        def commitLog = new Git( remoteRepository ).log().call().toList()
 
         assertEquals( 2, commitLog.size() )
         assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
@@ -134,7 +134,7 @@ class UpdateVersionTaskTest {
         updateVersionTask.execute()
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call().toList()
+        def commitLog = new Git( localRepository ).log().call().toList()
 
         assertEquals( 1, commitLog.size() )
         assertEquals( 'HEAD', commitLog.get( 0 ).shortMessage )
@@ -142,9 +142,6 @@ class UpdateVersionTaskTest {
 
     @Test
     void 'override commit message'() {
-        setup:
-        ScmTestUtil.createOrigin gradleRepository, temporaryFolder.newFolder()
-
         project.release {
             updateVersionCommitMessage = 'Custom prepare for %version.'
         }
@@ -155,7 +152,7 @@ class UpdateVersionTaskTest {
         updateVersionTask.execute()
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call().toList()
+        def commitLog = new Git( remoteRepository ).log().call().toList()
 
         assertEquals( 2, commitLog.size() )
         assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
@@ -164,6 +161,9 @@ class UpdateVersionTaskTest {
 
     @Test
     void 'commit is rolled back when push fails'() {
+        setup:
+        ScmTestUtil.removeOrigin localRepository
+
         when:
         try {
             prepareReleaseTask.configure()
@@ -176,7 +176,7 @@ class UpdateVersionTaskTest {
         }
 
         then:
-        def commitLog = new Git( gradleRepository ).log().call().toList()
+        def commitLog = new Git( localRepository ).log().call().toList()
 
         assertEquals( 1, commitLog.size() )
         assertEquals( 'HEAD', commitLog.get( 0 ).shortMessage )

@@ -14,16 +14,15 @@ class ReleaseTaskTest extends IntegrationTest {
     void 'default project is successfully released'() {
         setup:
         addProperty 'version', '1.0.0-SNAPSHOT'
-
-        def projectRepository = enableGit true
+        cloneGitRepository()
 
         when:
         execute 'release'
 
         then:
-        assertEquals '1.0.1-SNAPSHOT', properties.version
-        assertCommits projectRepository
-        assertTag projectRepository
+        assertEquals '1.0.1-SNAPSHOT', gradleProperties.version
+        assertCommits remoteRepository
+        assertTag remoteRepository
     }
 
     @Test
@@ -31,16 +30,15 @@ class ReleaseTaskTest extends IntegrationTest {
         setup:
         addProperty 'version', '1.0.0-SNAPSHOT'
         appendLineToBuildFile 'apply plugin: "java"'
-
-        def projectRepository = enableGit true
+        cloneGitRepository()
 
         when:
         execute 'release'
 
         then:
-        assertEquals '1.0.1-SNAPSHOT', properties.version
-        assertCommits projectRepository
-        assertTag projectRepository
+        assertEquals '1.0.1-SNAPSHOT', gradleProperties.version
+        assertCommits remoteRepository
+        assertTag remoteRepository
     }
 
     @Ignore
@@ -69,15 +67,15 @@ class ReleaseTaskTest extends IntegrationTest {
     void 'passing username and password from console does not throw error'() {
         setup:
         addProperty 'version', '1.0.0-SNAPSHOT'
-        def projectRepository = enableGit true
+        cloneGitRepository()
 
         when:
         execute 'release -PscmUsername=username -PscmPassword=password'
 
         then:
-        assertEquals '1.0.1-SNAPSHOT', properties.version
-        assertCommits projectRepository
-        assertTag projectRepository
+        assertEquals '1.0.1-SNAPSHOT', gradleProperties.version
+        assertCommits remoteRepository
+        assertTag remoteRepository
     }
 
 }
