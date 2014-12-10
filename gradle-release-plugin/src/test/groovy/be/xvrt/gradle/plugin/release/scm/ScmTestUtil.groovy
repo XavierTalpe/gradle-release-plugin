@@ -47,15 +47,15 @@ class ScmTestUtil {
         git.repository
     }
 
-    static void removeOrigin( Repository repository ) {
+    static void removeOriginFrom( Repository repository ) {
         def configFile = new File( repository.directory, 'config' )
         configFile.delete()
 
-        configFile << '[core]'
-        configFile << '  symlinks = false'
-        configFile << '  repositoryformatversion = 0'
-        configFile << '  filemode = true'
-        configFile << '  logallrefupdates = true'
+        configFile << '[core]\n'
+        configFile << '  symlinks = false\n'
+        configFile << '  repositoryformatversion = 0\n'
+        configFile << '  filemode = true\n'
+        configFile << '  logallrefupdates = true\n'
     }
 
 }

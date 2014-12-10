@@ -56,7 +56,7 @@ class UpdateVersionTaskTest extends IntegrationTest {
         appendLineToBuildFile 'tasks.tagRelease.enabled=false'
 
         cloneGitRepository()
-        ScmTestUtil.removeOrigin localRepository
+        ScmTestUtil.removeOriginFrom localRepository
 
         when:
         execute 'updateVersion', true

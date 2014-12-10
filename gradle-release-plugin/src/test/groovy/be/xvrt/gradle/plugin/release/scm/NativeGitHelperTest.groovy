@@ -126,7 +126,7 @@ class NativeGitHelperTest {
     void 'pushing to origin should fail because no remote added'() {
         setup:
         createLocalChange()
-        ScmTestUtil.removeOrigin localRepository
+        ScmTestUtil.removeOriginFrom localRepository
 
         when:
         gitHelper.commit 'commitMessage'

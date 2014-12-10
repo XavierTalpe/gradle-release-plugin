@@ -87,7 +87,7 @@ class TagReleaseTaskTest {
     @Test
     void 'tag is rolled back when push fails'() {
         setup:
-        ScmTestUtil.removeOrigin localRepository
+        ScmTestUtil.removeOriginFrom localRepository
 
         when:
         try {
