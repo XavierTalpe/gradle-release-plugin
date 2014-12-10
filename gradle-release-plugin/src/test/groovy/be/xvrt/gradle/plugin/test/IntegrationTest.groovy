@@ -44,8 +44,8 @@ abstract class IntegrationTest {
             w.writeLine '  }'
             w.writeLine '  dependencies {'
             w.writeLine "    classpath files( '${pluginPath}' )"
-            w.writeLine '    classpath "org.eclipse.jgit:org.eclipse.jgit:3.5.1.201410131835-r"'
-            w.writeLine '    classpath "org.apache.commons:commons-io:1.3.2"'
+            w.writeLine '    classpath "org.eclipse.jgit:org.eclipse.jgit:3.5.2.201411120430-r"'
+            w.writeLine '    classpath "org.apache.commons:commons-io:2.4"'
             w.writeLine '  }'
             w.writeLine '}'
             w.writeLine 'apply plugin: "be.xvrt.release"'
