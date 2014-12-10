@@ -51,6 +51,10 @@ artifacts {
 
 test {
     maxParallelForks = 4
+
+    testLogging {
+        exceptionFormat 'full'
+    }
 }
 
 /**
