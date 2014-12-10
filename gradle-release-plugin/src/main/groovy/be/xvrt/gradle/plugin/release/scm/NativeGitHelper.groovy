@@ -1,7 +1,5 @@
 package be.xvrt.gradle.plugin.release.scm
 
-import com.google.common.collect.Lists
-
 class NativeGitHelper implements ScmHelper {
 
     private final File projectRoot
@@ -109,7 +107,7 @@ class NativeGitHelper implements ScmHelper {
     }
 
     private Process gitExecute( List<String> command ) {
-        def process = command.execute( Lists.newArrayList(), projectRoot )
+        def process = command.execute( ( List ) null, projectRoot )
 
         process.waitFor()
 
