@@ -21,7 +21,7 @@ class ScmHelperFactoryTest {
         def scmHelper = ScmHelperFactory.create temporaryFolder.root
 
         then:
-        assertTrue( scmHelper instanceof GitHelper )
+        assertTrue( scmHelper instanceof GitHelper || scmHelper instanceof NativeGitHelper )
     }
 
     @Test
