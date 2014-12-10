@@ -16,7 +16,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'be.xvrt:release-plugin:0.4.0'
+        classpath 'be.xvrt:release-plugin:0.4.1'
     }
 }
 
@@ -26,7 +26,7 @@ apply plugin: 'be.xvrt.release'
 Alternatively you can also use the new, incubating, plugin mechanism introduced in Gradle 2.1:
 ```
 plugins {
-    id 'be.xvrt.release' version '0.4.0'
+    id 'be.xvrt.release' version '0.4.1'
 }
 ```
 
@@ -44,8 +44,8 @@ For projects that don't have a build task or need to modify the default behaviou
 ### Specifying the (release) version
 There are multiple options to provide the version for building the project. **In order of priority**:
 - Pass in a parameter `-Pversion=XXX` from the command line when invoking Gradle, useful for parametrized CI builds.
-- Set a `version` property in your `build.gradle` file. This version number **won't** be updated and committed if the release was successful.
-- Add a `version` property to your `gradle.properties` file. This version number **will** be updated and committed if the release was successful.
+- Set a `version` property in your `build.gradle` file. This version number will be updated and committed if the release was successful.
+- Add a `version` property to your `gradle.properties` file. This version number will be updated and committed if the release was successful.
 
 
 ## Limitations
@@ -134,7 +134,7 @@ There are three options to provide the project version. These are, in order of p
 - Set a `version` property in your `build.gradle` file.
 - Add a `version` property to your `gradle.properties` file.
 
-If a `gradle.properties` file is present and it already contains a `version` property, then this value will be updated and committed during the release process. If no such file (or property) is present, no attempt will be made to create (or update) the `gradle.properties` file. Similarly, if the `version` property was defined in the `build.gradle` file, that property also won't be updated.
+If the `version` property was defined in the `build.gradle` file, than this value will be updated during the release process. If a `gradle.properties` file is present and it already contains a `version` property, then this value will be updated and committed during the release process. If no such file (or property) is present, no attempt will be made to create (or update) the `gradle.properties` file.
 
 Using the `release` task it's also possible to override the logic to configure the release version. The following code snippet demonstrates how to implement a closure that adds an `RC1` suffix to the current version:
 ```
@@ -153,10 +153,10 @@ release {
 ```
 
 ### commitRelease
-Executed if the build was successful. Takes care of committing all changes files (gradle.properties and other) to the SCM. The commit message for this task can be overriden by specifying the `releaseCommitMessage` property. See the [custom messages example](https://github.com/XavierTalpe/gradle-release-plugin/tree/master/examples/custom-messages) for more information.
+Executed if the build was successful. Takes care of committing all changes files (build.gradle, gradle.properties and other) to the SCM. The commit message for this task can be overridden by specifying the `releaseCommitMessage` property. See the [custom messages example](https://github.com/XavierTalpe/gradle-release-plugin/tree/master/examples/custom-messages) for more information.
 
 ### tagRelease
-Executed if the build was successful. Takes care of tagging the current release. The tag name and tag message for this task can be overriden by specifying the `releaseTag` or `releaseTagMessage` property. See the [custom messages example](https://github.com/XavierTalpe/gradle-release-plugin/tree/master/examples/custom-messages) for more information.
+Executed if the build was successful. Takes care of tagging the current release. The tag name and tag message for this task can be overridden by specifying the `releaseTag` or `releaseTagMessage` property. See the [custom messages example](https://github.com/XavierTalpe/gradle-release-plugin/tree/master/examples/custom-messages) for more information.
 
 ### updateVersion
 Executed if the build was successful. The `updateVersion` task is responsible for incrementing the version number so it's ready for the next (snapshot) build. If the original version was a snapshot release, then the new version will also be a snapshot release, otherwise the version number is only incremented. This new version number will also be committed to the SCM.
