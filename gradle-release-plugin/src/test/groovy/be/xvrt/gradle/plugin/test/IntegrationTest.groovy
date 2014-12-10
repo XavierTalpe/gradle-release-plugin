@@ -88,7 +88,7 @@ abstract class IntegrationTest {
 
     protected void cloneGitRepository() {
         remoteRepository = ScmTestUtil.createGitRepository remoteDir
-        localRepository = ScmTestUtil.cloneGitRepository( localDir, remoteRepository.directory )
+        localRepository = ScmTestUtil.cloneGitRepository localDir, remoteRepository.directory
     }
 
     protected Properties getGradleProperties() {

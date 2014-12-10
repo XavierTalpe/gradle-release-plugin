@@ -22,7 +22,7 @@ class GitHelperTest {
     @Before
     void setUp() {
         remoteRepository = ScmTestUtil.createGitRepository temporaryFolder.newFolder()
-        localRepository = ScmTestUtil.cloneGitRepository( temporaryFolder.newFolder(), remoteRepository.directory )
+        localRepository = ScmTestUtil.cloneGitRepository temporaryFolder.newFolder(), remoteRepository.directory
 
         gitHelper = new GitHelper( localRepository.directory )
     }

@@ -31,7 +31,7 @@ class TagReleaseTaskTest {
         def projectDir = temporaryFolder.newFolder()
 
         remoteRepository = ScmTestUtil.createGitRepository temporaryFolder.newFolder()
-        localRepository = ScmTestUtil.cloneGitRepository( projectDir, remoteRepository.directory )
+        localRepository = ScmTestUtil.cloneGitRepository projectDir, remoteRepository.directory
 
         project = ProjectBuilder.builder().withProjectDir( projectDir ).build()
         project.apply plugin: ReleasePlugin

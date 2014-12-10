@@ -24,25 +24,44 @@ class CommitReleaseTaskTest {
     private Repository localRepository
 
     private Project project
+    private Task prepareReleaseTask
     private Task commitReleaseTask
 
     @Before
     void setUp() {
-        def projectDir = temporaryFolder.newFolder()
+        def remoteDir = temporaryFolder.newFolder()
+        def localDir = temporaryFolder.newFolder()
 
-        remoteRepository = ScmTestUtil.createGitRepository temporaryFolder.newFolder()
-        localRepository = ScmTestUtil.cloneGitRepository( projectDir, remoteRepository.directory )
+        createPropertiesFile remoteDir, 'version', '1.0.0-SNAPSHOT'
+        remoteRepository = ScmTestUtil.createGitRepository remoteDir
+        localRepository = ScmTestUtil.cloneGitRepository localDir, remoteRepository.directory
 
-        project = ProjectBuilder.builder().withProjectDir( projectDir ).build()
+        project = ProjectBuilder.builder().withProjectDir( localDir ).build()
         project.apply plugin: ReleasePlugin
-        project.version = '1.0.0'
+        project.version = '1.0.0-SNAPSHOT'
 
+        prepareReleaseTask = project.tasks.getByName( ReleasePlugin.PREPARE_RELEASE_TASK ) as PrepareReleaseTask
         commitReleaseTask = project.tasks.getByName ReleasePlugin.COMMIT_RELEASE_TASK
+    }
+
+    private static void createPropertiesFile( File projectDir, String key, Object value ) {
+        def propertiesFile = new File( projectDir, 'gradle.properties' )
+        if ( !propertiesFile.exists() ) {
+            propertiesFile.createNewFile()
+        }
+
+        def properties = new Properties()
+        propertiesFile.withInputStream { properties.load( it ) }
+
+        properties.put key, value
+        properties.store propertiesFile.newWriter(), null
     }
 
     @Test
     void 'commit is pushed when no errors occur'() {
         when:
+        prepareReleaseTask.configure()
+        prepareReleaseTask.execute()
         commitReleaseTask.execute()
 
         then:
@@ -61,6 +80,8 @@ class CommitReleaseTaskTest {
         }
 
         when:
+        prepareReleaseTask.configure()
+        prepareReleaseTask.execute()
         commitReleaseTask.execute()
 
         then:
@@ -78,6 +99,8 @@ class CommitReleaseTaskTest {
         }
 
         when:
+        prepareReleaseTask.configure()
+        prepareReleaseTask.execute()
         commitReleaseTask.execute()
 
         then:
@@ -94,6 +117,9 @@ class CommitReleaseTaskTest {
         ScmTestUtil.removeOriginFrom localRepository
 
         when:
+        prepareReleaseTask.configure()
+        prepareReleaseTask.execute()
+
         try {
             commitReleaseTask.execute()
             fail()
