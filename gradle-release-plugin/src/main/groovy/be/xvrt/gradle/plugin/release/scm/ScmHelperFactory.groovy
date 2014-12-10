@@ -1,5 +1,7 @@
 package be.xvrt.gradle.plugin.release.scm
 
+import com.google.common.collect.Lists
+
 class ScmHelperFactory {
 
     private static long lastScmHelperId
@@ -28,7 +30,7 @@ class ScmHelperFactory {
 
         def scmHelper
         if ( gitRepo.exists() ) {
-            if ( hasNativeGitClient() && !username && !password ) {
+            if ( hasNativeGitClient( scmRootDir ) && !username && !password ) {
                 scmHelper = new NativeGitHelper( gitRepo )
             }
             else {
@@ -55,9 +57,9 @@ class ScmHelperFactory {
         id
     }
 
-    private static boolean hasNativeGitClient() {
+    private static boolean hasNativeGitClient( File rootDir ) {
         try {
-            def process = 'git'.execute()
+            def process = 'git'.execute( Lists.newArrayList(), rootDir )
             process.waitFor()
 
             !process.exitValue()
