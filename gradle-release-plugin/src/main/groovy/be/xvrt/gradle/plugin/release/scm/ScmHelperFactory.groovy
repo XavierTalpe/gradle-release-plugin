@@ -59,7 +59,7 @@ class ScmHelperFactory {
 
     private static boolean hasNativeGitClient( File rootDir ) {
         try {
-            def process = 'git'.execute( Lists.newArrayList(), rootDir )
+            def process = 'git --version'.execute( Lists.newArrayList(), rootDir )
             process.waitFor()
 
             !process.exitValue()
