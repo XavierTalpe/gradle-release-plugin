@@ -8,7 +8,6 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 import static org.junit.Assert.assertEquals
-import static org.junit.Assume.assumeTrue
 
 class NativeGitHelperTest {
 
@@ -22,15 +21,13 @@ class NativeGitHelperTest {
 
     @Before
     void setUp() {
-        assumeTrue( System.getenv( 'CI' ) == null )
-
         def remoteFolder = temporaryFolder.newFolder()
 
         def initialFile = new File( remoteFolder, 'writable.file' )
         initialFile << 'initial data'
 
         remoteRepository = ScmTestUtil.createGitRepository remoteFolder
-        localRepository = ScmTestUtil.cloneGitRepository( temporaryFolder.newFolder(), remoteRepository.directory )
+        localRepository = ScmTestUtil.cloneGitRepository temporaryFolder.newFolder(), remoteRepository.directory
 
         gitHelper = new NativeGitHelper( localRepository.directory )
     }
@@ -126,7 +123,7 @@ class NativeGitHelperTest {
     void 'pushing to origin should fail because no remote added'() {
         setup:
         createLocalChange()
-        ScmTestUtil.removeOrigin localRepository
+        ScmTestUtil.removeOriginFrom localRepository
 
         when:
         gitHelper.commit 'commitMessage'

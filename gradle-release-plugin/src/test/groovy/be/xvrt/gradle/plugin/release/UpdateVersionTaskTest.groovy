@@ -28,17 +28,32 @@ class UpdateVersionTaskTest {
 
     @Before
     void setUp() {
-        def projectDir = temporaryFolder.newFolder()
+        def remoteDir = temporaryFolder.newFolder()
+        def localDir = temporaryFolder.newFolder()
 
-        remoteRepository = ScmTestUtil.createGitRepository temporaryFolder.newFolder()
-        localRepository = ScmTestUtil.cloneGitRepository( projectDir, remoteRepository.directory )
+        createPropertiesFile remoteDir, 'version', '1.0.0'
+        remoteRepository = ScmTestUtil.createGitRepository remoteDir
+        localRepository = ScmTestUtil.cloneGitRepository localDir, remoteRepository.directory
 
-        project = ProjectBuilder.builder().withProjectDir( projectDir ).build()
+        project = ProjectBuilder.builder().withProjectDir( localDir ).build()
         project.apply plugin: ReleasePlugin
         project.version = '1.0.0'
 
         prepareReleaseTask = project.tasks.getByName( ReleasePlugin.PREPARE_RELEASE_TASK ) as PrepareReleaseTask
         updateVersionTask = project.tasks.getByName( ReleasePlugin.UPDATE_VERSION_TASK ) as UpdateVersionTask
+    }
+
+    private static void createPropertiesFile( File projectDir, String key, Object value ) {
+        def propertiesFile = new File( projectDir, 'gradle.properties' )
+        if ( !propertiesFile.exists() ) {
+            propertiesFile.createNewFile()
+        }
+
+        def properties = new Properties()
+        propertiesFile.withInputStream { properties.load( it ) }
+
+        properties.put key, value
+        properties.store propertiesFile.newWriter(), null
     }
 
     @Test
@@ -162,7 +177,7 @@ class UpdateVersionTaskTest {
     @Test
     void 'commit is rolled back when push fails'() {
         setup:
-        ScmTestUtil.removeOrigin localRepository
+        ScmTestUtil.removeOriginFrom localRepository
 
         when:
         try {

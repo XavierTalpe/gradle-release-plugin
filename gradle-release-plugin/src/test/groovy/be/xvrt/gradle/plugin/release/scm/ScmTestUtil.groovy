@@ -6,6 +6,29 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 
 class ScmTestUtil {
 
+    static {
+        def isTravisCI = System.getenv( 'CI' ) && System.getenv( 'TRAVIS' )
+        if ( isTravisCI ) {
+            def setUsername = ['git', 'config', '--global', 'user.name', 'travis']
+            def setEmail = ['git', 'config', '--global', 'user.email', 'travis@test.com']
+            def homeDir = new File( System.getProperty( 'user.dir' ) )
+
+            def process = setUsername.execute( ( List ) null, homeDir )
+            process.waitFor()
+
+            if ( process.exitValue() ) {
+                print "${process.in.text}\n${process.err.text}"
+            }
+
+            process = setEmail.execute( ( List ) null, homeDir )
+            process.waitFor()
+
+            if ( process.exitValue() ) {
+                print "${process.in.text}\n${process.err.text}"
+            }
+        }
+    }
+
     private ScmTestUtil() {
     }
 
@@ -47,15 +70,15 @@ class ScmTestUtil {
         git.repository
     }
 
-    static void removeOrigin( Repository repository ) {
+    static void removeOriginFrom( Repository repository ) {
         def configFile = new File( repository.directory, 'config' )
         configFile.delete()
 
-        configFile << '[core]'
-        configFile << '  symlinks = false'
-        configFile << '  repositoryformatversion = 0'
-        configFile << '  filemode = true'
-        configFile << '  logallrefupdates = true'
+        configFile << '[core]\n'
+        configFile << '  symlinks = false\n'
+        configFile << '  repositoryformatversion = 0\n'
+        configFile << '  filemode = true\n'
+        configFile << '  logallrefupdates = true\n'
     }
 
 }

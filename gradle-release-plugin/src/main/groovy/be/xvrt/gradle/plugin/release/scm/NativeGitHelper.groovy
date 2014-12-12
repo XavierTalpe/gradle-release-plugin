@@ -1,7 +1,5 @@
 package be.xvrt.gradle.plugin.release.scm
 
-import com.google.common.collect.Lists
-
 class NativeGitHelper implements ScmHelper {
 
     private final File projectRoot
@@ -21,16 +19,10 @@ class NativeGitHelper implements ScmHelper {
 
         try {
             result = gitExecute( ['git', 'commit', '-am', message] )
+            raiseErrors result
         }
         catch ( Exception exception ) {
             throw new ScmException( 'Error when committing changes.', exception )
-        }
-
-        if ( result && result.exitValue() != 0 ) {
-            def error = result.err.text
-            if ( !error.contains( 'nothing to commit, working directory clean' ) ) {
-                throw new ScmException( "Error when committing changes: ${error}." )
-            }
         }
 
         new Commit( 'LAST' )
@@ -41,19 +33,17 @@ class NativeGitHelper implements ScmHelper {
      */
     @Override
     void deleteCommit( Commit commitId ) throws ScmException {
-        def result
+        def result = null
 
         try {
             if ( commitId.id.equals( 'LAST' ) ) {
                 result = gitExecute( ['git', 'reset', '--hard', 'HEAD~1'] )
             }
+
+            raiseErrors result
         }
         catch ( Exception exception ) {
             throw new ScmException( 'Error when rolling back commit.', exception )
-        }
-
-        if ( result && result.exitValue() != 0 ) {
-            throw new ScmException( "Error when rolling back commit: ${result.err.text}." )
         }
     }
 
@@ -63,17 +53,13 @@ class NativeGitHelper implements ScmHelper {
 
         try {
             result = gitExecute( ['git', 'tag', '-a', name, '-m', message] )
+            raiseErrors result
         }
         catch ( Exception exception ) {
             throw new ScmException( 'Error when tagging changes.', exception )
         }
 
-        if ( result && result.exitValue() != 0 ) {
-            throw new ScmException( "Error when tagging changes: ${result.err.text}." )
-        }
-        else {
-            new Tag( name )
-        }
+        new Tag( name )
     }
 
     @Override
@@ -82,13 +68,10 @@ class NativeGitHelper implements ScmHelper {
 
         try {
             result = gitExecute( ['git', 'tag', '-d', tag.id] )
+            raiseErrors result
         }
         catch ( Exception exception ) {
             throw new ScmException( 'Error when deleting tag.', exception )
-        }
-
-        if ( result && result.exitValue() != 0 ) {
-            throw new ScmException( "Error when deleting tag: ${result.err.text}." )
         }
     }
 
@@ -98,22 +81,35 @@ class NativeGitHelper implements ScmHelper {
 
         try {
             result = gitExecute( ['git', 'push', '--follow-tags', remoteName] )
+            raiseErrors result
         }
         catch ( Exception exception ) {
             throw new ScmException( 'Error when pushing changes.', exception )
         }
-
-        if ( result && result.exitValue() != 0 ) {
-            throw new ScmException( "Error when pushing changes: ${result.err.text}." )
-        }
     }
 
     private Process gitExecute( List<String> command ) {
-        def process = command.execute( Lists.newArrayList(), projectRoot )
+        def process = command.execute( ( List ) null, projectRoot )
 
         process.waitFor()
 
         process
+    }
+
+    private static void raiseErrors( Process process ) {
+        if ( process.exitValue() == 0 ) {
+            return
+        }
+
+        def baseOutput = process.in.text
+        def errorOutput = process.err.text
+
+        if ( baseOutput.contains( 'nothing to commit, working directory clean' ) ) {
+            return
+        }
+
+        def fullErrorMessage = "${errorOutput}\n\n${baseOutput}"
+        throw new IllegalStateException( fullErrorMessage )
     }
 
 }

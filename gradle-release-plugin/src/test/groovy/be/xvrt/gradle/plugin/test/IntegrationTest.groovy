@@ -1,7 +1,6 @@
 package be.xvrt.gradle.plugin.test
 
 import be.xvrt.gradle.plugin.release.scm.ScmTestUtil
-import com.google.common.collect.Lists
 import org.eclipse.jgit.lib.Repository
 import org.junit.Before
 import org.junit.Rule
@@ -44,8 +43,8 @@ abstract class IntegrationTest {
             w.writeLine '  }'
             w.writeLine '  dependencies {'
             w.writeLine "    classpath files( '${pluginPath}' )"
-            w.writeLine '    classpath "org.eclipse.jgit:org.eclipse.jgit:3.5.1.201410131835-r"'
-            w.writeLine '    classpath "org.apache.commons:commons-io:1.3.2"'
+            w.writeLine '    classpath "org.eclipse.jgit:org.eclipse.jgit:3.5.2.201411120430-r"'
+            w.writeLine '    classpath "commons-io:commons-io:2.4"'
             w.writeLine '  }'
             w.writeLine '}'
             w.writeLine 'apply plugin: "be.xvrt.release"'
@@ -89,7 +88,7 @@ abstract class IntegrationTest {
 
     protected void cloneGitRepository() {
         remoteRepository = ScmTestUtil.createGitRepository remoteDir
-        localRepository = ScmTestUtil.cloneGitRepository( localDir, remoteRepository.directory )
+        localRepository = ScmTestUtil.cloneGitRepository localDir, remoteRepository.directory
     }
 
     protected Properties getGradleProperties() {
@@ -106,7 +105,7 @@ abstract class IntegrationTest {
         def gradleWrapper = new File( workingDir, '../gradlew' )
 
         def command = gradleWrapper.toString() + ' --info --stacktrace ' + task
-        def process = command.execute Lists.newArrayList(), localDir
+        def process = command.execute( ( List ) null, localDir )
         process.waitFor()
 
         def expectedExitValue = shouldFail ? 1 : 0

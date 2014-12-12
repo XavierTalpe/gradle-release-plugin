@@ -22,7 +22,7 @@ class GitHelperTest {
     @Before
     void setUp() {
         remoteRepository = ScmTestUtil.createGitRepository temporaryFolder.newFolder()
-        localRepository = ScmTestUtil.cloneGitRepository( temporaryFolder.newFolder(), remoteRepository.directory )
+        localRepository = ScmTestUtil.cloneGitRepository temporaryFolder.newFolder(), remoteRepository.directory
 
         gitHelper = new GitHelper( localRepository.directory )
     }
@@ -129,7 +129,7 @@ class GitHelperTest {
     @Test( expected = ScmException.class )
     void 'pushing to origin should fail because no remote added'() {
         setup:
-        ScmTestUtil.removeOrigin localRepository
+        ScmTestUtil.removeOriginFrom localRepository
 
         when:
         gitHelper.commit 'commitMessage'
