@@ -61,12 +61,10 @@ class GradlePropertiesTest {
     }
 
     @Test
-    void 'properties file with indirect version should also be updated'() {
+    void 'properties file with spaces should also be updated'() {
         setup:
         def propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
-        propertiesFile << 'name=1.0.0-SNAPSHOT\n'
-        propertiesFile << 'version=name\n\n'
-        propertiesFile << 'group=be.xvrt\n'
+        propertiesFile << "version   =\t1.0.0-SNAPSHOT"
 
         when:
         gradleProperties.updateVersion '1.0.0-SNAPSHOT', '1.0.0'
@@ -75,13 +73,11 @@ class GradlePropertiesTest {
         def properties = new Properties()
         propertiesFile.withInputStream { properties.load( it ) }
 
-        assertEquals( '1.0.0', properties.name )
-        assertEquals( 'name', properties.version )
-        assertEquals( 'be.xvrt', properties.group )
+        assertEquals( '1.0.0', properties.version )
     }
 
     @Test
-    void 'all version occurrences should be replaced'() {
+    void 'only version=<version> occurrences should be replaced'() {
         setup:
         def propertiesFile = temporaryFolder.newFile( 'gradle.properties' )
         propertiesFile << 'name=1.0.0-SNAPSHOT\n'
@@ -95,7 +91,7 @@ class GradlePropertiesTest {
         def properties = new Properties()
         propertiesFile.withInputStream { properties.load( it ) }
 
-        assertEquals( '1.0.0', properties.name )
+        assertEquals( '1.0.0-SNAPSHOT', properties.name )
         assertEquals( '1.0.0', properties.version )
         assertEquals( 'be.xvrt', properties.group )
     }

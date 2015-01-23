@@ -33,7 +33,7 @@ class GradleProperties {
         def properties = IOUtils.toString inputStream, 'UTF-8'
         inputStream.close()
 
-        properties = ( properties =~ /${oldVersion}/ ).replaceAll newVersion
+        properties = ( properties =~ /version\s*=\s*${oldVersion}/ ).replaceAll "version=${newVersion}"
 
         def outputStream = new FileOutputStream( file )
         IOUtils.write properties, outputStream, 'UTF-8'
