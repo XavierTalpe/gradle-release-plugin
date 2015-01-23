@@ -123,9 +123,11 @@ class PrepareReleaseTaskTest {
 
         project.configurations { myConfig }
         project.dependencies {
-            compile 'group:name:1.0.0-SNAPSHOT'
-            compile 'group:name:'
-            myConfig 'group::5.1.2.3-SNAPSHOT'
+            compile 'group:static1:1.0.0-SNAPSHOT'
+            myConfig 'group:static2:5.1.2.3-SNAPSHOT'
+
+            compile "group:dynamic1:${project.version}"
+            compile group: 'group', name: 'dynamic2', version: project.version
         }
 
         when:
@@ -144,9 +146,12 @@ class PrepareReleaseTaskTest {
         then:
         assertNotNull( cause )
         assertTrue( cause instanceof InvalidDependencyException )
+        println cause.message
         assertEquals( 'Cannot release project with SNAPSHOT dependencies:\n' +
-                      'test - group:name:1.0.0-SNAPSHOT\n' +
-                      'test - group::5.1.2.3-SNAPSHOT\n', cause.message )
+                      'test - group:dynamic1:1.0.0-SNAPSHOT\n' +
+                      'test - group:static2:5.1.2.3-SNAPSHOT\n' +
+                      'test - group:dynamic2:1.0.0-SNAPSHOT\n' +
+                      'test - group:static1:1.0.0-SNAPSHOT\n', cause.message )
     }
 
     @Test
