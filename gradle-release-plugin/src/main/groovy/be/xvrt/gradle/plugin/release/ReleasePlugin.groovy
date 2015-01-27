@@ -57,7 +57,7 @@ class ReleasePlugin implements Plugin<Project> {
 
         releaseTask.group = RELEASE_GROUP
         releaseTask.description = 'Parent task of this plugin. Ensures all other tasks are executed at the right time.'
-        releaseTask.dependsOn prepareReleaseTask, tagReleaseTask, updateVersionTask
+        releaseTask.dependsOn prepareReleaseTask, commitReleaseTask, tagReleaseTask, updateVersionTask
     }
 
     private void setBuildTaskDependencies( Project project ) {
