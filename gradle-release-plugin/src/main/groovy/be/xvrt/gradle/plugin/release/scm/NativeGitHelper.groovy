@@ -104,7 +104,7 @@ class NativeGitHelper implements ScmHelper {
         def baseOutput = process.in.text
         def errorOutput = process.err.text
 
-        if ( baseOutput.contains( 'nothing to commit, working directory clean' ) ||
+        if ( baseOutput.contains( 'nothing to commit' ) ||
              baseOutput.contains( 'nothing added to commit but untracked files present' ) ) {
             return
         }
