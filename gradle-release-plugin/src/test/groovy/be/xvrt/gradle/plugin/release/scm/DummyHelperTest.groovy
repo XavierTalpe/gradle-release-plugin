@@ -20,6 +20,7 @@ class DummyHelperTest {
         dummyHelper.deleteTag tagId
 
         dummyHelper.push 'origin'
+        dummyHelper.pushTag 'origin', tagId
     }
 
 }

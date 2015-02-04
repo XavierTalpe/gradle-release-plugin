@@ -84,11 +84,39 @@ class GitHelperTest {
     }
 
     @Test
-    void 'pushing to origin should succeed'() {
+    void 'pushing commit to origin should succeed'() {
         when:
         gitHelper.commit 'commitMessage'
-        gitHelper.tag '1.0.0', 'Tagging a release'
         gitHelper.push 'origin'
+
+        then:
+        def commitLog = new Git( remoteRepository ).log().call().toList()
+
+        assertEquals( 2, commitLog.size() )
+        assertEquals( 'commitMessage', commitLog.get( 0 ).shortMessage )
+        assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
+    }
+
+    @Test
+    void 'pushing tag to origin should succeed'() {
+        when:
+        def tag = gitHelper.tag( '1.0.0', 'Tagging a release' )
+        gitHelper.pushTag 'origin', tag
+
+        then:
+        def allTags = new Git( remoteRepository ).tagList().call()
+
+        assertEquals( 1, allTags.size() )
+        assertEquals( 'refs/tags/1.0.0', allTags.get( 0 ).getName() )
+    }
+
+    @Test
+    void 'pushing commit and tag to origin should succeed'() {
+        when:
+        gitHelper.commit 'commitMessage'
+        def tag = gitHelper.tag( '1.0.0', 'Tagging a release' )
+        gitHelper.push 'origin'
+        gitHelper.pushTag 'origin', tag
 
         then:
         def commitLog = new Git( remoteRepository ).log().call().toList()
@@ -110,7 +138,6 @@ class GitHelperTest {
 
         when:
         gitHelper.commit 'commitMessage'
-        gitHelper.tag '1.0.0', 'Tagging a release'
         gitHelper.push 'origin'
 
         then:
@@ -119,22 +146,26 @@ class GitHelperTest {
         assertEquals( 2, commitLog.size() )
         assertEquals( 'commitMessage', commitLog.get( 0 ).shortMessage )
         assertEquals( 'HEAD', commitLog.get( 1 ).shortMessage )
-
-        def allTags = new Git( remoteRepository ).tagList().call()
-
-        assertEquals( 1, allTags.size() )
-        assertEquals( 'refs/tags/1.0.0', allTags.get( 0 ).getName() )
     }
 
     @Test( expected = ScmException.class )
-    void 'pushing to origin should fail because no remote added'() {
+    void 'pushing commit to origin should fail because no remote added'() {
         setup:
         ScmTestUtil.removeOriginFrom localRepository
 
         when:
         gitHelper.commit 'commitMessage'
-        gitHelper.tag '1.0.0', 'Tagging a release'
         gitHelper.push 'origin'
+    }
+
+    @Test( expected = ScmException.class )
+    void 'pushing tag to origin should fail because no remote added'() {
+        setup:
+        ScmTestUtil.removeOriginFrom localRepository
+
+        when:
+        def tag = gitHelper.tag( '1.0.0', 'Tagging a release' )
+        gitHelper.pushTag 'origin', tag
     }
 
 }

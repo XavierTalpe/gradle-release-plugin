@@ -12,4 +12,6 @@ interface ScmHelper {
 
     void push( String remoteName ) throws ScmException
 
+    void pushTag( String remoteName, Tag tag ) throws ScmException
+
 }

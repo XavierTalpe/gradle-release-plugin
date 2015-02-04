@@ -24,4 +24,8 @@ class DummyHelper implements ScmHelper {
     void push( String remoteName ) {
     }
 
+    @Override
+    void pushTag( String remoteName, Tag tag ) {
+    }
+
 }

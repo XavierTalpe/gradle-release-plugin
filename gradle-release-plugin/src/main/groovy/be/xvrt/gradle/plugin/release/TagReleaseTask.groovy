@@ -15,7 +15,7 @@ class TagReleaseTask extends PluginScmTask {
         }
         else {
             tagId = tag()
-            push()
+            pushTag tagId
         }
     }
 

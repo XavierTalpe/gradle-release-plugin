@@ -109,14 +109,30 @@ class GitHelper implements ScmHelper {
                 pushCommand.setCredentialsProvider( credentialsProvider )
             }
 
-            // Push commits.
-            pushCommand.call()
-
-            // Push tags.
-            pushCommand.setPushTags()
             pushCommand.call()
         } catch ( Exception exception ) {
             throw new ScmException( 'Error when pushing changes.', exception )
+        }
+    }
+
+    @Override
+    void pushTag( String remoteName, Tag tag ) throws ScmException {
+        def remoteUri = findRemoteUri remoteName
+        if ( !remoteUri ) {
+            throw new ScmException( 'Error when pushing tag. No remote defined.' )
+        }
+
+        try {
+            def pushCommand = git.push().setRemote( remoteUri )
+
+            if ( credentialsProvider ) {
+                pushCommand.setCredentialsProvider( credentialsProvider )
+            }
+
+            pushCommand.setPushTags()
+            pushCommand.call()
+        } catch ( Exception exception ) {
+            throw new ScmException( 'Error when pushing tag.', exception )
         }
     }
 

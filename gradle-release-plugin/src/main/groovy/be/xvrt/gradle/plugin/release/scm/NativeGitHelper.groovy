@@ -80,11 +80,24 @@ class NativeGitHelper implements ScmHelper {
         def result
 
         try {
-            result = gitExecute( ['git', 'push', '--follow-tags', remoteName] )
+            result = gitExecute( ['git', 'push', remoteName] )
             raiseErrors result
         }
         catch ( Exception exception ) {
             throw new ScmException( 'Error when pushing changes.', exception )
+        }
+    }
+
+    @Override
+    void pushTag( String remoteName, Tag tag ) throws ScmException {
+        def result
+
+        try {
+            result = gitExecute( ['git', 'push', remoteName, tag.id] )
+            raiseErrors result
+        }
+        catch ( Exception exception ) {
+            throw new ScmException( 'Error when pushing tag.', exception )
         }
     }
 

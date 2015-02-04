@@ -36,6 +36,14 @@ abstract class PluginScmTask extends DefaultPluginTask {
         getScmHelper().push scmRemote
     }
 
+    protected final void pushTag( Tag tag ) throws ScmException {
+        def scmRemote = extension.getAt( ReleasePluginExtension.SCM_REMOTE ) as String
+
+        logger.info ":${name} pushing local tag to ${scmRemote}."
+
+        getScmHelper().pushTag scmRemote, tag
+    }
+
     protected final ScmHelper getScmHelper() {
         if ( !scmHelper ) {
             def scmRootDir = extension.getAt( ReleasePluginExtension.SCM_ROOT_DIR ) as String
