@@ -156,7 +156,7 @@ release {
 Executed if the build was successful. Takes care of committing all changes files (build.gradle, gradle.properties and other) to the SCM. The commit message for this task can be overridden by specifying the `releaseCommitMessage` property. See the [custom messages example](https://github.com/XavierTalpe/gradle-release-plugin/tree/master/examples/custom-messages) for more information.
 
 ### tagRelease
-Executed if the build was successful. Takes care of tagging the current release. The tag name and tag message for this task can be overridden by specifying the `releaseTag` or `releaseTagMessage` property. See the [custom messages example](https://github.com/XavierTalpe/gradle-release-plugin/tree/master/examples/custom-messages) for more information.
+Executed if the build was successful. Takes care of tagging the current release. The tag name and tag message for this task can be overridden by specifying the `releaseTag` or `releaseTagMessage` property. See the [scm-config example](https://github.com/XavierTalpe/gradle-release-plugin/tree/master/examples/scm-config) for more information.
 
 ### updateVersion
 Executed if the build was successful. The `updateVersion` task is responsible for incrementing the version number so it's ready for the next (snapshot) build. If the original version was a snapshot release, then the new version will also be a snapshot release, otherwise the version number is only incremented. This new version number will also be committed to the SCM.
