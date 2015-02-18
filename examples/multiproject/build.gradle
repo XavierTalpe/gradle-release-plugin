@@ -1,5 +1,5 @@
 plugins {
-    id 'be.xvrt.release' version '0.4.2'
+    id 'be.xvrt.release' version '0.4.5'
 }
 
 subprojects {
@@ -11,5 +11,16 @@ subprojects {
 
     dependencies {
         testCompile group: 'junit', name: 'junit', version: '4.+'
+    }
+
+
+    /**
+     * Additional configuration for CI build below. Can be ignored.
+     */
+    task( 'check', dependsOn: 'release' ) {
+    }
+
+    release {
+        scmDisabled = true
     }
 }
