@@ -3,6 +3,7 @@ plugins {
 }
 
 subprojects {
+    apply plugin: 'be.xvrt.release'
     apply plugin: 'java'
 
     repositories {
@@ -17,9 +18,6 @@ subprojects {
     /**
      * Additional configuration for CI build below. Can be ignored.
      */
-    task( 'check', dependsOn: 'release' ) {
-    }
-
     release {
         scmDisabled = true
     }

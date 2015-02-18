@@ -1,5 +1,7 @@
 package be.xvrt;
 
+import static org.junit.Assert.assertEquals;
+
 import org.gradle.Person;
 import org.junit.Test;
 

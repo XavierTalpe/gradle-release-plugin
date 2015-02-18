@@ -17,9 +17,6 @@ dependencies {
 /**
  * Additional configuration for CI build below. Can be ignored.
  */
-task( 'check', dependsOn: 'release' ) {
-}
-
 release {
     scmDisabled = true
 }
