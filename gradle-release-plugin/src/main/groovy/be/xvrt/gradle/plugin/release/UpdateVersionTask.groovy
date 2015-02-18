@@ -19,7 +19,7 @@ class UpdateVersionTask extends PluginScmTask {
         saveVersion nextVersion
 
         if ( isScmSupportDisabled() ) {
-            logger.info ":${name} skipping updateVersion commit because SCM support is disabled."
+            logger.info ":${project.name}:${name} skipping updateVersion commit because SCM support is disabled."
         }
         else {
             commitId = commit nextVersion
@@ -50,7 +50,7 @@ class UpdateVersionTask extends PluginScmTask {
     }
 
     private void saveVersion( String nextVersion ) {
-        logger.info( ":${name} setting next version to ${nextVersion}." )
+        logger.info( ":${project.name}:${name} setting next version to ${nextVersion}." )
 
         setProjectVersion( nextVersion, true )
     }
@@ -63,7 +63,7 @@ class UpdateVersionTask extends PluginScmTask {
 
     private void rollbackCommit( Commit commitId ) throws ScmException {
         if ( commitId ) {
-            logger.info ":${name} rolling back unpushed commit due to error."
+            logger.info ":${project.name}:${name} rolling back unpushed commit due to error."
 
             scmHelper.deleteCommit commitId
         }

@@ -20,10 +20,10 @@ class GradleProperties {
         def file = new File( project.projectDir, filename )
 
         if ( !file.exists() ) {
-            project.logger.info( ":${taskName} ${filename} does not exist, skipping update." )
+            project.logger.info( ":${project.name}:${taskName} ${filename} does not exist, skipping update." )
         }
         else {
-            project.logger.info( ":${taskName} updating ${filename} with new version." )
+            project.logger.info( ":${project.name}:${taskName} updating ${filename} with new version." )
             writeVersion( file, oldVersion, newVersion )
         }
     }

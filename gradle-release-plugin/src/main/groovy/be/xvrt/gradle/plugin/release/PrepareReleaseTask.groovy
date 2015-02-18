@@ -45,14 +45,14 @@ class PrepareReleaseTask extends DefaultPluginTask {
     }
 
     private void saveVersion( String releaseVersion ) {
-        logger.info ":${name} setting release version to ${releaseVersion}."
+        logger.info ":${project.name}:${name} setting release version to ${releaseVersion}."
 
         projectVersion = releaseVersion
     }
 
     private void rollbackVersion( String version ) {
         if ( version ) {
-            logger.info ":${name} rolling back uncommitted version to ${version}."
+            logger.info ":${project.name}:${name} rolling back uncommitted version to ${version}."
 
             projectVersion = version
         }
