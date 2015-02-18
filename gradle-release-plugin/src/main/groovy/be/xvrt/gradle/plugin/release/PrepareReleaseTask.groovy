@@ -52,7 +52,7 @@ class PrepareReleaseTask extends DefaultPluginTask {
 
     private void rollbackVersion( String version ) {
         if ( version ) {
-            logger.info ":${name} rolling back version to ${version}."
+            logger.info ":${name} rolling back uncommitted version to ${version}."
 
             projectVersion = version
         }

@@ -33,7 +33,7 @@ class CommitReleaseTask extends PluginScmTask {
 
     private void rollbackCommit( Commit commitId ) throws ScmException {
         if ( commitId ) {
-            logger.info ":${name} rolling back commit due to error."
+            logger.info ":${name} rolling back unpushed commit due to error."
 
             scmHelper.deleteCommit commitId
         }

@@ -34,7 +34,7 @@ class TagReleaseTask extends PluginScmTask {
 
     private void rollbackTag( Tag tagId ) throws ScmException {
         if ( tagId ) {
-            logger.info ":${name} rolling back tag due to error."
+            logger.info ":${name} rolling back unpushed tag due to error."
 
             scmHelper.deleteTag tagId
         }
