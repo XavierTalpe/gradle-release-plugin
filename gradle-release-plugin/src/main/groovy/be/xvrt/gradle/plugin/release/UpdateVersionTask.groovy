@@ -52,7 +52,7 @@ class UpdateVersionTask extends PluginScmTask {
     private void saveVersion( String nextVersion ) {
         logger.info( ":${name} setting next version to ${nextVersion}." )
 
-        projectVersion = nextVersion
+        setProjectVersion( nextVersion, true )
     }
 
     private Commit commit( String nextVersion ) {

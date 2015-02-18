@@ -36,10 +36,12 @@ abstract class DefaultPluginTask extends DefaultTask {
         projectVersion
     }
 
-    protected final void setProjectVersion( String newVersion ) {
+    protected final void setProjectVersion( String newVersion, boolean noInMemoryUpdate = false ) {
         def oldVersion = projectVersion
 
-        project.version = newVersion
+        if ( !noInMemoryUpdate ) {
+            project.version = newVersion
+        }
 
         gradleProperties.updateVersion oldVersion, newVersion, name
     }

@@ -72,7 +72,6 @@ class UpdateVersionTaskTest {
         then:
         assertEquals( '1.0.0', updateVersionTask.releasedVersion )
         assertEquals( '1.0.1-SNAPSHOT', updateVersionTask.nextVersion )
-        assertEquals( '1.0.1-SNAPSHOT', project.version )
     }
 
     @Test
@@ -91,7 +90,6 @@ class UpdateVersionTaskTest {
         then:
         assertEquals( '1.0.0', updateVersionTask.releasedVersion )
         assertEquals( '1.0.1', updateVersionTask.nextVersion )
-        assertEquals( '1.0.1', project.version )
     }
 
     @Test
@@ -118,7 +116,6 @@ class UpdateVersionTaskTest {
         then:
         assertEquals( '1.0.0', updateVersionTask.releasedVersion )
         assertEquals( '1.0.0-SNAPSHOT-2', updateVersionTask.nextVersion )
-        assertEquals( '1.0.0-SNAPSHOT-2', project.version )
     }
 
     @Test
