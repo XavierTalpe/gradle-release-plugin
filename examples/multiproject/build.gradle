@@ -1,0 +1,24 @@
+plugins {
+    id 'be.xvrt.release' version '0.4.5'
+}
+
+subprojects {
+    apply plugin: 'be.xvrt.release'
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testCompile group: 'junit', name: 'junit', version: '4.+'
+    }
+
+
+    /**
+     * Additional configuration for CI build below. Can be ignored.
+     */
+    release {
+        scmDisabled = true
+    }
+}

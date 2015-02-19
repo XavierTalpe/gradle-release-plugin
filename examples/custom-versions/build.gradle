@@ -1,5 +1,5 @@
 plugins {
-    id 'be.xvrt.release' version '0.4.2'
+    id 'be.xvrt.release' version '0.4.5'
 }
 
 
@@ -36,9 +36,6 @@ release {
 /**
  * Additional configuration for CI build below. Can be ignored.
  */
-task( 'check', dependsOn: 'release' ) {
-}
-
 release {
     scmDisabled = true
 }

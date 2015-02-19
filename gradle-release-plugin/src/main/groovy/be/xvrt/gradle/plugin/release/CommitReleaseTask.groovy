@@ -11,7 +11,7 @@ class CommitReleaseTask extends PluginScmTask {
     @Override
     void run() {
         if ( isScmSupportDisabled() ) {
-            logger.info ":${name} skipping commitRelease because SCM support is disabled."
+            logger.info ":${project.name}:${name} skipping commitRelease because SCM support is disabled."
         }
         else {
             commitId = commit()
@@ -33,7 +33,7 @@ class CommitReleaseTask extends PluginScmTask {
 
     private void rollbackCommit( Commit commitId ) throws ScmException {
         if ( commitId ) {
-            logger.info ":${name} rolling back commit due to error."
+            logger.info ":${project.name}:${name} rolling back unpushed commit due to error."
 
             scmHelper.deleteCommit commitId
         }

@@ -12,7 +12,7 @@ abstract class PluginScmTask extends DefaultPluginTask {
     }
 
     protected final Commit commit( String commitMessage, String version ) throws ScmException {
-        logger.info ":${name} committing local changes."
+        logger.info ":${project.name}:${name} committing local changes."
 
         commitMessage = injectVersion commitMessage, version
 
@@ -20,7 +20,7 @@ abstract class PluginScmTask extends DefaultPluginTask {
     }
 
     protected final Tag tag( String tagName, String tagMessage, String version ) throws ScmException {
-        logger.info ":${name} tagging release."
+        logger.info ":${project.name}:${name} tagging release."
 
         tagName = injectVersion tagName, version
         tagMessage = injectVersion tagMessage, version
@@ -31,7 +31,7 @@ abstract class PluginScmTask extends DefaultPluginTask {
     protected final void push() throws ScmException {
         def scmRemote = extension.getAt( ReleasePluginExtension.SCM_REMOTE ) as String
 
-        logger.info ":${name} pushing local changes to ${scmRemote}."
+        logger.info ":${project.name}:${name} pushing local changes to ${scmRemote}."
 
         getScmHelper().push scmRemote
     }
@@ -39,7 +39,7 @@ abstract class PluginScmTask extends DefaultPluginTask {
     protected final void pushTag( Tag tag ) throws ScmException {
         def scmRemote = extension.getAt( ReleasePluginExtension.SCM_REMOTE ) as String
 
-        logger.info ":${name} pushing local tag to ${scmRemote}."
+        logger.info ":${project.name}:${name} pushing local tag to ${scmRemote}."
 
         getScmHelper().pushTag scmRemote, tag
     }

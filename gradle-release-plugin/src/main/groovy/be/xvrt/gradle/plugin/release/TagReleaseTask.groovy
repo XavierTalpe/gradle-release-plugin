@@ -11,7 +11,7 @@ class TagReleaseTask extends PluginScmTask {
     @Override
     void run() {
         if ( isScmSupportDisabled() ) {
-            logger.info ":${name} skipping tagRelease because SCM support is disabled."
+            logger.info ":${project.name}:${name} skipping tagRelease because SCM support is disabled."
         }
         else {
             tagId = tag()
@@ -34,7 +34,7 @@ class TagReleaseTask extends PluginScmTask {
 
     private void rollbackTag( Tag tagId ) throws ScmException {
         if ( tagId ) {
-            logger.info ":${name} rolling back tag due to error."
+            logger.info ":${project.name}:${name} rolling back unpushed tag due to error."
 
             scmHelper.deleteTag tagId
         }

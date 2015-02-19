@@ -1,3 +1,9 @@
 language: groovy
 
-script: ./gradlew check --stacktrace
+script:
+- ./gradlew -b gradle-release-plugin/build.gradle check --stacktrace
+- ./gradlew -b examples/custom-build-task/build.gradle release --stacktrace
+- ./gradlew -b examples/custom-versions/build.gradle release --stacktrace
+- ./gradlew -b examples/java/build.gradle release --stacktrace
+- ./gradlew -b examples/multiproject/build.gradle release --stacktrace
+- ./gradlew -b examples/scm-config/build.gradle release --stacktrace
