@@ -43,7 +43,7 @@ abstract class DefaultPluginTask extends DefaultTask {
             project.version = newVersion
         }
 
-        gradleProperties.updateVersion oldVersion, newVersion, name
+        gradleProperties.updateVersion newVersion, name
     }
 
     @SuppressWarnings( "GroovyUnusedDeclaration" )

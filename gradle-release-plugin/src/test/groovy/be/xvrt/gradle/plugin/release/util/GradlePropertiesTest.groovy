@@ -31,7 +31,7 @@ class GradlePropertiesTest {
         propertiesFile << 'version=1.0.0-SNAPSHOT'
 
         when:
-        gradleProperties.updateVersion '1.0.0-SNAPSHOT', '1.0.0'
+        gradleProperties.updateVersion '1.0.0'
 
         then:
         def properties = new Properties()
@@ -49,7 +49,7 @@ class GradlePropertiesTest {
         propertiesFile << 'group=be.xvrt\n'
 
         when:
-        gradleProperties.updateVersion '1.0.0-SNAPSHOT', '1.0.0'
+        gradleProperties.updateVersion '1.0.0'
 
         then:
         def properties = new Properties()
@@ -67,7 +67,7 @@ class GradlePropertiesTest {
         propertiesFile << "version   =\t1.0.0-SNAPSHOT"
 
         when:
-        gradleProperties.updateVersion '1.0.0-SNAPSHOT', '1.0.0'
+        gradleProperties.updateVersion '1.0.0'
 
         then:
         def properties = new Properties()
@@ -85,7 +85,7 @@ class GradlePropertiesTest {
         propertiesFile << 'group=be.xvrt\n'
 
         when:
-        gradleProperties.updateVersion '1.0.0-SNAPSHOT', '1.0.0'
+        gradleProperties.updateVersion '1.0.0'
 
         then:
         def properties = new Properties()
@@ -99,7 +99,7 @@ class GradlePropertiesTest {
     @Test
     void 'saving version should not result in error when properties and build file are missing'() {
         when:
-        gradleProperties.updateVersion '1.0.0-SNAPSHOT', '1.0.0'
+        gradleProperties.updateVersion '1.0.0'
     }
 
     @Test
@@ -109,7 +109,7 @@ class GradlePropertiesTest {
         buildFile << 'version=1.0.0-SNAPSHOT'
 
         when:
-        gradleProperties.updateVersion '1.0.0-SNAPSHOT', '1.0.0'
+        gradleProperties.updateVersion '1.0.0'
 
         then:
         def buildFileAsProperties = new Properties()

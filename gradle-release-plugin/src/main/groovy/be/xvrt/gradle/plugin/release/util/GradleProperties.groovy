@@ -11,12 +11,12 @@ class GradleProperties {
         this.project = project
     }
 
-    def updateVersion( String oldVersion, String newVersion, String taskName = '' ) {
-        updateFile( 'build.gradle', oldVersion, newVersion, taskName )
-        updateFile( 'gradle.properties', oldVersion, newVersion, taskName )
+    def updateVersion( String newVersion, String taskName = '' ) {
+        updateFile( 'build.gradle', newVersion, taskName )
+        updateFile( 'gradle.properties', newVersion, taskName )
     }
 
-    private updateFile( String filename, String oldVersion, String newVersion, String taskName ) {
+    private updateFile( String filename, String newVersion, String taskName ) {
         def file = new File( project.projectDir, filename )
 
         if ( !file.exists() ) {
@@ -24,16 +24,16 @@ class GradleProperties {
         }
         else {
             project.logger.info( ":${project.name}:${taskName} updating ${filename} with new version." )
-            writeVersion( file, oldVersion, newVersion )
+            writeVersion( file, newVersion )
         }
     }
 
-    private static writeVersion( File file, String oldVersion, String newVersion ) {
+    private static writeVersion( File file, String newVersion ) {
         def inputStream = new FileInputStream( file )
         def properties = IOUtils.toString inputStream, 'UTF-8'
         inputStream.close()
 
-        properties = ( properties =~ /version\s*=\s*${oldVersion}/ ).replaceAll "version=${newVersion}"
+        properties = ( properties =~ /version\s*=\s*[\w-.]+/ ).replaceAll "version=${newVersion}"
 
         def outputStream = new FileOutputStream( file )
         IOUtils.write properties, outputStream, 'UTF-8'
