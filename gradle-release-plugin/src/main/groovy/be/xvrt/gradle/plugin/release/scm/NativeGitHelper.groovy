@@ -37,6 +37,7 @@ class NativeGitHelper implements ScmHelper {
 
         try {
             if ( commitId.id.equals( 'LAST' ) ) {
+                // TODO: If commit didn't do anything, this will remove a commit!
                 result = gitExecute( ['git', 'reset', '--hard', 'HEAD~1'] )
             }
 
